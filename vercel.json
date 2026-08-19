@@ -19,8 +19,16 @@
       "dest": "/backend/server.js"
     },
     {
-      "src": "/(.*)",
+      "src": "/assets/(.*)",
+      "dest": "/svsms/assets/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|svg|png|jpg|jpeg|ico|json|txt|woff2?))$",
       "dest": "/svsms/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/svsms/index.html"
     }
   ]
 }
