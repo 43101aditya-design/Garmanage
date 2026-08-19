@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
-import { Sun, Moon, User } from 'lucide-react';
+import { Sun, Moon, User, Menu } from 'lucide-react';
 import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
+import { useUIStore } from '../../store/uiStore';
 import { GlobalSearch } from './GlobalSearch';
 import { NotificationCenter } from './NotificationCenter';
 
 export const Topbar = () => {
   const { theme, setTheme } = useThemeStore();
   const { user, logout } = useAuthStore();
+  const toggleSidebar = useUIStore(state => state.toggleSidebar);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -31,7 +33,13 @@ export const Topbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 md:px-6 backdrop-blur-md">
+      <button
+        onClick={toggleSidebar}
+        className="md:hidden rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
       <div className="flex flex-1 items-center gap-4">
         <GlobalSearch />
       </div>
