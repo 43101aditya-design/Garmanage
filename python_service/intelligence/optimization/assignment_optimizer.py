@@ -43,9 +43,12 @@ def optimize(scored_by_job: Dict[str, List[Dict[str, Any]]], jobs: Dict[str, Dic
         assigned, used = {}, defaultdict(int)
         for job_id in sorted(scored_by_job):
             duration = int(float(jobs[job_id].get("estimated_duration_minutes") or 0))
-            for candidate in sorted(scored_by_job[job_id], key=lambda c: (-c["suitability_score"], c["mechanic_id"])):
+            for candidate in sorted(
+                (candidate for candidate in scored_by_job[job_id] if candidate.get("eligible") and candidate.get("suitability_score") is not None),
+                key=lambda candidate: (-candidate["suitability_score"], candidate["mechanic_id"]),
+            ):
                 mechanic = candidate["mechanic_id"]
-                if candidate.get("eligible") and int(float(candidate.get("workload_minutes") or 0)) + used[mechanic] + duration <= MAX_WORKLOAD_MINUTES:
+                if int(float(candidate.get("workload_minutes") or 0)) + used[mechanic] + duration <= MAX_WORKLOAD_MINUTES:
                     assigned[job_id], used[mechanic] = mechanic, used[mechanic] + duration
                     break
         return assigned, "DETERMINISTIC_FALLBACK_OR_TOOLS_UNAVAILABLE"

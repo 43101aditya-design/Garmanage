@@ -198,3 +198,32 @@ exports.trainModel = async (req, res, next) => {
     res.json(result);
   } catch (error) { next(error); }
 };
+
+exports.getMonitoring = async (req, res, next) => {
+  try {
+    const { garage_id } = req.query;
+    if (!garage_id) return res.status(400).json({ error: 'garage_id is required' });
+    if (!await assertAccess(res, req.user.id, garage_id)) return;
+    const summary = await databaseRows(pool, `
+      SELECT COUNT(*) AS recommendation_count,
+        SUM(status = 'APPROVED') AS approval_count, SUM(status = 'REJECTED') AS rejection_count,
+        SUM(status = 'APPROVED' AND manager_choice_mechanic_id <> recommended_mechanic_id) AS override_count,
+        AVG(suitability_score) AS average_predicted_suitability
+      FROM AI_Job_Recommendation WHERE garage_id = ?`, [garage_id]);
+    const outcomes = await databaseRows(pool, `
+      SELECT COUNT(*) AS completed_assignment_count, AVG(jc.actual_duration_minutes) AS average_actual_completion_minutes,
+        AVG(CASE WHEN jc.actual_duration_minutes IS NOT NULL AND jc.estimated_duration_minutes > 0
+          THEN jc.actual_duration_minutes <= jc.estimated_duration_minutes * 1.25 ELSE NULL END) AS on_time_completion_rate
+      FROM AI_Job_Recommendation r JOIN Job_Card jc ON jc.id = r.job_card_id
+      WHERE r.garage_id = ? AND r.status = 'APPROVED' AND jc.status = 'COMPLETED'`, [garage_id]);
+    const byModel = await databaseRows(pool, `SELECT mode, model_version, COUNT(*) AS recommendation_count FROM AI_Job_Recommendation WHERE garage_id = ? GROUP BY mode, model_version`, [garage_id]);
+    const values = summary[0] || {};
+    res.json({
+      recommendation_count: Number(values.recommendation_count || 0), approval_rate: values.recommendation_count ? Number(values.approval_count || 0) / Number(values.recommendation_count) : null,
+      rejection_rate: values.recommendation_count ? Number(values.rejection_count || 0) / Number(values.recommendation_count) : null,
+      manual_override_rate: values.approval_count ? Number(values.override_count || 0) / Number(values.approval_count) : null,
+      average_predicted_suitability: values.average_predicted_suitability === null ? null : Number(values.average_predicted_suitability),
+      assignment_success: outcomes[0] || {}, model_modes: byModel,
+    });
+  } catch (error) { next(error); }
+};

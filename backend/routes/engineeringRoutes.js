@@ -67,7 +67,7 @@ router.get('/simulation/inventory-prediction', verifyToken, requireRole(['admin'
 
 // Safe Source Code endpoints (whitelisted by Python service)
 router.get('/source-code/:algorithm', verifyToken, requireRole(['admin', 'owner']), async (req, res) => {
-    const validAlgorithms = ['mechanic-assignment', 'assignment-features', 'assignment-ranking', 'assignment-optimization', 'assignment-explanations', 'revenue-forecast', 'anomaly-detection', 'inventory-prediction'];
+    const validAlgorithms = ['mechanic-assignment', 'assignment-features', 'assignment-candidate-filter', 'assignment-ranking', 'assignment-optimization', 'assignment-explanations', 'revenue-forecast', 'anomaly-detection', 'inventory-prediction'];
     if (!validAlgorithms.includes(req.params.algorithm)) {
         return res.status(403).json({ error: 'Unauthorized algorithm request' });
     }

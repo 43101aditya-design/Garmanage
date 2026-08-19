@@ -108,6 +108,10 @@ def source_mechanic_assignment():
 def source_assignment_features():
     return get_safe_intelligence_source("features/assignment_features.py")
 
+@app.get("/source-code/assignment-candidate-filter")
+def source_assignment_candidate_filter():
+    return get_safe_intelligence_source("features/candidate_filter.py")
+
 @app.get("/source-code/assignment-ranking")
 def source_assignment_ranking():
     return get_safe_intelligence_source("ranking/ranker.py")

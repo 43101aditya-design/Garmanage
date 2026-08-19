@@ -11,6 +11,7 @@ export const CodeViewer = () => {
   const files = [
     { id: 'mechanic-assignment', name: 'mechanic_assignment.py', label: 'Mechanic Recommendation' },
     { id: 'assignment-features', name: 'assignment_features.py', label: 'Assignment Features' },
+    { id: 'assignment-candidate-filter', name: 'candidate_filter.py', label: 'Candidate Filtering' },
     { id: 'assignment-ranking', name: 'ranker.py', label: 'XGBoost Ranking' },
     { id: 'assignment-optimization', name: 'assignment_optimizer.py', label: 'OR-Tools Optimization' },
     { id: 'assignment-explanations', name: 'explain.py', label: 'Explanation Generation' },

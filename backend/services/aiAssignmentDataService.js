@@ -27,7 +27,9 @@ async function getJob(db, jobId, lock = false) {
   const jobs = await rows(db, `
     SELECT jc.id AS job_id, jc.garage_id, jc.status, jc.service_type, jc.priority, jc.complexity,
            jc.estimated_duration_minutes, jc.appointment_id, v.vehicle_type,
-           a.appointment_date, a.appointment_time, a.end_time
+           DATE_FORMAT(a.appointment_date, '%Y-%m-%d') AS appointment_date,
+           TIME_FORMAT(a.appointment_time, '%H:%i:%s') AS appointment_time,
+           TIME_FORMAT(a.end_time, '%H:%i:%s') AS end_time
     FROM Job_Card jc
     LEFT JOIN Vehicle v ON v.id = jc.vehicle_id
     LEFT JOIN Appointment a ON a.id = jc.appointment_id
@@ -60,7 +62,10 @@ async function buildAssignmentInput(db, jobId, { lockJob = false } = {}) {
   const availability = mechanicIds.length ? await rows(db, `SELECT mechanic_id, day_of_week, start_time, end_time, is_available FROM Mechanic_Availability WHERE mechanic_id IN (${placeholders})`, mechanicIds) : [];
   const leaves = mechanicIds.length ? await rows(db, `SELECT mechanic_id, start_datetime, end_datetime FROM Mechanic_Unavailability WHERE status = 'APPROVED' AND mechanic_id IN (${placeholders})`, mechanicIds) : [];
   const assignments = mechanicIds.length ? await rows(db, `
-    SELECT ja.mechanic_id, jc.id AS job_card_id, jc.estimated_duration_minutes, a.appointment_date, a.appointment_time, a.end_time
+    SELECT ja.mechanic_id, jc.id AS job_card_id, jc.estimated_duration_minutes,
+      DATE_FORMAT(a.appointment_date, '%Y-%m-%d') AS appointment_date,
+      TIME_FORMAT(a.appointment_time, '%H:%i:%s') AS appointment_time,
+      TIME_FORMAT(a.end_time, '%H:%i:%s') AS end_time
     FROM Job_Assignment ja JOIN Job_Card jc ON jc.id = ja.job_card_id
     LEFT JOIN Appointment a ON a.id = jc.appointment_id
     WHERE ja.status IN ('PENDING', 'ACCEPTED', 'ACTIVE') AND ja.mechanic_id IN (${placeholders})`, mechanicIds) : [];
@@ -126,15 +131,21 @@ async function buildAssignmentInput(db, jobId, { lockJob = false } = {}) {
 
 async function trainingRows(db) {
   const completed = await rows(db, `
-    SELECT r.id, r.reasoning_data, jc.actual_duration_minutes, jc.estimated_duration_minutes, jc.completed_at, r.created_at
+    SELECT r.id, r.reasoning_data, r.manager_choice_mechanic_id, r.recommended_mechanic_id,
+      jc.actual_duration_minutes, jc.estimated_duration_minutes, jc.completed_at, r.created_at
     FROM AI_Job_Recommendation r JOIN Job_Card jc ON jc.id = r.job_card_id
     WHERE r.status = 'APPROVED' AND jc.status = 'COMPLETED'
       AND jc.actual_duration_minutes IS NOT NULL AND jc.estimated_duration_minutes > 0`);
   return completed.map(record => {
     const reasoning = typeof record.reasoning_data === 'string' ? JSON.parse(record.reasoning_data) : record.reasoning_data;
+    const selected = reasoning?.recommended_candidate?.mechanic_id === record.manager_choice_mechanic_id
+      ? reasoning.recommended_candidate
+      : (reasoning?.alternatives || []).find(candidate => candidate.mechanic_id === record.manager_choice_mechanic_id);
     return {
       recommendation_id: record.id, created_at: record.created_at, completed_at: record.completed_at,
-      feature_snapshot: reasoning?.recommended_candidate?.feature_snapshot,
+      // Overrides are valuable data, but their actual selected candidate—not the
+      // original AI choice—must supply the feature snapshot to avoid label drift.
+      feature_snapshot: selected?.feature_snapshot,
       label: Number(record.actual_duration_minutes) <= Number(record.estimated_duration_minutes) * 1.25 ? 1 : 0,
     };
   }).filter(row => row.feature_snapshot);

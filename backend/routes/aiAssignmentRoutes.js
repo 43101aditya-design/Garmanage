@@ -12,6 +12,7 @@ router.post('/recommendations/:id/approve', controller.approveRecommendation);
 router.post('/recommendations/:id/reject', controller.rejectRecommendation);
 router.get('/model/status', controller.getModelStatus);
 router.get('/model/evaluation', controller.getModelEvaluation);
+router.get('/monitoring', controller.getMonitoring);
 router.post('/model/train', requireRole(['owner', 'admin']), controller.trainModel);
 
 module.exports = router;
