@@ -67,11 +67,11 @@ app.use('/api/engineering', engineeringRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    const isProduction = process.env.NODE_ENV === 'production';
     res.status(500).json({
         error: 'Internal Server Error',
-        message: isProduction ? 'An unexpected error occurred' : err.message,
-        _sqlLogs: isProduction ? undefined : (req.sqlLogs || [])
+        message: err.message,
+        stack: err.stack,
+        _sqlLogs: req.sqlLogs || []
     });
 });
 
