@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDbStore } from '../../store/dbStore';
 import { useAuthStore } from '../../store/authStore';
-import { Activity, Users, Car, Calendar, Package, DollarSign, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { Activity, Users, Car, Calendar, Package, IndianRupee, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { apiClient } from '../../api/services/apiClient';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -83,7 +83,7 @@ export const Dashboard = () => {
   }
 
   const statCards = [
-    { title: 'Today\'s Revenue', value: `₹${Number(metrics.daily_revenue || 0).toLocaleString()}`, icon: DollarSign, color: 'text-emerald-500', trend: '+12%' },
+    { title: 'Today\'s Revenue', value: `₹${Number(metrics.daily_revenue || 0).toLocaleString()}`, icon: IndianRupee, color: 'text-emerald-500', trend: '+12%' },
     { title: 'Weekly Revenue', value: `₹${Number(metrics.weekly_revenue || 0).toLocaleString()}`, icon: Activity, color: 'text-blue-500', trend: '+5%' },
     { title: 'Monthly Revenue', value: `₹${Number(metrics.monthly_revenue || 0).toLocaleString()}`, icon: TrendingUp, color: 'text-indigo-500', trend: '+18%' },
     { title: 'Total Customers', value: metrics.total_customers || 0, icon: Users, color: 'text-violet-500', trend: '+2 this week' },

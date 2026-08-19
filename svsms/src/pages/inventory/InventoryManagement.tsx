@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDbStore } from '../../store/dbStore';
-import { Package, AlertTriangle, DollarSign } from 'lucide-react';
+import { Package, AlertTriangle, IndianRupee } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -55,11 +55,11 @@ export const InventoryManagement = () => {
                 <div className="p-6 bg-card border rounded-xl shadow-sm space-y-2 relative overflow-hidden">
                     <div className="flex items-center justify-between relative z-10">
                         <div className="flex items-center gap-2 text-indigo-500 mb-2">
-                            <DollarSign className="w-5 h-5" />
+                            <IndianRupee className="w-5 h-5" />
                             <h3 className="font-semibold">Total Valuation</h3>
                         </div>
                     </div>
-                    <p className="text-4xl font-bold relative z-10">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-4xl font-bold relative z-10">₹{totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
             </div>
 
@@ -115,7 +115,7 @@ export const InventoryManagement = () => {
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <RechartsTooltip formatter={(value: any) => `$${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}`} />
+                                <RechartsTooltip formatter={(value: any) => `₹${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}`} />
                                 <Legend />
                             </PieChart>
                         </ResponsiveContainer>
