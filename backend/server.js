@@ -6,6 +6,7 @@ const compression = require('compression');
 const { sqlLoggerMiddleware, responseInterceptor } = require('./middleware/sqlLogger');
 
 const app = express();
+app.set('trust proxy', 1);
 
 const { helmetConfig, globalLimiter } = require('./middleware/securityMiddleware');
 

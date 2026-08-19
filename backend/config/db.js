@@ -10,7 +10,7 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME || 'b4eturwt8cnf3b4gqngb',
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 2, // Clever Cloud free tier max is 5. Reduced to 2 for Serverless.
     queueLimit: 0,
     multipleStatements: true
 });
