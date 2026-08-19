@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
+const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const db = require('../config/db');
 
 const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://127.0.0.1:8000';
 
 // Health check for Engineering Lab
-router.get('/health', authenticateToken, authorizeRole(['admin', 'manager', 'owner']), async (req, res) => {
+router.get('/health', verifyToken, requireRole(['admin', 'manager', 'owner']), async (req, res) => {
     try {
         // Check MySQL from Node
         const [rows] = await db.query('SELECT 1');
@@ -60,13 +60,13 @@ const proxyPost = (path) => async (req, res) => {
 };
 
 // Simulations
-router.post('/simulation/mechanic-assignment', authenticateToken, authorizeRole(['admin', 'manager', 'owner']), proxyPost('/api/simulation/mechanic-assignment'));
-router.get('/simulation/revenue-forecast', authenticateToken, authorizeRole(['admin', 'owner']), proxyGet('/api/simulation/revenue-forecast'));
-router.get('/simulation/anomaly-detection', authenticateToken, authorizeRole(['admin', 'owner']), proxyGet('/api/simulation/anomaly-detection'));
-router.get('/simulation/inventory-prediction', authenticateToken, authorizeRole(['admin', 'manager', 'owner']), proxyGet('/api/simulation/inventory-prediction'));
+router.post('/simulation/mechanic-assignment', verifyToken, requireRole(['admin', 'manager', 'owner']), proxyPost('/api/simulation/mechanic-assignment'));
+router.get('/simulation/revenue-forecast', verifyToken, requireRole(['admin', 'owner']), proxyGet('/api/simulation/revenue-forecast'));
+router.get('/simulation/anomaly-detection', verifyToken, requireRole(['admin', 'owner']), proxyGet('/api/simulation/anomaly-detection'));
+router.get('/simulation/inventory-prediction', verifyToken, requireRole(['admin', 'manager', 'owner']), proxyGet('/api/simulation/inventory-prediction'));
 
 // Safe Source Code endpoints (whitelisted by Python service)
-router.get('/source-code/:algorithm', authenticateToken, authorizeRole(['admin', 'owner']), async (req, res) => {
+router.get('/source-code/:algorithm', verifyToken, requireRole(['admin', 'owner']), async (req, res) => {
     const validAlgorithms = ['mechanic-assignment', 'revenue-forecast', 'anomaly-detection', 'inventory-prediction'];
     if (!validAlgorithms.includes(req.params.algorithm)) {
         return res.status(403).json({ error: 'Unauthorized algorithm request' });
