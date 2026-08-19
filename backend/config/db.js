@@ -4,10 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'svsms_db',
+    host: process.env.DB_HOST || 'b4eturwt8cnf3b4gqngb-mysql.services.clever-cloud.com',
+    user: process.env.DB_USER || 'un9gagdyqj29naam',
+    password: process.env.DB_PASSWORD || 'FTasnXdDXtYM64i89fOK',
+    database: process.env.DB_NAME || 'b4eturwt8cnf3b4gqngb',
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
