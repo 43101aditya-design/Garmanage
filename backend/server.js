@@ -29,6 +29,9 @@ app.get('/api/health', (req, res) => {
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
+const garageRoutes = require('./routes/garageRoutes');
+const memberRoutes = require('./routes/memberRoutes');
+const userRoutes = require('./routes/userRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const searchRoutes = require('./routes/searchRoutes');
@@ -45,7 +48,16 @@ const branchRoutes = require('./routes/branchRoutes');
 const managerRoutes = require('./routes/managerRoutes');
 const approvalRoutes = require('./routes/approvalRoutes');
 const engineeringRoutes = require('./routes/engineeringRoutes');
-
+const customerVehicleRoutes = require('./routes/customerVehicleRoutes');
+const serviceRequestRoutes = require('./routes/serviceRequestRoutes');
+const managerRequestRoutes = require('./routes/managerRequestRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const managerJobRoutes = require('./routes/managerJobRoutes');
+const managerAppointmentRoutes = require('./routes/managerAppointmentRoutes');
+const customerAppointmentRoutes = require('./routes/customerAppointmentRoutes');
+const workforceRoutes = require('./routes/workforceRoutes');
+const assignmentRoutes = require('./routes/assignmentRoutes');
+const aiAssignmentRoutes = require('./routes/aiAssignmentRoutes');
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -64,6 +76,21 @@ app.use('/api/branches', branchRoutes);
 app.use('/api/managers', managerRoutes);
 app.use('/api/approvals', approvalRoutes);
 app.use('/api/engineering', engineeringRoutes);
+app.use('/api/garages', garageRoutes);
+app.use('/api/garages', memberRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/customer/vehicles', customerVehicleRoutes);
+app.use('/api/customer/service-requests', serviceRequestRoutes);
+app.use('/api/customer/appointments', customerAppointmentRoutes);
+app.use('/api/garages/:id/service-requests', managerRequestRoutes);
+app.use('/api/garages/:id/jobs', managerJobRoutes);
+app.use('/api/garages/:id/appointments', managerAppointmentRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api', workforceRoutes);
+app.use('/api', assignmentRoutes);
+app.use('/api/ai', aiAssignmentRoutes);
+
+app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, (req, res) => { res.json({ user: req.user }); });
 
 // Global Error Handler
 app.use((err, req, res, next) => {

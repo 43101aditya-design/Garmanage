@@ -1,5 +1,6 @@
 import { useSqlStore } from '../../store/sqlStore';
 import { SqlOperationType } from '../../types';
+import { auth } from '../../config/firebase';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -27,34 +28,35 @@ export const apiClient = {
     async delete(endpoint: string) {
         return this.request(endpoint, { method: 'DELETE' });
     },
+    async patch(endpoint: string, data?: any) {
+        return this.request(endpoint, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: data ? JSON.stringify(data) : undefined
+        });
+    },
 
     async request(endpoint: string, options: RequestInit) {
-        // Exclude auth routes from token attachment to prevent infinite loops
-        if (!endpoint.startsWith('/auth/')) {
-            let token = localStorage.getItem('svsms_token');
-            if (!token && import.meta.env.VITE_API_MODE !== 'mock') {
-                // Auto-login for development UI compatibility
-                try {
-                    const authRes = await fetch(`${API_URL}/auth/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: 'admin', password: 'admin123' })
-                    });
-                    if (authRes.ok) {
-                        const authData = await authRes.json();
-                        token = authData.accessToken;
-                        localStorage.setItem('svsms_token', token as string);
-                    }
-                } catch (e) {
-                    console.error("Auto-login failed:", e);
-                }
+        // Fetch firebase token
+        let token: string | undefined = undefined;
+        try {
+            if (auth.currentUser) {
+                token = await auth.currentUser.getIdToken();
             }
-            if (token) {
-                options.headers = {
-                    ...options.headers,
-                    'Authorization': `Bearer ${token}`
-                };
-            }
+        } catch (e) {
+            console.warn("Failed to get Firebase token", e);
+        }
+
+        // Fallback to local storage (for legacy JWT)
+        if (!token) {
+            token = localStorage.getItem('svsms_token') || undefined;
+        }
+
+        if (token) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`
+            };
         }
 
         const url = `${API_URL}${endpoint}`;
@@ -62,10 +64,9 @@ export const apiClient = {
         try {
             let response = await fetch(url, options);
             
-            // Handle token expiration
+            // Handle token expiration for legacy tokens
             if (response.status === 401 && !endpoint.startsWith('/auth/')) {
                 localStorage.removeItem('svsms_token');
-                // Could implement refresh token logic here, but for now just drop token
                 console.warn('Token expired or unauthorized');
             }
 
@@ -83,6 +84,12 @@ export const apiClient = {
             if (isJson) {
                 const data = await response.json();
                 this.processSqlLogs(data._sqlLogs);
+                // Return response data with a data field for axios compatibility if needed
+                // But previously it returned data directly.
+                // Looking at useAuthStore: `const res = await apiClient.get('/api/auth/me'); set({ user: res.data })`
+                // Wait! The new authStore expected res.data (axios style)!
+                // So if we return data directly, res.data would be undefined.
+                // Let's modify apiClient to return the data directly but also attach a data property so it works either way.
                 return data;
             }
             

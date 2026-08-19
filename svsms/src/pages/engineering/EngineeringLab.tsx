@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Database, Activity, Code, GitMerge, Settings, TerminalSquare, AlertTriangle, Box, Cpu, HardDrive } from 'lucide-react';
+import { Play, Database, Activity, Code, GitMerge, Settings, TerminalSquare, AlertTriangle, Box, Cpu, HardDrive, BrainCircuit } from 'lucide-react';
 import { SimulationPanel } from './components/SimulationPanel';
 import { ERDiagram } from './components/ERDiagram';
 import { ControlFlow } from './components/ControlFlow';
 import { CodeViewer } from './components/CodeViewer';
+import { AIAssignmentEngine } from './components/AIAssignmentEngine';
 import { apiClient } from '../../api/services/apiClient';
 
 export const EngineeringLab = () => {
-  const [activeTab, setActiveTab] = useState<'simulation' | 'er-model' | 'control-flow' | 'source'>('simulation');
+  const [activeTab, setActiveTab] = useState<'simulation' | 'assignment-engine' | 'er-model' | 'control-flow' | 'source'>('simulation');
   const [health, setHealth] = useState({ node: 'Checking...', mysql: 'Checking...', python: 'Checking...' });
 
   useEffect(() => {
@@ -62,6 +63,7 @@ export const EngineeringLab = () => {
       <div className="flex space-x-1 bg-surface p-1 rounded-xl shrink-0">
         {[
           { id: 'simulation', icon: Play, label: 'Live Simulation' },
+          { id: 'assignment-engine', icon: BrainCircuit, label: 'AI Assignment Engine' },
           { id: 'er-model', icon: HardDrive, label: 'DBMS ER Model' },
           { id: 'control-flow', icon: GitMerge, label: 'Control Flow' },
           { id: 'source', icon: Code, label: 'Python Source' },
@@ -84,6 +86,7 @@ export const EngineeringLab = () => {
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto bg-surface rounded-xl border border-border">
         {activeTab === 'simulation' && <SimulationPanel />}
+        {activeTab === 'assignment-engine' && <AIAssignmentEngine />}
         {activeTab === 'er-model' && <ERDiagram />}
         {activeTab === 'control-flow' && <ControlFlow />}
         {activeTab === 'source' && <CodeViewer />}

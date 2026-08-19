@@ -97,7 +97,7 @@ export const Dashboard = () => {
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          {user?.role === 'admin' ? 'Owner Dashboard' : 
+          {user?.role === 'owner' ? 'Owner Dashboard' : 
            user?.role === 'manager' ? 'Manager Dashboard' : 
            'Welcome Back'}
         </h1>
@@ -133,7 +133,7 @@ export const Dashboard = () => {
         })}
       </div>
 
-      {(user?.role === 'admin' || user?.role === 'manager') && (
+      {(user?.role === 'owner' || user?.role === 'manager') && (
         <div className="mt-12 bg-card border rounded-xl p-6 shadow-sm">
           <div className="mb-6">
             <h3 className="text-xl font-bold text-foreground">Revenue Growth</h3>

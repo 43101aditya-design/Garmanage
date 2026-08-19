@@ -10,6 +10,10 @@ export const CodeViewer = () => {
 
   const files = [
     { id: 'mechanic-assignment', name: 'mechanic_assignment.py', label: 'Mechanic Recommendation' },
+    { id: 'assignment-features', name: 'assignment_features.py', label: 'Assignment Features' },
+    { id: 'assignment-ranking', name: 'ranker.py', label: 'XGBoost Ranking' },
+    { id: 'assignment-optimization', name: 'assignment_optimizer.py', label: 'OR-Tools Optimization' },
+    { id: 'assignment-explanations', name: 'explain.py', label: 'Explanation Generation' },
     { id: 'revenue-forecast', name: 'revenue_forecast.py', label: 'Revenue Forecast' },
     { id: 'anomaly-detection', name: 'anomaly_detection.py', label: 'Anomaly Detection' },
     { id: 'inventory-prediction', name: 'inventory_prediction.py', label: 'Inventory Prediction' },

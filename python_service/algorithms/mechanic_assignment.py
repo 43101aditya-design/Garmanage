@@ -1,74 +1,39 @@
-def run_mechanic_assignment(db_conn, data: dict):
-    # data expects: {"branch_id": "...", "job_type": "Engine Repair", "priority": "High", "required_skill": 3}
-    branch_id = data.get("branch_id")
-    required_skill = data.get("required_skill", 1)
-    
-    cursor = db_conn.cursor(dictionary=True)
-    
-    # Check if active_jobs_count exists (fallback if it doesn't)
-    try:
-        cursor.execute("SELECT active_jobs_count FROM Mechanic LIMIT 1")
-        has_active_jobs_col = True
-    except:
-        has_active_jobs_col = False
-        db_conn.commit() # Clear error state
+"""Isolated Engineering Lab scenario adapter for the shared assignment core."""
+from intelligence.core import recommend
 
-    # Fetch mechanics
-    if has_active_jobs_col:
-        query = """
-            SELECT id, first_name, last_name, specialization, skill_level, active_jobs_count 
-            FROM Mechanic 
-            WHERE branch_id = %s AND status = 'active'
-        """
-    else:
-        query = """
-            SELECT m.id, m.first_name, m.last_name, m.specialization, m.skill_level, 
-                   (SELECT COUNT(*) FROM Appointment a WHERE a.mechanic_id = m.id AND a.status NOT IN ('COMPLETED', 'CANCELLED')) as active_jobs_count
-            FROM Mechanic m
-            WHERE m.branch_id = %s AND m.status = 'active'
-        """
-    cursor.execute(query, (branch_id,))
-    mechanics = cursor.fetchall()
-    
-    if not mechanics:
-        return {"error": "No mechanics available"}
 
-    candidates = []
-    for m in mechanics:
-        # Simple Scoring Model
-        # Skill Match: up to 40% (max out if mechanic skill >= required)
-        skill_diff = m['skill_level'] - required_skill
-        skill_score = 40 if skill_diff >= 0 else max(0, 40 + (skill_diff * 10))
-        
-        # Workload Score: up to 40% (less active jobs = higher score)
-        active_jobs = m['active_jobs_count'] or 0
-        workload_score = max(0, 40 - (active_jobs * 10)) # Penalize 10 points per active job
-        
-        # Availability (assume 20% flat for now if 'active' status)
-        availability_score = 20
-        
-        total_score = skill_score + workload_score + availability_score
-        
-        candidates.append({
-            "mechanic_id": m['id'],
-            "name": f"{m['first_name']} {m['last_name']}",
-            "specialization": m['specialization'],
-            "score": round(total_score, 1),
-            "details": {
-                "skill_match": skill_score,
-                "workload": workload_score,
-                "availability": availability_score,
-                "active_jobs": active_jobs,
-                "skill_level": m['skill_level']
-            }
-        })
-        
-    cursor.close()
-    
-    # Sort candidates by score descending
-    candidates.sort(key=lambda x: x["score"], reverse=True)
-    
-    return {
-        "recommended_mechanic": candidates[0] if candidates else None,
-        "all_candidates": candidates
+def run_mechanic_assignment(data: dict):
+    scenario = data.get("scenario") or {}
+    job = scenario.get("job") or {
+        "job_id": "simulation-job-1",
+        "service_type": data.get("job_type", "Engine Repair"),
+        "priority": str(data.get("priority", "HIGH")).upper(),
+        "complexity": "MEDIUM",
+        "estimated_duration_minutes": 90,
+        "required_skills": [],
     }
+    job.setdefault("job_id", "simulation-job-1")
+    candidates = scenario.get("candidates") or [
+        {"mechanic_id": "simulation-mechanic-a", "display_name": "Scenario Mechanic A", "eligible": True, "skill_match": True, "proficiency_score": 0.9, "experience_years": 5, "workload_minutes": 80, "availability_score": 1.0, "availability_known": True, "historical_completed_jobs": 0, "historical_success_rate": None},
+        {"mechanic_id": "simulation-mechanic-b", "display_name": "Scenario Mechanic B", "eligible": True, "skill_match": True, "proficiency_score": 0.65, "experience_years": 2, "workload_minutes": 30, "availability_score": 1.0, "availability_known": True, "historical_completed_jobs": 0, "historical_success_rate": None},
+    ]
+    result = recommend({"jobs": [job], "candidates_by_job": {job["job_id"]: candidates}})
+    recommendation = result["recommendations"][0]
+    def legacy_candidate(candidate):
+        if not candidate:
+            return None
+        return {
+            **candidate,
+            "name": candidate.get("display_name"),
+            "specialization": "Scenario candidate",
+            "score": round(float(candidate.get("suitability_score") or 0) * 100, 1),
+            "details": {
+                "skill_match": round(float(candidate.get("feature_snapshot", {}).get("skill_match", 0)) * 40, 1),
+                "workload": round(float(candidate.get("feature_snapshot", {}).get("workload_headroom", 0)) * 40, 1),
+                "availability": round(float(candidate.get("feature_snapshot", {}).get("availability_score", 0)) * 20, 1),
+                "active_jobs": candidate.get("active_job_count", 0),
+                "skill_level": candidate.get("proficiency_score"),
+            },
+        }
+    all_candidates = [recommendation.get("recommended_candidate"), *recommendation.get("alternatives", [])]
+    return {"status": "SIMULATION_ONLY", "scenario": "isolated", "recommended_mechanic": legacy_candidate(recommendation.get("recommended_candidate")), "all_candidates": [legacy_candidate(candidate) for candidate in all_candidates if candidate], "recommendation": recommendation}

@@ -12,8 +12,8 @@ export const MechanicDashboard = () => {
     const [selectedMechanic, setSelectedMechanic] = useState('');
 
     useEffect(() => {
-        if (user?.role === 'mechanic' && user?.reference_id) {
-            setSelectedMechanic(user.reference_id);
+        if (user?.role === 'mechanic' && user?.id) {
+            setSelectedMechanic(user.id);
         } else if (mechanics.length > 0 && !selectedMechanic) {
             setSelectedMechanic(mechanics[0].id);
         }
@@ -42,7 +42,7 @@ export const MechanicDashboard = () => {
                     <p className="text-muted-foreground">Track mechanic efficiency, jobs, and performance.</p>
                 </div>
                 
-                {(user?.role === 'admin' || user?.role === 'manager') && (
+                {(user?.role === 'owner' || user?.role === 'manager') && (
                     <select 
                         value={selectedMechanic}
                         onChange={(e) => setSelectedMechanic(e.target.value)}
