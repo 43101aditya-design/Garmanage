@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Play, Activity, Clock, Users, ArrowRight, ShieldAlert, BarChart3, Box, FastForward } from 'lucide-react';
-import { apiClient } from '../../../../apiClient';
+import { apiClient } from '../../../api/services/apiClient';
 
 export const SimulationPanel = () => {
   const [activeSim, setActiveSim] = useState('mechanic-assignment');

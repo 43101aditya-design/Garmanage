@@ -1,4 +1,4 @@
-import { apiClient } from '../apiClient';
+import { apiClient } from './apiClient';
 
 export class AuthService {
   static async login(credentials: { email: string; password?: string; role?: string }) {

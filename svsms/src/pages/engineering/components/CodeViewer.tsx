@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileCode2, Terminal } from 'lucide-react';
-import { apiClient } from '../../../../apiClient';
+import { apiClient } from '../../../api/services/apiClient';
 
 export const CodeViewer = () => {
   const [activeFile, setActiveFile] = useState('mechanic-assignment');

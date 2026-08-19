@@ -4,7 +4,7 @@ import { SimulationPanel } from './components/SimulationPanel';
 import { ERDiagram } from './components/ERDiagram';
 import { ControlFlow } from './components/ControlFlow';
 import { CodeViewer } from './components/CodeViewer';
-import { apiClient } from '../../../apiClient';
+import { apiClient } from '../../api/services/apiClient';
 
 export const EngineeringLab = () => {
   const [activeTab, setActiveTab] = useState<'simulation' | 'er-model' | 'control-flow' | 'source'>('simulation');
