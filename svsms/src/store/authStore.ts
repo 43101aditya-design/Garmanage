@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface User {
   id: string;
@@ -17,18 +18,25 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: localStorage.getItem('svsms_token'),
-  isAuthenticated: !!localStorage.getItem('svsms_token'),
-  
-  login: (user, token) => {
-    localStorage.setItem('svsms_token', token);
-    set({ user, token, isAuthenticated: true });
-  },
-  
-  logout: () => {
-    localStorage.removeItem('svsms_token');
-    set({ user: null, token: null, isAuthenticated: false });
-  },
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: localStorage.getItem('svsms_token'),
+      isAuthenticated: !!localStorage.getItem('svsms_token'),
+      
+      login: (user, token) => {
+        localStorage.setItem('svsms_token', token);
+        set({ user, token, isAuthenticated: true });
+      },
+      
+      logout: () => {
+        localStorage.removeItem('svsms_token');
+        set({ user: null, token: null, isAuthenticated: false });
+      },
+    }),
+    {
+      name: 'svsms-auth', // Persist user data in local storage
+    }
+  )
+);
