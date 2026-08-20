@@ -16,7 +16,8 @@ export const Login = () => {
     if (user.role === 'manager') return <Navigate to="/manager" replace />;
     if (user.role === 'mechanic') return <Navigate to="/mechanic/jobs" replace />;
     if (user.role === 'customer') return <Navigate to="/customer" replace />;
-    return <Navigate to="/" replace />;
+    // If role is unknown, maybe they need onboarding or just force logout
+    // For now, don't infinitely redirect. Just stay on login or show an error.
   }
 
   const handleGoogleLogin = async () => {

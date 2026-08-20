@@ -53,14 +53,14 @@ const WorkflowTimeline = lazy(() => import('../pages/workflow/WorkflowTimeline')
 
 // Index routing component
 const IndexRedirect = () => {
-  const { user } = useAuthStore();
-  if (!user) return <Navigate to="/login" replace />;
+  const { user, isAuthenticated } = useAuthStore();
+  if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
   switch (user.role) {
     case 'owner': return <Navigate to="/owner" replace />;
     case 'manager': return <Navigate to="/manager" replace />;
     case 'mechanic': return <Navigate to="/mechanic/jobs" replace />;
     case 'customer': return <Navigate to="/customer" replace />;
-    default: return <Navigate to="/login" replace />;
+    default: return <div className="p-10 text-center">Unknown role: {user.role}. Please logout and contact support.</div>;
   }
 };
 
