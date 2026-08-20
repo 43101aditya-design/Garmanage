@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { apiClient } from '../api/services/apiClient';
 
@@ -18,9 +18,10 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  needsOnboarding: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  googleLogin: () => Promise<void>;
+  onboard: (role: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
@@ -28,12 +29,15 @@ interface AuthState {
   syncProfile: () => Promise<void>;
 }
 
+const provider = new GoogleAuthProvider();
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
+      needsOnboarding: false,
       isLoading: false,
 
       setLoading: (loading) => set({ isLoading: loading }),
@@ -43,17 +47,21 @@ export const useAuthStore = create<AuthState>()(
       syncProfile: async () => {
         try {
           const res = await apiClient.get('/api/auth/me');
-          set({ user: res.user, isAuthenticated: true });
-        } catch (error) {
-          console.error('Failed to sync profile', error);
-          set({ user: null, isAuthenticated: false, token: null });
+          set({ user: res.user, isAuthenticated: true, needsOnboarding: false });
+        } catch (error: any) {
+          if (error.response?.data?.requiresOnboarding) {
+            set({ needsOnboarding: true, isAuthenticated: false, user: null });
+          } else {
+            console.error('Failed to sync profile', error);
+            set({ user: null, isAuthenticated: false, token: null, needsOnboarding: false });
+          }
         }
       },
 
-      login: async (email, password) => {
+      googleLogin: async () => {
         set({ isLoading: true });
         try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const userCredential = await signInWithPopup(auth, provider);
           const token = await userCredential.user.getIdToken();
           set({ token });
           await get().syncProfile();
@@ -62,15 +70,11 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (email, password, name) => {
+      onboard: async (role: string) => {
         set({ isLoading: true });
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const token = await userCredential.user.getIdToken();
-          set({ token });
-          // Assuming backend handles Firebase user creation via some hook or we call an endpoint
-          // For now, syncProfile will fetch the user if the backend creates it
-          await get().syncProfile();
+          const res = await apiClient.post('/api/auth/onboard', { role });
+          set({ user: res.user, isAuthenticated: true, needsOnboarding: false });
         } finally {
           set({ isLoading: false });
         }
@@ -80,14 +84,15 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           await signOut(auth);
-          set({ user: null, token: null, isAuthenticated: false });
+          set({ user: null, token: null, isAuthenticated: false, needsOnboarding: false });
         } finally {
           set({ isLoading: false });
         }
       },
     }),
     {
-      name: 'svsms-auth',
+      name: 'auth-storage',
+      partialize: (state) => ({ token: state.token }),
     }
   )
 );

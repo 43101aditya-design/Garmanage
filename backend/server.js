@@ -90,7 +90,67 @@ app.use('/api', workforceRoutes);
 app.use('/api', assignmentRoutes);
 app.use('/api/ai', aiAssignmentRoutes);
 
-app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, (req, res) => { res.json({ user: req.user }); });
+
+app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, (req, res) => { 
+    if (!req.user && req.firebaseUser) {
+        return res.status(404).json({ error: 'User not registered', requiresOnboarding: true, firebaseUser: req.firebaseUser });
+    }
+    if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+    res.json({ user: req.user }); 
+});
+
+app.post('/api/auth/onboard', require('./middleware/firebaseAuth').requireAuth, async (req, res) => {
+    if (req.user) {
+        return res.status(400).json({ error: 'User already registered' });
+    }
+    if (!req.firebaseUser) {
+        return res.status(401).json({ error: 'Valid Firebase token required for onboarding' });
+    }
+
+    const { role } = req.body;
+    const allowedRoles = ['customer', 'owner', 'manager', 'mechanic'];
+    if (!allowedRoles.includes(role)) return res.status(400).json({ error: 'Invalid role' });
+
+    try {
+        const newId = require('uuid').v4();
+        const refId = require('uuid').v4();
+        const [firstName, ...lastNames] = (req.firebaseUser.name || '').split(' ');
+        
+        if (role === 'customer') {
+            await req.db.query('INSERT INTO Customer (id, first_name, last_name, email) VALUES (?, ?, ?, ?)', [refId, firstName || 'Unknown', lastNames.join(' ') || '', req.firebaseUser.email]);
+        } else if (role === 'owner') {
+            await req.db.query('INSERT INTO Owner (id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)', [refId, firstName || 'Unknown', lastNames.join(' ') || '', req.firebaseUser.email, null]);
+        } else if (role === 'manager') {
+            await req.db.query('INSERT INTO Manager (id, first_name, last_name, email, user_account_id) VALUES (?, ?, ?, ?, ?)', [refId, firstName || 'Unknown', lastNames.join(' ') || '', req.firebaseUser.email, newId]);
+        } else if (role === 'mechanic') {
+            await req.db.query('INSERT INTO Mechanic (id, first_name, last_name, email) VALUES (?, ?, ?, ?)', [refId, firstName || 'Unknown', lastNames.join(' ') || '', req.firebaseUser.email]);
+        }
+
+        await req.db.query(
+            'INSERT INTO User_Account (id, firebase_uid, name, email, role, reference_id) VALUES (?, ?, ?, ?, ?, ?)',
+            [newId, req.firebaseUser.firebase_uid, req.firebaseUser.name, req.firebaseUser.email, role, refId]
+        );
+        
+        const [userRecords] = await req.db.query('SELECT * FROM User_Account WHERE id = ?', [newId]);
+        const user = userRecords[0];
+
+        res.json({ 
+            user: {
+                id: user.id,
+                firebase_uid: user.firebase_uid,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                customer_id: user.reference_id,
+                memberships: []
+            } 
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to onboard user' });
+    }
+});
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {

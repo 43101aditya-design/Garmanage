@@ -9,15 +9,12 @@ const loadUserAndMemberships = async (req, res, next, userData) => {
             userRecords = await req.db.query('SELECT * FROM User_Account WHERE firebase_uid = ?', [userData.firebase_uid]);
             
             if (userRecords.length === 0) {
-                const newId = uuidv4();
-                const custId = uuidv4();
-                const [firstName, ...lastNames] = (userData.name || '').split(' ');
-                await req.db.query('INSERT INTO Customer (id, first_name, last_name, email) VALUES (?, ?, ?, ?)', [custId, firstName || 'Unknown', lastNames.join(' ') || '', userData.email]);
-                await req.db.query(
-                    'INSERT INTO User_Account (id, firebase_uid, name, email, role, reference_id) VALUES (?, ?, ?, ?, ?, ?)',
-                    [newId, userData.firebase_uid, userData.name, userData.email, 'customer', custId]
-                );
-                userRecords = await req.db.query('SELECT * FROM User_Account WHERE id = ?', [newId]);
+                if (req.originalUrl.includes('/auth/me') || req.originalUrl.includes('/auth/onboard')) {
+                    req.firebaseUser = userData;
+                    req.user = null;
+                    return next();
+                }
+                return res.status(401).json({ error: 'Unauthorized: User not registered' });
             }
         } else if (userData.id) {
             userRecords = await req.db.query('SELECT * FROM User_Account WHERE id = ?', [userData.id]);

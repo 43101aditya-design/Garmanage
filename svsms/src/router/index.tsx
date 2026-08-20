@@ -1,3 +1,4 @@
+import { useAuthStore } from '../store/authStore';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
@@ -52,7 +53,15 @@ const WorkflowTimeline = lazy(() => import('../pages/workflow/WorkflowTimeline')
 
 // Index routing component
 const IndexRedirect = () => {
-  return <ProtectedRoute allowedRoles={['owner', 'manager', 'mechanic', 'customer']}><div/></ProtectedRoute>;
+  const { user } = useAuthStore();
+  if (!user) return <Navigate to="/login" replace />;
+  switch (user.role) {
+    case 'owner': return <Navigate to="/owner" replace />;
+    case 'manager': return <Navigate to="/manager" replace />;
+    case 'mechanic': return <Navigate to="/mechanic/jobs" replace />;
+    case 'customer': return <Navigate to="/customer" replace />;
+    default: return <Navigate to="/login" replace />;
+  }
 };
 
 export const router = createBrowserRouter([
@@ -64,14 +73,7 @@ export const router = createBrowserRouter([
       </Suspense>
     ),
   },
-  {
-    path: '/register',
-    element: (
-      <Suspense fallback={<div className="flex items-center justify-center h-full w-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-        <Register />
-      </Suspense>
-    ),
-  },
+  
   {
     path: '/',
     element: (
