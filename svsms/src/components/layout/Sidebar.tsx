@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Calendar, Wrench, FileText, 
-  Settings, X, BarChart, Database, Map, Box, BrainCircuit
+  Settings, X, BarChart, Database, Map, Box, BrainCircuit, ChevronLeft, ShieldAlert, ShieldCheck
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useAuthStore } from '../../store/authStore';
@@ -11,27 +11,32 @@ import { useUIStore } from '../../store/uiStore';
 const roleNavs: Record<string, { name: string; href: string; icon: any }[]> = {
   owner: [
     { name: 'Dashboard', href: '/owner', icon: LayoutDashboard },
+    { name: 'AI Decision Center', href: '/owner/decisions', icon: BrainCircuit },
+    { name: 'Alert Center', href: '/owner/alerts', icon: ShieldAlert },
+    { name: 'Advanced Analytics', href: '/owner/advanced-analytics', icon: BarChart },
+    { name: 'Technical Ops', href: '/owner/technical-ops', icon: Settings },
     { name: 'My Garages', href: '/owner/garages', icon: Map },
-    { name: 'Analytics', href: '/analytics', icon: BarChart },
-    { name: 'Inventory', href: '/inventory', icon: Box },
+    { name: 'Access Management', href: '/owner/access-management', icon: ShieldCheck },
+    { name: 'Inventory & Parts', href: '/inventory', icon: Box },
     { name: 'Engineering Lab', href: '/engineering-lab', icon: Database },
   ],
   manager: [
     { name: 'Dashboard', href: '/manager', icon: LayoutDashboard },
+    { name: 'AI Decision Center', href: '/manager/decisions', icon: BrainCircuit },
     { name: 'Service Requests', href: '/manager/service-requests', icon: FileText },
     { name: 'Calendar', href: '/manager/calendar', icon: Calendar },
     { name: 'Workshop Board', href: '/manager/jobs', icon: Wrench },
     { name: 'Mechanics', href: '/manager/mechanics', icon: Users },
     { name: 'AI Assignment', href: '/manager/ai-assignment', icon: BrainCircuit },
     { name: 'Customers', href: '/customers', icon: Users },
-    { name: 'Inventory', href: '/inventory', icon: Box },
+    { name: 'Inventory & Parts', href: '/inventory', icon: Box },
     { name: 'Reports', href: '/reports', icon: FileText },
   ],
   mechanic: [
     { name: 'Dashboard', href: '/mechanic', icon: LayoutDashboard },
     { name: 'My Jobs', href: '/mechanic/jobs', icon: Wrench },
     { name: 'My Profile', href: '/mechanic/profile', icon: Users },
-    { name: 'Parts Used', href: '/inventory', icon: Box },
+    { name: 'Parts Required', href: '/inventory', icon: Box },
   ],
   customer: [
     { name: 'Dashboard', href: '/customer', icon: LayoutDashboard },
@@ -50,57 +55,89 @@ const devNav = [
 
 export const Sidebar = () => {
   const { user } = useAuthStore();
-  const { isSidebarOpen, setSidebarOpen } = useUIStore();
+  const { isSidebarOpen, setSidebarOpen, isSidebarCollapsed, toggleSidebarCollapsed } = useUIStore();
   const navItems = user?.role ? roleNavs[user.role] : [];
 
   return (
     <>
+      {/* Mobile backdrop overlay */}
       <div 
         className={cn(
-          "fixed inset-0 bg-gray-900/50 z-40 lg:hidden",
+          "fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden",
           isSidebarOpen ? "block" : "hidden"
         )}
         onClick={() => setSidebarOpen(false)}
       />
 
-      <div className={cn(
-        "fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col z-50 transform transition-transform duration-200 lg:translate-x-0",
-        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      {/* Sidebar Panel */}
+      <aside className={cn(
+        // Base styles
+        "fixed inset-y-0 left-0 w-64 bg-card/95 backdrop-blur-md border-r border-border/80 text-foreground flex flex-col z-50 shadow-xl",
+        // Mobile: slides in/out
+        "transition-transform duration-300 ease-in-out",
+        // Mobile behavior: hidden by default, slides in when open
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+        // Desktop: always visible unless collapsed
+        isSidebarCollapsed 
+          ? "lg:-translate-x-full" 
+          : "lg:translate-x-0"
       )}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
-          <span className="text-xl font-bold text-white flex items-center gap-2">
-            <Wrench className="w-6 h-6 text-blue-500" />
-            Garmanage
+        {/* Header with logo and collapse button */}
+        <div className="h-16 flex items-center justify-between px-6 border-b border-border/80 shrink-0">
+          <span className="text-lg font-bold text-foreground flex items-center gap-2 font-mono tracking-wider">
+            <Wrench className="w-5 h-5 text-primary animate-pulse" />
+            GARMANAGE
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
           </span>
-          <button className="lg:hidden text-gray-400 hover:text-white" onClick={() => setSidebarOpen(false)}>
+          {/* Desktop collapse button */}
+          <button 
+            className="hidden lg:flex p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+            onClick={toggleSidebarCollapsed}
+            title="Collapse Sidebar"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          {/* Mobile close button */}
+          <button 
+            className="lg:hidden p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+            onClick={() => setSidebarOpen(false)}
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-4">
-          <nav className="px-3 space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) => cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-md group",
-                    isActive ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-slate-800 hover:text-white"
-                  )}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <Icon className="mr-3 flex-shrink-0 h-5 w-5" />
-                  {item.name}
-                </NavLink>
-              );
-            })}
-          </nav>
+        <div className="flex-1 overflow-y-auto py-6 space-y-6 custom-scrollbar">
+          <div className="px-3">
+            <h3 className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 font-mono">
+              Operational Workspace
+            </h3>
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.name}
+                    to={item.href}
+                    end={item.href !== '/manager/jobs'}
+                    className={({ isActive }) => cn(
+                      "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
+                      isActive 
+                        ? "bg-primary/10 text-primary border-primary font-semibold" 
+                        : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
+                    )}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform" />
+                    {item.name}
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
 
-          <div className="mt-8 px-3">
-            <h3 className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              DBMS Project
+          <div className="px-3">
+            <h3 className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 font-mono">
+              DBMS Intelligence
             </h3>
             <nav className="space-y-1">
               {devNav.map((item) => {
@@ -110,12 +147,14 @@ export const Sidebar = () => {
                     key={item.name}
                     to={item.href}
                     className={({ isActive }) => cn(
-                      "flex items-center px-3 py-2 text-sm font-medium rounded-md group",
-                      isActive ? "bg-slate-800 text-blue-400" : "text-gray-400 hover:bg-slate-800 hover:text-white"
+                      "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
+                      isActive 
+                        ? "bg-primary/10 text-primary border-primary font-semibold" 
+                        : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
                     )}
                     onClick={() => setSidebarOpen(false)}
                   >
-                    <Icon className="mr-3 flex-shrink-0 h-5 w-5" />
+                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform" />
                     {item.name}
                   </NavLink>
                 );
@@ -124,20 +163,22 @@ export const Sidebar = () => {
           </div>
         </div>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-border/80 bg-muted/20 shrink-0">
           <NavLink
             to="/settings"
             className={({ isActive }) => cn(
-              "flex items-center px-3 py-2 text-sm font-medium rounded-md group",
-              isActive ? "bg-slate-800 text-white" : "text-gray-400 hover:bg-slate-800 hover:text-white"
+              "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
+              isActive 
+                ? "bg-primary/10 text-primary border-primary" 
+                : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
             )}
             onClick={() => setSidebarOpen(false)}
           >
-            <Settings className="mr-3 h-5 w-5" />
+            <Settings className="mr-3 h-4.5 w-4.5 group-hover:rotate-45 transition-transform duration-300" />
             Settings
           </NavLink>
         </div>
-      </div>
+      </aside>
     </>
   );
 };

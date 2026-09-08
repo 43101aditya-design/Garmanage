@@ -7,14 +7,16 @@ exports.getAllGarages = async (req, res, next) => {
         let garages;
         
         if (role === 'customer') {
-            garages = await req.db.query("SELECT * FROM Garage WHERE status = 'ACTIVE'");
+            const [rows] = await req.db.query("SELECT * FROM Garage WHERE status = 'ACTIVE'");
+            garages = rows;
         } else {
             const garageIds = memberships.map(m => m.garage_id);
             if (garageIds.length === 0) {
                 garages = [];
             } else {
                 const placeholders = garageIds.map(() => '?').join(',');
-                garages = await req.db.query(`SELECT * FROM Garage WHERE id IN (${placeholders})`, garageIds);
+                const [rows] = await req.db.query(`SELECT * FROM Garage WHERE id IN (${placeholders})`, garageIds);
+                garages = rows;
             }
         }
         

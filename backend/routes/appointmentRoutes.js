@@ -4,6 +4,7 @@ const appointmentController = require('../controllers/appointmentController');
 
 const router = express.Router();
 
+router.get('/', requireAuth, requireRole(['manager', 'owner']), appointmentController.getAllAppointments);
 router.post('/', requireAuth, requireRole(['manager', 'owner']), appointmentController.createAppointment);
 
 module.exports = router;

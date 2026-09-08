@@ -8,11 +8,27 @@ from algorithms.mechanic_assignment import run_mechanic_assignment
 from algorithms.revenue_forecast import run_revenue_forecast
 from algorithms.anomaly_detection import run_anomaly_detection
 from algorithms.inventory_prediction import run_inventory_prediction
+from algorithms.digital_twin import run_digital_twin_simulation
 from intelligence.core import recommend
 from intelligence.ranking.ranker import ranker
 from intelligence.training.train import train
+from predictions.anomaly_detection_pipeline import run_all_detections
+
+# Phase 7: Prediction router
+from predictions.routes.prediction_routes import router as prediction_router
+
+# Phase 8: Decision Intelligence router
+from decisions.routes.decision_routes import router as decision_router
+
+# Phase 9: Digital Twin router
+from digital_twin.routes import router as digital_twin_router
 
 app = FastAPI(title="Engineering Intelligence Lab API")
+
+# Register Phase 7, Phase 8 & Phase 9 routers
+app.include_router(prediction_router)
+app.include_router(decision_router)
+app.include_router(digital_twin_router)
 
 # Allow Node.js backend (or React directly if needed for proxy testing)
 app.add_middleware(
@@ -88,9 +104,21 @@ def workload_prediction(db=Depends(get_db)):
 def anomaly_detection(db=Depends(get_db)):
     return run_anomaly_detection(db)
 
+@app.post("/api/anomalies/scan")
+def anomalies_scan(db=Depends(get_db)):
+    return run_all_detections(db)
+
 @app.get("/api/simulation/inventory-prediction")
 def inventory_prediction(db=Depends(get_db)):
     return run_inventory_prediction(db)
+
+@app.get("/api/simulation/digital-twin")
+def digital_twin_get():
+    return run_digital_twin_simulation()
+
+@app.post("/api/simulation/digital-twin")
+def digital_twin_post(data: Dict[str, Any]):
+    return run_digital_twin_simulation(data)
 
 # Safe endpoints to fetch source code
 def get_safe_source(filename: str):
@@ -136,6 +164,35 @@ def source_anomaly_detection():
 def source_inventory_prediction():
     return get_safe_source("inventory_prediction.py")
 
+# Phase 7 source code endpoints
+@app.get("/source-code/revenue-prediction")
+def source_revenue_prediction():
+    return get_safe_prediction_source("models/revenue/predict.py")
+
+@app.get("/source-code/workload-prediction")
+def source_workload_prediction():
+    return get_safe_prediction_source("models/workload/predict.py")
+
+@app.get("/source-code/inventory-demand-prediction")
+def source_inventory_demand_prediction():
+    return get_safe_prediction_source("models/inventory_demand/predict.py")
+
+@app.get("/source-code/duration-prediction")
+def source_duration_prediction():
+    return get_safe_prediction_source("models/duration/predict.py")
+
+@app.get("/source-code/anomaly-pipeline")
+def source_anomaly_pipeline():
+    return get_safe_prediction_source("anomaly_detection_pipeline.py")
+
+def get_safe_prediction_source(relative_filename: str):
+    base = os.path.join(os.path.dirname(__file__), "predictions")
+    filepath = os.path.abspath(os.path.join(base, relative_filename))
+    if not filepath.startswith(os.path.abspath(base) + os.sep) or not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="File not found")
+    with open(filepath, "r") as f:
+        return {"source": f.read()}
+
 def get_safe_intelligence_source(relative_filename: str):
     base = os.path.join(os.path.dirname(__file__), "intelligence")
     filepath = os.path.abspath(os.path.join(base, relative_filename))
@@ -143,6 +200,24 @@ def get_safe_intelligence_source(relative_filename: str):
         raise HTTPException(status_code=404, detail="File not found")
     with open(filepath, "r") as f:
         return {"source": f.read()}
+
+@app.get("/api/health")
+def api_health():
+    return {
+        "status": "healthy",
+        "service": "FastAPI Intelligence Engine",
+        "models": ["revenue_model_v1", "workload_model_v1", "inventory_demand_model_v1", "duration_model_v1"]
+    }
+
+@app.post("/api/benchmarks/run")
+def api_run_benchmarks():
+    from run_benchmarks import execute_and_log
+    try:
+        execute_and_log()
+        return {"status": "success", "message": "Benchmarks executed and logged successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn

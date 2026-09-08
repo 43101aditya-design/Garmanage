@@ -81,3 +81,14 @@ exports.getCustomerAppointments = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getAllAppointments = async (req, res, next) => {
+    try {
+        const [appointments] = await req.db.query(
+            'SELECT * FROM Appointment ORDER BY appointment_date DESC, appointment_time DESC'
+        );
+        res.json(appointments);
+    } catch (error) {
+        next(error);
+    }
+};

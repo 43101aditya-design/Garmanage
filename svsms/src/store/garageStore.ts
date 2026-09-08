@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { apiClient } from '../api/services/apiClient';
 
-interface Garage {
+export interface Garage {
   id: string;
   name: string;
   description?: string;
@@ -30,15 +30,34 @@ interface GarageState {
 
 export const useGarageStore = create<GarageState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentGarage: null,
       garages: [],
-      setCurrentGarage: (garage) => set({ currentGarage: garage }),
+      setCurrentGarage: (garage) => {
+        const prevId = get().currentGarage?.id;
+        const nextId = garage?.id;
+        set({ currentGarage: garage });
+        
+        // Notify application components of garage context switch
+        if (prevId !== nextId && typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('svsms:garage_changed', {
+              detail: { previousGarageId: prevId, currentGarageId: nextId },
+            })
+          );
+        }
+      },
       setGarages: (garages) => set({ garages }),
       fetchGarages: async () => {
         try {
           const res = await apiClient.get('/api/garages');
-          set({ garages: res.data || [] });
+          const list = res.garages || res.data || (Array.isArray(res) ? res : []);
+          set({ garages: list });
+          
+          // Auto-select first garage if none currently selected
+          if (!get().currentGarage && list.length > 0) {
+            get().setCurrentGarage(list[0]);
+          }
         } catch (error) {
           console.error('Failed to fetch garages', error);
         }

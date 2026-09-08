@@ -23,7 +23,8 @@ try {
   
   const mockAdmin = {
     auth: () => ({
-      verifyIdToken: async () => null
+      verifyIdToken: async () => null,
+      isMock: true
     })
   };
   

@@ -3,10 +3,10 @@ import { cn } from "../../utils/cn"
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto custom-scrollbar">
+    <div className="relative w-full overflow-auto custom-scrollbar border border-border/40 rounded-xl bg-card/20">
       <table
         ref={ref}
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm text-foreground", className)}
         {...props}
       />
     </div>
@@ -16,7 +16,7 @@ Table.displayName = "Table"
 
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("[&_tr]:border-b bg-muted/50", className)} {...props} />
+    <thead ref={ref} className={cn("[&_tr]:border-b border-border/40 bg-muted/30", className)} {...props} />
   )
 )
 TableHeader.displayName = "TableHeader"
@@ -25,7 +25,7 @@ const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes
   ({ className, ...props }, ref) => (
     <tbody
       ref={ref}
-      className={cn("[&_tr:last-child]:border-0 divide-y divide-border/50", className)}
+      className={cn("[&_tr:last-child]:border-0 divide-y divide-border/30", className)}
       {...props}
     />
   )
@@ -37,7 +37,7 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
     <tfoot
       ref={ref}
       className={cn(
-        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+        "border-t border-border/45 bg-muted/40 font-medium [&>tr]:last:border-b-0",
         className
       )}
       {...props}
@@ -51,7 +51,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b border-border/30 transition-colors hover:bg-muted/35 data-[state=selected]:bg-muted/50",
         className
       )}
       {...props}
@@ -65,7 +65,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     <th
       ref={ref}
       className={cn(
-        "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        "h-11 px-4 text-left align-middle font-mono text-[10px] font-bold text-muted-foreground uppercase tracking-wider [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
@@ -78,7 +78,7 @@ const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<
   ({ className, ...props }, ref) => (
     <td
       ref={ref}
-      className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+      className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0 text-sm", className)}
       {...props}
     />
   )

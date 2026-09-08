@@ -64,6 +64,8 @@ router.post('/simulation/mechanic-assignment', verifyToken, requireRole(['admin'
 router.get('/simulation/revenue-forecast', verifyToken, requireRole(['admin', 'owner']), proxyGet('/api/simulation/revenue-forecast'));
 router.get('/simulation/anomaly-detection', verifyToken, requireRole(['admin', 'owner']), proxyGet('/api/simulation/anomaly-detection'));
 router.get('/simulation/inventory-prediction', verifyToken, requireRole(['admin', 'manager', 'owner']), proxyGet('/api/simulation/inventory-prediction'));
+router.get('/simulation/digital-twin', verifyToken, requireRole(['admin', 'manager', 'owner']), proxyGet('/api/simulation/digital-twin'));
+router.post('/simulation/digital-twin', verifyToken, requireRole(['admin', 'manager', 'owner']), proxyPost('/api/simulation/digital-twin'));
 
 // Safe Source Code endpoints (whitelisted by Python service)
 router.get('/source-code/:algorithm', verifyToken, requireRole(['admin', 'owner']), async (req, res) => {

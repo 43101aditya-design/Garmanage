@@ -59,7 +59,15 @@ export const apiClient = {
             };
         }
 
-        const url = `${API_URL}${endpoint}`;
+        // Deduplicate '/api' prefix if both API_URL and endpoint contain it
+        let cleanEndpoint = endpoint;
+        if (endpoint.startsWith('/api/') || endpoint === '/api') {
+            if (API_URL.endsWith('/api') || API_URL === '/api') {
+                cleanEndpoint = endpoint.substring(4);
+            }
+        }
+        const url = `${API_URL}${cleanEndpoint}`;
+
         
         try {
             let response = await fetch(url, options);
@@ -76,9 +84,16 @@ export const apiClient = {
                 if (isJson) {
                     const errorData = await response.json();
                     this.processSqlLogs(errorData._sqlLogs);
-                    throw new Error(errorData.error || 'API Error');
+                    // Preserve full error body so callers can inspect requiresOnboarding etc.
+                    const err: any = new Error(errorData.error || `HTTP Error: ${response.status}`);
+                    err.status = response.status;
+                    err.data = errorData;          // full body — key fix
+                    err.response = { data: errorData, status: response.status };
+                    throw err;
                 }
-                throw new Error(`HTTP Error: ${response.status}`);
+                const err: any = new Error(`HTTP Error: ${response.status}`);
+                err.status = response.status;
+                throw err;
             }
 
             if (isJson) {

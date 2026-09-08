@@ -16,6 +16,7 @@ router.get('/customer-growth', analyticsController.getCustomerGrowth);
 
 router.get('/manager-contribution', requireRole(['admin']), analyticsController.getManagerContribution);
 router.get('/mechanic-workload', requireRole(['admin', 'manager']), analyticsController.getMechanicWorkload);
-router.get('/mom-revenue', requireRole(['admin']), analyticsController.getMoMRevenue);
+router.get('/mom-revenue', requireRole(['admin', 'owner']), analyticsController.getMoMRevenue);
+router.get('/advanced', requireRole(['owner', 'admin']), analyticsController.getAdvancedAnalytics);
 
 module.exports = router;

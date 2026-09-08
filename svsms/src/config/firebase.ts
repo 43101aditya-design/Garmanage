@@ -20,4 +20,9 @@ try {
 }
 
 export const auth = getAuth(app);
+export const isFirebaseConfigured = !!(
+  firebaseConfig.apiKey &&
+  firebaseConfig.apiKey !== 'missing' &&
+  firebaseConfig.apiKey !== 'placeholder'
+);
 export { app };

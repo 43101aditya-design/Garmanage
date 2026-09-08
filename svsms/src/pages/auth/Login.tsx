@@ -1,26 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../../components/ui/Button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/Card';
-import { Wrench, Car, Store, Users, Cpu, ShieldCheck, Activity } from 'lucide-react';
+import { Wrench, Car, Store, Users, Cpu, ShieldCheck, Activity, FlaskConical } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const Login = () => {
   const navigate = useNavigate();
-  const { googleLogin, onboard, isLoading, isAuthenticated, needsOnboarding, user } = useAuthStore();
+  const { googleLogin, handleRedirectResult, onboard, devLogin, isLoading, isAuthenticated, needsOnboarding, onboardingState, pendingRequests, user } = useAuthStore();
   const [selectedRole, setSelectedRole] = useState<string>('');
+  const [redirectLoading, setRedirectLoading] = useState(false);
+
+  // On mount: check if we just came back from Google redirect
+  useEffect(() => {
+    (async () => {
+      try {
+        setRedirectLoading(true);
+        await handleRedirectResult();
+      } catch (err: any) {
+        toast.error(err.message || 'Google sign-in failed after redirect.');
+      } finally {
+        setRedirectLoading(false);
+      }
+    })();
+  }, []);
+
+  // Handle all post-auth redirect states
+  if (needsOnboarding) {
+    if (onboardingState === 'PENDING_APPROVAL' || (pendingRequests && pendingRequests.length > 0)) {
+      return <Navigate to="/pending-approval" replace />;
+    }
+    return <Navigate to="/onboarding" replace />;
+  }
 
   if (isAuthenticated && user) {
+    // Multi-garage: let user pick workspace
+    if (user.memberships && user.memberships.length > 1) {
+      return <Navigate to="/select-role" replace />;
+    }
     if (user.role === 'owner') return <Navigate to="/owner" replace />;
     if (user.role === 'manager') return <Navigate to="/manager" replace />;
     if (user.role === 'mechanic') return <Navigate to="/mechanic/jobs" replace />;
     if (user.role === 'customer') return <Navigate to="/customer" replace />;
   }
 
+
   const handleGoogleLogin = async () => {
     try {
       await googleLogin();
+      // After calling signInWithRedirect, browser navigates away — nothing below runs
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in with Google');
     }
@@ -34,6 +63,11 @@ export const Login = () => {
     } catch (error: any) {
       toast.error(error.message || 'Failed to set up account');
     }
+  };
+
+  const handleDevLogin = (role: 'owner' | 'manager' | 'mechanic' | 'customer') => {
+    devLogin(role);
+    toast.success(`Logged in as ${role} (demo mode)`);
   };
 
   const BrandingSection = () => (
@@ -158,7 +192,7 @@ export const Login = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="w-full max-w-md space-y-8">
+          <div className="w-full max-w-md space-y-6">
             <div className="text-center lg:hidden mb-8">
               <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
                 <Wrench className="w-8 h-8 text-yellow-300" />
@@ -176,14 +210,57 @@ export const Login = () => {
                 <Button 
                   onClick={handleGoogleLogin} 
                   className="w-full h-14 text-base font-bold flex items-center justify-center gap-3 bg-white text-gray-800 hover:bg-gray-50 border-2 border-gray-200 hover:border-blue-400 hover:text-blue-700 shadow-md transition-all rounded-xl" 
-                  disabled={isLoading}
+                  disabled={isLoading || redirectLoading}
                 >
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="Google logo" />
-                  {isLoading ? 'Connecting...' : 'Continue with Google'}
+                  {redirectLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      Checking Google sign-in…
+                    </>
+                  ) : isLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      Redirecting to Google…
+                    </>
+                  ) : (
+                    <>
+                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="Google logo" />
+                      Continue with Google
+                    </>
+                  )}
                 </Button>
+
                 
                 <div className="mt-8 text-center text-sm font-medium text-gray-500">
                   By signing in, you agree to our Terms of Service and Privacy Policy.
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Demo Login Panel */}
+            <Card className="w-full shadow-lg border border-amber-200 bg-amber-50/80">
+              <CardHeader className="pb-2 pt-4 px-6">
+                <div className="flex items-center gap-2">
+                  <FlaskConical className="w-4 h-4 text-amber-600" />
+                  <CardTitle className="text-sm font-bold text-amber-800">Demo / Dev Mode</CardTitle>
+                </div>
+                <CardDescription className="text-xs text-amber-700">Instant login without Google. For testing only.</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-5 px-6">
+                <div className="grid grid-cols-2 gap-2">
+                  {(['owner', 'manager', 'mechanic', 'customer'] as const).map((role) => (
+                    <button
+                      key={role}
+                      onClick={() => handleDevLogin(role)}
+                      className="py-2 px-3 text-xs font-semibold rounded-lg border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 transition-colors capitalize flex items-center gap-1.5 justify-center"
+                    >
+                      {role === 'owner' && <Store className="w-3 h-3" />}
+                      {role === 'manager' && <Users className="w-3 h-3" />}
+                      {role === 'mechanic' && <Wrench className="w-3 h-3" />}
+                      {role === 'customer' && <Car className="w-3 h-3" />}
+                      {role.charAt(0).toUpperCase() + role.slice(1)}
+                    </button>
+                  ))}
                 </div>
               </CardContent>
             </Card>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Play, Activity, Clock, Users, ArrowRight, ShieldAlert, BarChart3, Box, FastForward } from 'lucide-react';
+import { Play, Activity, Clock, Users, ArrowRight, ShieldAlert, BarChart3, Box, FastForward, BrainCircuit, Sparkles, CheckCircle, ShieldCheck } from 'lucide-react';
 import { apiClient } from '../../../api/services/apiClient';
 
 export const SimulationPanel = () => {
-  const [activeSim, setActiveSim] = useState('mechanic-assignment');
+  const [activeSim, setActiveSim] = useState('digital-twin');
+  const [scenarioType, setScenarioType] = useState('job_surge_30pct');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [trace, setTrace] = useState<string[]>([]);
@@ -25,11 +26,19 @@ export const SimulationPanel = () => {
       addTrace(`JWT/RBAC validation in Node.js`);
       
       // Simulate delay for trace if needed
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 400));
       
       let res;
       
-      if (type === 'mechanic-assignment') {
+      if (type === 'digital-twin') {
+        addTrace(`Executing Digital Twin What-If Simulator [Scenario: ${scenarioType}]`);
+        addTrace(`Enforcing memory sandbox: MySQL production database is 100% immutable`);
+        res = await apiClient.post('/engineering/simulation/digital-twin', {
+          scenario_type: scenarioType,
+          custom_jobs: 20,
+          custom_mechanics: 8
+        });
+      } else if (type === 'mechanic-assignment') {
         addTrace(`Proxying POST to Python Engine`);
         res = await apiClient.post('/engineering/simulation/mechanic-assignment', {
           branch_id: 1,
@@ -42,9 +51,9 @@ export const SimulationPanel = () => {
         res = await apiClient.get(`/engineering/simulation/${type}`);
       }
       
-      addTrace(`Python executing model...`);
-      await new Promise(r => setTimeout(r, 600));
-      addTrace(`MySQL queried by Python`);
+      addTrace(`Python executing model sandbox...`);
+      await new Promise(r => setTimeout(r, 400));
+      addTrace(`Phase 8 Decision Engine evaluated recommendation`);
       addTrace(`Data processed and result generated`);
       addTrace(`Node.js responded to React UI`);
       
@@ -62,7 +71,10 @@ export const SimulationPanel = () => {
       {/* Sidebar Controls */}
       <div className="w-80 border-r border-border bg-surface p-6 flex flex-col space-y-6">
         <div>
-          <h3 className="font-semibold text-text mb-4">Simulation Controls</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-text">Simulation Controls</h3>
+            <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded">SIMULATION MODE</span>
+          </div>
           <div className="space-y-2">
             <div className="text-sm text-textSecondary mb-1">Dataset</div>
             <select className="w-full bg-background border border-border text-text rounded-md px-3 py-2 text-sm focus:outline-none focus:border-primary">
@@ -75,6 +87,7 @@ export const SimulationPanel = () => {
           <div className="text-sm text-textSecondary mb-2">Simulation Model</div>
           <div className="space-y-2">
             {[
+              { id: 'digital-twin', label: 'Digital Twin (What-If)', icon: BrainCircuit },
               { id: 'mechanic-assignment', label: 'Mechanic Assignment', icon: Users },
               { id: 'revenue-forecast', label: 'Revenue Forecast', icon: BarChart3 },
               { id: 'anomaly-detection', label: 'Anomaly Detection', icon: ShieldAlert },
@@ -85,7 +98,7 @@ export const SimulationPanel = () => {
                 onClick={() => setActiveSim(sim.id)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg border text-sm transition-all ${
                   activeSim === sim.id
-                    ? 'border-primary bg-primary/10 text-primary'
+                    ? 'border-primary bg-primary/10 text-primary font-semibold'
                     : 'border-border bg-background text-text hover:border-textSecondary'
                 }`}
               >
@@ -95,6 +108,22 @@ export const SimulationPanel = () => {
             ))}
           </div>
         </div>
+
+        {activeSim === 'digital-twin' && (
+          <div className="space-y-2 bg-background p-3 rounded-lg border border-border">
+            <label className="text-xs font-mono font-bold text-textSecondary uppercase">What-If Scenario</label>
+            <select
+              value={scenarioType}
+              onChange={(e) => setScenarioType(e.target.value)}
+              className="w-full bg-surface border border-border text-text rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-primary font-medium"
+            >
+              <option value="job_surge_30pct">+30% Job Surge (26 jobs, 8 mechanics)</option>
+              <option value="mechanic_absence">Mechanic Absence (-2 Technicians)</option>
+              <option value="inventory_shortage">Brake Pad Stockout Shortage</option>
+              <option value="standard_shift">Standard Schedule Shift</option>
+            </select>
+          </div>
+        )}
         
         <div>
            <div className="text-sm text-textSecondary mb-2">Simulation Speed</div>
@@ -180,6 +209,140 @@ export const SimulationPanel = () => {
                     </div>
                   )}
                </div>
+
+               {/* Digital Twin (What-If) Result */}
+               {activeSim === 'digital-twin' && result.baseline && result.simulated && (
+                 <div className="space-y-6">
+                   {/* Isolation Guarantee Banner */}
+                   <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between text-xs text-emerald-400 font-mono">
+                     <div className="flex items-center gap-2">
+                       <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                       <span>{result.isolation_guarantee || "Isolated In-Memory Sandbox: Production MySQL data unmodified."}</span>
+                     </div>
+                     <span className="bg-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-bold">100% MUTATION-FREE</span>
+                   </div>
+
+                   {/* 3-Panel Scenario vs Baseline vs Phase 8 Decision Comparison */}
+                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                     {/* Column 1: BASELINE */}
+                     <div className="bg-background p-5 rounded-xl border border-border/80 flex flex-col justify-between space-y-4">
+                       <div>
+                         <div className="flex items-center justify-between">
+                           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted/40 px-2 py-0.5 rounded">
+                             BASELINE PROFILE
+                           </span>
+                           <span className="text-xs font-bold text-emerald-400">{result.baseline.status}</span>
+                         </div>
+                         <h3 className="text-lg font-bold text-text mt-3">Nominal Workshop State</h3>
+                         <p className="text-xs text-textSecondary mt-1">Real historical baseline capacity metrics.</p>
+                       </div>
+
+                       <div className="space-y-2.5 text-xs font-mono">
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Active Jobs:</span>
+                           <strong className="text-text">{result.baseline.active_jobs} jobs</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Mechanics:</span>
+                           <strong className="text-text">{result.baseline.available_mechanics} available</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Capacity:</span>
+                           <strong className="text-text">{result.baseline.daily_capacity_jobs} jobs/day</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Utilization:</span>
+                           <strong className="text-emerald-400">{result.baseline.utilization_pct}%</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Avg Customer Wait:</span>
+                           <strong className="text-text">~{result.baseline.avg_customer_wait_mins}m</strong>
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* Column 2: SIMULATED */}
+                     <div className="bg-background p-5 rounded-xl border border-amber-500/30 flex flex-col justify-between space-y-4 shadow-[0_0_15px_rgba(245,158,11,0.05)]">
+                       <div>
+                         <div className="flex items-center justify-between">
+                           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">
+                             SIMULATED SCENARIO
+                           </span>
+                           <span className={`text-xs font-bold ${result.simulated.risk_level === 'CRITICAL' ? 'text-red-400' : 'text-amber-400'}`}>
+                             {result.simulated.risk_level} RISK
+                           </span>
+                         </div>
+                         <h3 className="text-lg font-bold text-text mt-3">{result.simulated.scenario_name}</h3>
+                         <p className="text-xs text-textSecondary mt-1">What-if simulation impact on queuing & bays.</p>
+                       </div>
+
+                       <div className="space-y-2.5 text-xs font-mono">
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Projected Intake:</span>
+                           <strong className="text-amber-400">{result.simulated.predicted_jobs} jobs</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Active Technicians:</span>
+                           <strong className="text-text">{result.simulated.available_mechanics} available</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Projected Utilization:</span>
+                           <strong className={result.simulated.simulated_utilization_pct > 90 ? 'text-red-400 font-bold' : 'text-amber-400'}>
+                             {result.simulated.simulated_utilization_pct}%
+                           </strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">Projected Wait Time:</span>
+                           <strong className="text-red-400">~{result.simulated.simulated_avg_wait_mins}m</strong>
+                         </div>
+                         <div className="flex justify-between p-2 rounded bg-surface border border-border/50">
+                           <span className="text-textSecondary">SLA Violations Risk:</span>
+                           <strong className="text-red-400">{result.simulated.projected_schedule_violations} breaches</strong>
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* Column 3: RECOMMENDED ACTION (Phase 8 Decision Engine) */}
+                     {result.recommended_action && (
+                       <div className="bg-background p-5 rounded-xl border border-primary/40 flex flex-col justify-between space-y-4 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                         <div>
+                           <div className="flex items-center justify-between">
+                             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded flex items-center gap-1">
+                               <Sparkles className="w-3 h-3" /> PHASE 8 DECISION
+                             </span>
+                             <span className="text-xs font-mono text-primary font-bold">
+                               {result.recommended_action.confidence_score}% Confidence
+                             </span>
+                           </div>
+                           <h3 className="text-sm font-bold text-foreground mt-3 leading-snug">
+                             {result.recommended_action.action}
+                           </h3>
+                         </div>
+
+                         <div className="space-y-2 text-xs">
+                           <p className="font-mono text-[10px] uppercase text-textSecondary font-bold">Why Rationale:</p>
+                           <div className="bg-surface p-2.5 rounded-lg border border-border/60 space-y-1">
+                             {result.recommended_action.why.map((r: string, idx: number) => (
+                               <p key={idx} className="text-textSecondary text-[11px] leading-relaxed">• {r}</p>
+                             ))}
+                           </div>
+                         </div>
+
+                         {result.recommended_action.projected_outcome && (
+                           <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-400 space-y-1">
+                             <p className="font-bold flex items-center gap-1">
+                               <CheckCircle className="w-3.5 h-3.5" /> Projected Resolution Impact:
+                             </p>
+                             <p className="text-[11px] font-mono">
+                               Restores utilization to nominal ~{result.recommended_action.projected_outcome.resulting_utilization_pct}% • Wait time: ~{result.recommended_action.projected_outcome.resulting_avg_wait_mins}m
+                             </p>
+                           </div>
+                         )}
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               )}
 
                {/* Mechanic Assignment Result */}
                {activeSim === 'mechanic-assignment' && result.recommended_mechanic && (

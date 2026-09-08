@@ -58,9 +58,20 @@ const customerAppointmentRoutes = require('./routes/customerAppointmentRoutes');
 const workforceRoutes = require('./routes/workforceRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 const aiAssignmentRoutes = require('./routes/aiAssignmentRoutes');
+const predictionRoutes = require('./routes/predictionRoutes');
+const decisionRoutes = require('./routes/decisionRoutes');
+const digitalTwinRoutes = require('./routes/digitalTwinRoutes');
+const anomalyRoutes = require('./routes/anomalyRoutes');
+const benchmarkRoutes = require('./routes/benchmarkRoutes');
+const benchmarkController = require('./controllers/benchmarkController');
+const onboardingRoutes = require('./routes/onboardingRoutes');
 // Mount Routes
+app.get('/health', benchmarkController.checkHealth);
 app.use('/api/auth', authRoutes);
+app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/anomalies', anomalyRoutes);
+app.use('/api/benchmarks', benchmarkRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/backup', backupRoutes);
@@ -89,14 +100,49 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api', workforceRoutes);
 app.use('/api', assignmentRoutes);
 app.use('/api/ai', aiAssignmentRoutes);
+app.use('/api/predictions', predictionRoutes);
+app.use('/api/decisions', decisionRoutes);
+app.use('/api/digital-twin', digitalTwinRoutes);
 
 
-app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, (req, res) => { 
+app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async (req, res) => { 
     if (!req.user && req.firebaseUser) {
-        return res.status(404).json({ error: 'User not registered', requiresOnboarding: true, firebaseUser: req.firebaseUser });
+        // New Firebase user — check if they have a pending join request
+        try {
+            const [userRows] = await req.db.query('SELECT id, onboarding_state FROM User_Account WHERE firebase_uid = ?', [req.firebaseUser.firebase_uid]);
+            if (userRows.length > 0) {
+                const userId = userRows[0].id;
+                const [pending] = await req.db.query(
+                    `SELECT gjr.id, gjr.requested_role, gjr.status, g.name AS garage_name
+                     FROM Garage_Join_Request gjr JOIN Garage g ON gjr.garage_id = g.id
+                     WHERE gjr.requester_id = ? AND gjr.status = 'PENDING'`, [userId]
+                );
+                return res.status(404).json({ 
+                    error: 'User not registered', 
+                    requiresOnboarding: true, 
+                    onboarding_state: userRows[0].onboarding_state || 'ONBOARDING',
+                    pendingRequests: pending,
+                    firebaseUser: req.firebaseUser 
+                });
+            }
+        } catch(e) { console.error('[/api/auth/me]', e); }
+        return res.status(404).json({ error: 'User not registered', requiresOnboarding: true, onboarding_state: 'ONBOARDING', pendingRequests: [], firebaseUser: req.firebaseUser });
     }
     if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-    res.json({ user: req.user }); 
+    // Return enriched profile with onboarding_state and pending requests
+    try {
+        const [pendingRows] = await req.db.query(
+            `SELECT gjr.id, gjr.requested_role, gjr.status, g.name AS garage_name
+             FROM Garage_Join_Request gjr JOIN Garage g ON gjr.garage_id = g.id
+             WHERE gjr.requester_id = ? AND gjr.status = 'PENDING'`, [req.user.id]
+        );
+        const [uaRows] = await req.db.query('SELECT onboarding_state FROM User_Account WHERE id = ?', [req.user.id]);
+        const onboarding_state = uaRows.length > 0 ? uaRows[0].onboarding_state : 'ACTIVE';
+        res.json({ user: { ...req.user, onboarding_state, pendingRequests: pendingRows } });
+    } catch(e) {
+        console.error('[/api/auth/me enriched]', e);
+        res.json({ user: req.user });
+    }
 });
 
 app.post('/api/auth/onboard', require('./middleware/firebaseAuth').requireAuth, async (req, res) => {
@@ -154,12 +200,13 @@ app.post('/api/auth/onboard', require('./middleware/firebaseAuth').requireAuth, 
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        error: 'Internal Server Error',
-        message: err.message,
-        stack: err.stack,
-        _sqlLogs: req.sqlLogs || []
+    console.error(err.stack || err.message || err);
+    const isProduction = process.env.NODE_ENV === 'production';
+    const statusCode = err.status || (res.statusCode >= 400 ? res.statusCode : 500);
+    
+    res.status(statusCode).json({
+        error: isProduction && statusCode === 500 ? 'Internal Server Error' : (err.message || 'Internal Server Error'),
+        ...(isProduction ? {} : { stack: err.stack, _sqlLogs: req.sqlLogs || [] })
     });
 });
 

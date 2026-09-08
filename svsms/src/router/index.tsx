@@ -2,6 +2,7 @@ import { useAuthStore } from '../store/authStore';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
+import { getDashboardRoute } from '../permissions';
 
 // Layout
 const AppLayout = lazy(() => import('../components/layout/AppLayout').then(m => ({ default: m.AppLayout })));
@@ -9,13 +10,20 @@ const AppLayout = lazy(() => import('../components/layout/AppLayout').then(m => 
 // Auth
 const Login = lazy(() => import('../pages/auth/Login').then(m => ({ default: m.Login })));
 const Register = lazy(() => import('../pages/auth/Register').then(m => ({ default: m.Register })));
+const Onboarding = lazy(() => import('../pages/auth/Onboarding').then(m => ({ default: m.Onboarding })));
+const PendingApproval = lazy(() => import('../pages/auth/PendingApproval').then(m => ({ default: m.PendingApproval })));
+const RoleSelector = lazy(() => import('../pages/auth/RoleSelector').then(m => ({ default: m.RoleSelector })));
 
 // Roles
 const OwnerDashboard = lazy(() => import('../pages/owner/OwnerDashboard').then(m => ({ default: m.OwnerDashboard })));
 const GarageList = lazy(() => import('../pages/owner/GarageList').then(m => ({ default: m.GarageList })));
 const GarageManage = lazy(() => import('../pages/owner/GarageManage').then(m => ({ default: m.GarageManage })));
+const TechnicalDashboard = lazy(() => import('../pages/owner/TechnicalDashboard').then(m => ({ default: m.TechnicalDashboard })));
+const AccessManagement = lazy(() => import('../pages/owner/AccessManagement').then(m => ({ default: m.AccessManagement })));
+const OwnerDecisionCenter = lazy(() => import('../pages/owner/OwnerDecisionCenter').then(m => ({ default: m.OwnerDecisionCenter })));
 
 const ManagerDashboard = lazy(() => import('../pages/manager/ManagerDashboard').then(m => ({ default: m.ManagerDashboard })));
+const DecisionCenter = lazy(() => import('../pages/manager/DecisionCenter').then(m => ({ default: m.DecisionCenter })));
 const ManagerServiceRequests = lazy(() => import('../pages/manager/ManagerServiceRequests').then(m => ({ default: m.ManagerServiceRequests })));
 const ManagerCalendar = lazy(() => import('../pages/manager/ManagerCalendar').then(m => ({ default: m.ManagerCalendar })));
 const WorkshopBoard = lazy(() => import('../pages/manager/WorkshopBoard').then(m => ({ default: m.WorkshopBoard })));
@@ -55,13 +63,8 @@ const WorkflowTimeline = lazy(() => import('../pages/workflow/WorkflowTimeline')
 const IndexRedirect = () => {
   const { user, isAuthenticated } = useAuthStore();
   if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
-  switch (user.role) {
-    case 'owner': return <Navigate to="/owner" replace />;
-    case 'manager': return <Navigate to="/manager" replace />;
-    case 'mechanic': return <Navigate to="/mechanic/jobs" replace />;
-    case 'customer': return <Navigate to="/customer" replace />;
-    default: return <div className="p-10 text-center">Unknown role: {user.role}. Please logout and contact support.</div>;
-  }
+  const target = getDashboardRoute(user.role);
+  return <Navigate to={target} replace />;
 };
 
 export const router = createBrowserRouter([
@@ -70,6 +73,30 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<div className="flex items-center justify-center h-full w-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
         <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/onboarding',
+    element: (
+      <Suspense fallback={<div className="flex items-center justify-center h-full w-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+        <Onboarding />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/pending-approval',
+    element: (
+      <Suspense fallback={<div className="flex items-center justify-center h-full w-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+        <PendingApproval />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/select-role',
+    element: (
+      <Suspense fallback={<div className="flex items-center justify-center h-full w-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+        <RoleSelector />
       </Suspense>
     ),
   },
@@ -88,9 +115,13 @@ export const router = createBrowserRouter([
       { path: 'owner', element: <ProtectedRoute allowedRoles={['owner']}><OwnerDashboard /></ProtectedRoute> },
       { path: 'owner/garages', element: <ProtectedRoute allowedRoles={['owner']}><GarageList /></ProtectedRoute> },
       { path: 'owner/garages/:id', element: <ProtectedRoute allowedRoles={['owner']}><GarageManage /></ProtectedRoute> },
+      { path: 'owner/decisions', element: <ProtectedRoute allowedRoles={['owner']}><OwnerDecisionCenter /></ProtectedRoute> },
+      { path: 'owner/technical-ops', element: <ProtectedRoute allowedRoles={['owner']}><TechnicalDashboard /></ProtectedRoute> },
+      { path: 'owner/access-management', element: <ProtectedRoute allowedRoles={['owner']}><AccessManagement /></ProtectedRoute> },
       
       // Manager routes
       { path: 'manager', element: <ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute> },
+      { path: 'manager/decisions', element: <ProtectedRoute allowedRoles={['manager']}><DecisionCenter /></ProtectedRoute> },
       { path: 'manager/service-requests', element: <ProtectedRoute allowedRoles={['manager']}><ManagerServiceRequests /></ProtectedRoute> },
       { path: 'manager/calendar', element: <ProtectedRoute allowedRoles={['manager']}><ManagerCalendar /></ProtectedRoute> },
       { path: 'manager/jobs', element: <ProtectedRoute allowedRoles={['manager']}><WorkshopBoard /></ProtectedRoute> },

@@ -23,3 +23,23 @@ build/
 .DS_Store
 *.log
 .vercel
+
+# ML Model Artifacts
+*.ubj
+*.joblib
+python_service/model_artifacts/*
+!python_service/model_artifacts/.gitkeep
+
+# Node binaries & temporary bundles
+node20/
+node20.tar.gz
+
+# Temporary test scripts
+svsms/test-*.cjs
+backend/add_toaster.js
+backend/fix_*.js
+backend/remove_register.js
+backend/update_server.js
+
+# Service keys & secrets
+backend/config/serviceAccountKey.json
