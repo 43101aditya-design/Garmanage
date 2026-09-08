@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../..
 import { Wrench, Car, Store, Users, Cpu, ShieldCheck, Activity, FlaskConical } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { getDashboardRoute } from '../../permissions';
+
 export const Login = () => {
   const navigate = useNavigate();
   const { googleLogin, handleRedirectResult, onboard, devLogin, isLoading, isAuthenticated, needsOnboarding, onboardingState, pendingRequests, user } = useAuthStore();
@@ -39,10 +41,8 @@ export const Login = () => {
     if (user.memberships && user.memberships.length > 1) {
       return <Navigate to="/select-role" replace />;
     }
-    if (user.role === 'owner') return <Navigate to="/owner" replace />;
-    if (user.role === 'manager') return <Navigate to="/manager" replace />;
-    if (user.role === 'mechanic') return <Navigate to="/mechanic/jobs" replace />;
-    if (user.role === 'customer') return <Navigate to="/customer" replace />;
+    const targetRoute = getDashboardRoute(user.role);
+    return <Navigate to={targetRoute} replace />;
   }
 
 
