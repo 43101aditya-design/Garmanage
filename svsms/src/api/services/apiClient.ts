@@ -2,7 +2,7 @@ import { useSqlStore } from '../../store/sqlStore';
 import { SqlOperationType } from '../../types';
 import { auth } from '../../config/firebase';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const apiClient = {
     async get(endpoint: string) {

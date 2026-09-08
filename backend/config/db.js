@@ -10,9 +10,13 @@ const dbConfig = {
     database: process.env.DB_NAME || 'b4eturwt8cnf3b4gqngb',
     port: process.env.DB_PORT || 3306,
     multipleStatements: true,
-    connectionLimit: 3, // Hard limit to stay below max_user_connections (5)
+    connectionLimit: 2, // Strict limit for Clever Cloud free tier (max 5)
     waitForConnections: true,
-    queueLimit: 0
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
+    idleTimeout: 5000,
+    maxIdle: 1
 };
 
 const poolInstance = mysql.createPool(dbConfig);

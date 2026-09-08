@@ -175,6 +175,7 @@ export const useAuthStore = create<AuthState>()(
             console.error('Failed to sync profile', error);
             localStorage.removeItem('svsms_token');
             set({ user: null, isAuthenticated: false, token: null, needsOnboarding: false, onboardingState: null });
+            throw error;
           }
         }
       },
