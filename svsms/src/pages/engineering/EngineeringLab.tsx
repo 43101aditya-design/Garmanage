@@ -11,10 +11,11 @@ import { PredictionPipeline } from './components/PredictionPipeline';
 import { DecisionIntelligencePipeline } from './components/DecisionIntelligencePipeline';
 import { AnomalyPipeline } from './components/AnomalyPipeline';
 import { ResearchLab } from './components/ResearchLab';
+import { SyntheticMLLab } from './components/SyntheticMLLab';
 import { apiClient } from '../../api/services/apiClient';
 
 export const EngineeringLab = () => {
-  const [activeTab, setActiveTab] = useState<'digital-twin' | 'simulation' | 'research-lab' | 'decision-pipeline' | 'prediction-pipeline' | 'anomaly-pipeline' | 'assignment-engine' | 'inventory-flow' | 'er-model' | 'control-flow' | 'source'>('digital-twin');
+  const [activeTab, setActiveTab] = useState<'synthetic-lab' | 'digital-twin' | 'simulation' | 'research-lab' | 'decision-pipeline' | 'prediction-pipeline' | 'anomaly-pipeline' | 'assignment-engine' | 'inventory-flow' | 'er-model' | 'control-flow' | 'source'>('synthetic-lab');
   const [health, setHealth] = useState({ node: 'Checking...', mysql: 'Checking...', python: 'Checking...' });
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export const EngineeringLab = () => {
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-1 flex items-center gap-2">
             <span>Engineering Intelligence Lab</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Python analytics pipelines, ER diagram monitoring, and DBMS inventory flow.</p>
+          <p className="text-sm text-muted-foreground mt-1">Dev-only synthetic ML training, Python analytics pipelines, and ER model monitoring.</p>
         </div>
         
         {/* Health Monitors */}
@@ -71,6 +72,7 @@ export const EngineeringLab = () => {
       {/* Code Editor Style Navigation Tabs */}
       <div className="flex space-x-1 bg-card/60 border border-border/80 p-1 rounded-xl shrink-0 font-mono text-xs overflow-x-auto custom-scrollbar">
         {[
+          { id: 'synthetic-lab', icon: Sparkles, label: 'Synthetic ML Lab (DEV ONLY)' },
           { id: 'digital-twin', icon: BrainCircuit, label: 'Digital Twin Studio' },
           { id: 'simulation', icon: Play, label: 'Classic Simulations' },
           { id: 'research-lab', icon: BookOpen, label: 'Research & Benchmarks' },
@@ -100,6 +102,7 @@ export const EngineeringLab = () => {
 
       {/* Tab Panel Viewports */}
       <div className="flex-1 overflow-y-auto bg-card/40 rounded-xl border border-border/80 p-6 custom-scrollbar backdrop-blur-sm min-h-[500px]">
+        {activeTab === 'synthetic-lab' && <SyntheticMLLab />}
         {activeTab === 'digital-twin' && <DigitalTwinStudio />}
         {activeTab === 'simulation' && <SimulationPanel />}
         {activeTab === 'research-lab' && <ResearchLab />}
@@ -112,6 +115,7 @@ export const EngineeringLab = () => {
         {activeTab === 'control-flow' && <ControlFlow />}
         {activeTab === 'source' && <CodeViewer />}
       </div>
+
     </div>
   );
 };

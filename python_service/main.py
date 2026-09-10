@@ -120,6 +120,30 @@ def digital_twin_get():
 def digital_twin_post(data: Dict[str, Any]):
     return run_digital_twin_simulation(data)
 
+# DEV-ONLY Synthetic Data & Training Endpoints
+@app.post("/api/dev/synthetic/generate")
+def dev_synthetic_generate(data: Dict[str, Any] = None):
+    from synthetic.generator import generate_python_synthetic_dataset
+    if os.getenv("NODE_ENV") == "production":
+        raise HTTPException(status_code=403, detail="FORBIDDEN: Synthetic data generation is blocked in PRODUCTION.")
+    count = (data or {}).get("count", 1000)
+    seed = (data or {}).get("seed", 42)
+    return generate_python_synthetic_dataset(count=count, seed=seed)
+
+@app.post("/api/dev/synthetic/train")
+def dev_synthetic_train(data: Dict[str, Any] = None):
+    from synthetic.trainer import train_synthetic_model
+    if os.getenv("NODE_ENV") == "production":
+        raise HTTPException(status_code=403, detail="FORBIDDEN: Synthetic ML training injection is blocked in PRODUCTION.")
+    payload = data or {}
+    return train_synthetic_model(
+        dataset_id=payload.get("dataset_id"),
+        model_name=payload.get("model_name", "Duration_XGBoost_Synthetic"),
+        model_type=payload.get("model_type", "regression"),
+        hyperparameters=payload.get("hyperparameters")
+    )
+
+
 # Safe endpoints to fetch source code
 def get_safe_source(filename: str):
     filepath = os.path.join(os.path.dirname(__file__), "algorithms", filename)

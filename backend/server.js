@@ -67,6 +67,7 @@ const benchmarkController = require('./controllers/benchmarkController');
 const onboardingRoutes = require('./routes/onboardingRoutes');
 const savedGarageRoutes = require('./routes/savedGarageRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
+const syntheticRoutes = require('./routes/syntheticRoutes');
 // Mount Routes
 app.get('/health', benchmarkController.checkHealth);
 app.use('/api/auth', authRoutes);
@@ -107,6 +108,8 @@ app.use('/api/ai', aiAssignmentRoutes);
 app.use('/api/predictions', predictionRoutes);
 app.use('/api/decisions', decisionRoutes);
 app.use('/api/digital-twin', digitalTwinRoutes);
+app.use('/api/dev/synthetic', syntheticRoutes);
+
 
 
 app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async (req, res) => { 

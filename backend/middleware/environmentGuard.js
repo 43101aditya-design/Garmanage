@@ -119,9 +119,40 @@ function requireSimulationContext(req, res, next) {
     next();
 }
 
+/**
+ * Checks if the current environment allows synthetic data generation or ML synthetic training.
+ * Strictly forbidden in production.
+ */
+function isSyntheticDataAllowed(req) {
+    if (process.env.NODE_ENV === 'production') {
+        return false;
+    }
+    // Allowed in development, test, or when explicitly enabled in non-prod
+    return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' || process.env.ALLOW_SYNTHETIC_GENERATION === 'true' || !process.env.NODE_ENV;
+}
+
+/**
+ * Hard backend safety check blocking any synthetic data generation, synthetic dataset import,
+ * or synthetic model training injection in production environments.
+ */
+function requireDevEnvironment(req, res, next) {
+    if (!isSyntheticDataAllowed(req)) {
+        console.error(`[ENVIRONMENT_GUARD:HARD_BLOCK] Synthetic data operation rejected on ${req.originalUrl} in NODE_ENV=${process.env.NODE_ENV}`);
+        return res.status(403).json({
+            error: 'FORBIDDEN: Synthetic data generation, import, and synthetic training are strictly blocked in PRODUCTION.',
+            environment: process.env.NODE_ENV || 'production',
+            allowed: false
+        });
+    }
+    next();
+}
+
 module.exports = {
     isSimulationAllowed,
+    isSyntheticDataAllowed,
+    requireDevEnvironment,
     validateAndBoundScenarioParameters,
     requireSimulationContext,
     SimulationValidationError
 };
+

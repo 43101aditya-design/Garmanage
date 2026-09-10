@@ -1,0 +1,62 @@
+[
+  {
+    "feedback_id": "fb_1789042831015_c0e7a1",
+    "job_id": "JOB_REAL_999",
+    "model_version": "duration_model_v1",
+    "data_source": "REAL_PRODUCTION",
+    "prediction_time_features": {},
+    "prediction": {
+      "duration_minutes": 90,
+      "recommended_mechanic_id": "MECH_01"
+    },
+    "actual_outcome": {
+      "duration_minutes": 110,
+      "selected_mechanic_id": "MECH_01",
+      "job_status": "COMPLETED",
+      "rejection_reason": null
+    },
+    "delta_duration": 20,
+    "is_validated_example": true,
+    "recorded_at": "2026-09-10T12:20:31.015Z"
+  },
+  {
+    "feedback_id": "fb_1789042784475_74a3bd",
+    "job_id": "JOB_REAL_999",
+    "model_version": "duration_model_v1",
+    "data_source": "REAL_PRODUCTION",
+    "prediction_time_features": {},
+    "prediction": {
+      "duration_minutes": 90,
+      "recommended_mechanic_id": "MECH_01"
+    },
+    "actual_outcome": {
+      "duration_minutes": 110,
+      "selected_mechanic_id": "MECH_01",
+      "job_status": "COMPLETED",
+      "rejection_reason": null
+    },
+    "delta_duration": 20,
+    "is_validated_example": true,
+    "recorded_at": "2026-09-10T12:19:44.475Z"
+  },
+  {
+    "feedback_id": "fb_1789042778353_980d21",
+    "job_id": "JOB_REAL_999",
+    "model_version": "duration_model_v1",
+    "data_source": "REAL_PRODUCTION",
+    "prediction_time_features": {},
+    "prediction": {
+      "duration_minutes": 90,
+      "recommended_mechanic_id": "MECH_01"
+    },
+    "actual_outcome": {
+      "duration_minutes": 110,
+      "selected_mechanic_id": "MECH_01",
+      "job_status": "COMPLETED",
+      "rejection_reason": null
+    },
+    "delta_duration": 20,
+    "is_validated_example": true,
+    "recorded_at": "2026-09-10T12:19:38.353Z"
+  }
+]
