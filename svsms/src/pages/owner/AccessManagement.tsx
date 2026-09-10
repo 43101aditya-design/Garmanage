@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { apiClient } from '../../api/services/apiClient';
-import toast from 'react-hot-toast';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+import { ShieldCheck, UserPlus, Users, Key, Copy, Check, RefreshCw, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface JoinReq {
   id: string;
@@ -23,7 +27,7 @@ interface Member {
 
 export const AccessManagement = () => {
   const { user, selectedGarageId } = useAuthStore();
-  const garageId = selectedGarageId || user?.memberships?.[0]?.garage_id;
+  const garageId = selectedGarageId || user?.memberships?.[0]?.garage_id || user?.garage_id;
 
   const [pendingReqs, setPendingReqs] = useState<JoinReq[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
@@ -69,11 +73,11 @@ export const AccessManagement = () => {
     setActionLoading(reqId);
     try {
       await apiClient.post(`/api/garages/${garageId}/join-requests/${reqId}/approve`, {});
-      toast.success('Request approved! User now has access.');
+      toast.success('Request approved! User now has access to the garage.');
       fetchData();
       fetchMembers();
     } catch (e: any) {
-      toast.error(e.response?.data?.error || 'Failed to approve');
+      toast.error(e.response?.data?.error || 'Failed to approve request');
     } finally {
       setActionLoading(null);
     }
@@ -86,7 +90,7 @@ export const AccessManagement = () => {
       toast.success('Request rejected.');
       fetchData();
     } catch (e: any) {
-      toast.error(e.response?.data?.error || 'Failed to reject');
+      toast.error(e.response?.data?.error || 'Failed to reject request');
     } finally {
       setActionLoading(null);
     }
@@ -97,7 +101,7 @@ export const AccessManagement = () => {
     try {
       const res = await apiClient.post(`/api/garages/${garageId}/generate-join-code`, {});
       setJoinCode(res.join_code);
-      toast.success('New join code generated!');
+      toast.success('New garage join code generated!');
     } catch (e: any) {
       toast.error('Failed to generate code');
     } finally {
@@ -109,89 +113,132 @@ export const AccessManagement = () => {
     if (joinCode) {
       navigator.clipboard.writeText(joinCode);
       setCopied(true);
+      toast.success('Join code copied to clipboard!');
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   const TABS = [
-    { key: 'requests', label: 'Join Requests', count: pendingReqs.length },
-    { key: 'members', label: 'Active Members', count: members.length },
-    { key: 'code', label: 'Join Code', count: null },
+    { key: 'requests', label: 'Join Requests', icon: UserPlus, count: pendingReqs.length },
+    { key: 'members', label: 'Active Members', icon: Users, count: members.length },
+    { key: 'code', label: 'Garage Join Code', icon: Key, count: null },
   ] as const;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Access Management</h1>
-        <p className="text-slate-400 text-sm mt-1">Manage who can join your garage and in what role.</p>
+    <div className="p-6 max-w-5xl mx-auto space-y-6 animate-in fade-in duration-200">
+      {/* Page Header */}
+      <div className="border-b border-border pb-5">
+        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-primary font-bold">
+          <ShieldCheck className="w-4 h-4 text-primary" />
+          Garage RBAC & Team Access
+        </div>
+        <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-1">Access Management</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Review join requests, manage active workforce permissions, and distribute team join codes.
+        </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-slate-900/50 border border-slate-700/50 rounded-xl p-1">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            id={`access-tab-${t.key}`}
-            onClick={() => setTab(t.key)}
-            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${tab === t.key ? 'bg-violet-500 text-white shadow' : 'text-slate-400 hover:text-slate-300'}`}
-          >
-            {t.label}
-            {t.count !== null && t.count > 0 && (
-              <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${tab === t.key ? 'bg-white/20' : 'bg-slate-700'}`}>
-                {t.count}
-              </span>
-            )}
-          </button>
-        ))}
+      {/* Tabs Navigation */}
+      <div className="flex bg-muted/60 p-1.5 rounded-xl border border-border/80 gap-1 shadow-sm max-w-md">
+        {TABS.map((t) => {
+          const Icon = t.icon;
+          const isActive = tab === t.key;
+          return (
+            <button
+              key={t.key}
+              id={`access-tab-${t.key}`}
+              onClick={() => setTab(t.key)}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+                isActive
+                  ? 'bg-card text-foreground shadow-sm border border-border/60'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+              <span>{t.label}</span>
+              {t.count !== null && t.count > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  isActive ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
+                }`}>
+                  {t.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+        <div className="flex flex-col items-center justify-center py-20 space-y-3">
+          <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-muted-foreground font-mono">Loading access data...</p>
         </div>
       ) : (
         <>
           {/* Pending Requests Tab */}
           {tab === 'requests' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {pendingReqs.length === 0 ? (
-                <div className="bg-slate-900/50 border border-slate-700/30 rounded-xl p-8 text-center">
-                  <div className="text-4xl mb-3">✅</div>
-                  <p className="text-slate-400">No pending join requests</p>
-                </div>
+                <Card className="border-dashed bg-card/60">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3">
+                      <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-base font-bold text-foreground">No Pending Join Requests</h3>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                      New mechanics or managers who enter your garage join code will appear here for your approval.
+                    </p>
+                  </CardContent>
+                </Card>
               ) : (
                 pendingReqs.map((req) => (
-                  <div key={req.id} className="bg-slate-900/60 border border-slate-700/50 rounded-xl p-5 flex items-start gap-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-600 rounded-full flex items-center justify-center text-lg font-bold text-white flex-shrink-0">
-                      {req.requester_name?.[0]?.toUpperCase() || '?'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-white">{req.requester_name}</div>
-                      <div className="text-xs text-slate-400">{req.requester_email}</div>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full capitalize">{req.requested_role}</span>
-                        {req.message && <span className="text-xs text-slate-500 italic truncate max-w-xs">"{req.message}"</span>}
+                  <Card key={req.id} className="border-border hover:shadow-md transition-shadow">
+                    <CardContent className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                          {req.requester_name?.[0]?.toUpperCase() || 'U'}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-foreground text-sm">{req.requester_name}</h4>
+                            <Badge variant="outline" className="capitalize text-[10px] font-mono">
+                              {req.requested_role}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">{req.requester_email}</p>
+                          {req.message && (
+                            <p className="text-xs text-foreground/80 italic mt-1.5 bg-muted/50 px-2.5 py-1 rounded-md border border-border/40">
+                              "{req.message}"
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex gap-2 flex-shrink-0">
-                      <button
-                        id={`reject-req-${req.id}`}
-                        onClick={() => handleReject(req.id)}
-                        disabled={!!actionLoading}
-                        className="px-3 py-1.5 text-xs font-medium text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/10 transition-all disabled:opacity-50"
-                      >
-                        {actionLoading === req.id + '-reject' ? '...' : 'Reject'}
-                      </button>
-                      <button
-                        id={`approve-req-${req.id}`}
-                        onClick={() => handleApprove(req.id)}
-                        disabled={!!actionLoading}
-                        className="px-3 py-1.5 text-xs font-medium text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10 transition-all disabled:opacity-50"
-                      >
-                        {actionLoading === req.id ? '...' : '✓ Approve'}
-                      </button>
-                    </div>
-                  </div>
+
+                      <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                        <Button
+                          id={`reject-req-${req.id}`}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleReject(req.id)}
+                          disabled={!!actionLoading}
+                          className="text-xs text-destructive hover:bg-destructive/10 border-destructive/30"
+                        >
+                          <XCircle className="w-3.5 h-3.5 mr-1" />
+                          Reject
+                        </Button>
+                        <Button
+                          id={`approve-req-${req.id}`}
+                          size="sm"
+                          onClick={() => handleApprove(req.id)}
+                          disabled={!!actionLoading}
+                          className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                          Approve
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))
               )}
             </div>
@@ -199,60 +246,93 @@ export const AccessManagement = () => {
 
           {/* Members Tab */}
           {tab === 'members' && (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {members.length === 0 ? (
-                <div className="bg-slate-900/50 border border-slate-700/30 rounded-xl p-8 text-center">
-                  <p className="text-slate-400">No members found</p>
-                </div>
+                <Card className="border-dashed bg-card/60">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <Users className="w-10 h-10 text-muted-foreground/50 mb-3" />
+                    <h3 className="text-base font-bold text-foreground">No Team Members Found</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Share your garage join code to recruit managers and mechanics.
+                    </p>
+                  </CardContent>
+                </Card>
               ) : (
-                members.map((m) => (
-                  <div key={m.membership_id} className="bg-slate-900/60 border border-slate-700/50 rounded-xl p-4 flex items-center gap-4">
-                    <div className="w-9 h-9 bg-gradient-to-br from-slate-700 to-slate-600 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
-                      {m.name?.[0]?.toUpperCase() || '?'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-white text-sm">{m.name}</div>
-                      <div className="text-xs text-slate-400">{m.email}</div>
-                    </div>
-                    <span className="text-xs bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full capitalize border border-violet-500/20">
-                      {m.role_name}
-                    </span>
-                  </div>
-                ))
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {members.map((m) => (
+                    <Card key={m.membership_id} className="border-border">
+                      <CardContent className="p-4 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 truncate">
+                          <div className="w-9 h-9 rounded-lg bg-muted border border-border flex items-center justify-center text-xs font-bold text-foreground shrink-0">
+                            {m.name?.[0]?.toUpperCase() || 'M'}
+                          </div>
+                          <div className="truncate">
+                            <h4 className="font-semibold text-foreground text-sm truncate">{m.name}</h4>
+                            <p className="text-xs text-muted-foreground truncate">{m.email}</p>
+                          </div>
+                        </div>
+                        <Badge variant={m.role_name === 'owner' ? 'default' : 'secondary'} className="capitalize text-[10px] shrink-0 font-mono">
+                          {m.role_name}
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               )}
             </div>
           )}
 
           {/* Join Code Tab */}
           {tab === 'code' && (
-            <div className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-8 text-center space-y-6">
-              <div>
-                <p className="text-slate-400 text-sm mb-1">Share this code with team members to join your garage</p>
-                <p className="text-xs text-slate-500">Anyone with this code can request to join — you still need to approve them</p>
-              </div>
+            <Card className="max-w-2xl border-border shadow-sm">
+              <CardHeader className="text-center pb-3">
+                <CardTitle className="text-lg font-bold text-foreground">Garage Team Join Code</CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
+                  Share this 6-character code with your team. Users can enter this code during setup to join your garage.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-6 pt-2 pb-6">
+                {joinCode ? (
+                  <div className="w-full max-w-sm bg-muted/50 border-2 border-primary/30 rounded-2xl p-6 text-center shadow-inner">
+                    <span className="text-xs font-mono uppercase text-muted-foreground tracking-widest font-bold block mb-1">
+                      Active Code
+                    </span>
+                    <div className="text-4xl font-mono font-extrabold text-primary tracking-[0.25em] my-3">
+                      {joinCode}
+                    </div>
+                    <Button
+                      id="copy-join-code-btn"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopy}
+                      className="mt-2 text-xs font-semibold gap-1.5"
+                    >
+                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copied ? 'Copied to Clipboard' : 'Copy Join Code'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">No join code set yet</div>
+                )}
 
-              {joinCode ? (
-                <div className="bg-slate-800/80 border border-violet-500/20 rounded-2xl p-6">
-                  <div className="text-4xl font-mono font-bold text-violet-300 tracking-[0.3em] mb-4">{joinCode}</div>
-                  <button id="copy-join-code-btn" onClick={handleCopy}
-                    className={`px-6 py-2 rounded-xl text-sm font-medium transition-all ${copied ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-violet-500/20 text-violet-400 border border-violet-500/30 hover:bg-violet-500/30'}`}>
-                    {copied ? '✓ Copied!' : '📋 Copy Code'}
-                  </button>
+                <div className="flex flex-col items-center gap-2">
+                  <Button
+                    id="generate-join-code-btn"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGenerateCode}
+                    disabled={actionLoading === 'gen-code'}
+                    className="text-xs gap-1.5"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${actionLoading === 'gen-code' ? 'animate-spin' : ''}`} />
+                    {actionLoading === 'gen-code' ? 'Generating...' : 'Generate New Join Code'}
+                  </Button>
+                  <span className="text-[11px] text-muted-foreground">
+                    Generating a new code will immediately invalidate the previous code.
+                  </span>
                 </div>
-              ) : (
-                <div className="text-slate-500 text-sm">No join code set yet</div>
-              )}
-
-              <button
-                id="generate-join-code-btn"
-                onClick={handleGenerateCode}
-                disabled={actionLoading === 'gen-code'}
-                className="px-6 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition-all text-sm font-medium disabled:opacity-50"
-              >
-                {actionLoading === 'gen-code' ? 'Generating...' : '🔄 Generate New Code'}
-              </button>
-              <p className="text-xs text-slate-600">Generating a new code invalidates the old one</p>
-            </div>
+              </CardContent>
+            </Card>
           )}
         </>
       )}

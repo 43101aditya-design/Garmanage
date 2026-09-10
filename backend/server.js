@@ -139,15 +139,13 @@ app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async 
                 const customerProfile = customerRows.length > 0 ? customerRows[0] : null;
 
                 const availableWorkspaces = [];
-                if (customerProfile || user.role === 'customer') {
-                    availableWorkspaces.push({
-                        id: 'customer_personal',
-                        type: 'customer',
-                        role: 'customer',
-                        name: 'Personal Customer Account',
-                        description: 'Manage vehicles & book service appointments'
-                    });
-                }
+                availableWorkspaces.push({
+                    id: 'customer_personal',
+                    type: 'customer',
+                    role: 'customer',
+                    name: 'Personal Customer Account',
+                    description: 'Manage personal vehicles & book service appointments'
+                });
                 for (const m of memberships) {
                     availableWorkspaces.push({
                         id: m.membership_id,

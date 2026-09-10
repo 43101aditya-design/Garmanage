@@ -85,15 +85,14 @@ const loadUserAndMemberships = async (req, res, next, userData) => {
 
         // Build list of all available workspaces authorized for this user
         const availableWorkspaces = [];
-        if (customerProfile || user.role === 'customer') {
-            availableWorkspaces.push({
-                id: 'customer_personal',
-                type: 'customer',
-                role: 'customer',
-                name: 'Personal Customer Account',
-                description: 'Manage vehicles & book service appointments'
-            });
-        }
+        // Every user account legitimately has access to their personal customer workspace for personal vehicles & service bookings
+        availableWorkspaces.push({
+            id: 'customer_personal',
+            type: 'customer',
+            role: 'customer',
+            name: 'Personal Customer Account',
+            description: 'Manage personal vehicles & book service appointments'
+        });
         for (const m of memberships) {
             availableWorkspaces.push({
                 id: m.membership_id,
