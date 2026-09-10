@@ -31,15 +31,26 @@ export const DecisionCenter = () => {
   const fetchDecisions = async () => {
     try {
       setLoading(true);
-      const [pendingRes, historyRes] = await Promise.all([
+      const [pendingRes, historyRes] = await Promise.allSettled([
         decisionService.getPendingDecisions(),
         decisionService.getDecisionHistory(undefined, 50)
       ]);
-      setDecisions(pendingRes.decisions || []);
-      setHistory(historyRes.history || []);
+
+      if (pendingRes.status === 'fulfilled' && pendingRes.value) {
+        setDecisions(pendingRes.value.decisions || []);
+      } else {
+        setDecisions([]);
+      }
+
+      if (historyRes.status === 'fulfilled' && historyRes.value) {
+        setHistory(historyRes.value.history || []);
+      } else {
+        setHistory([]);
+      }
     } catch (err: any) {
-      console.error('Failed to load decisions:', err);
-      toast.error('Could not load AI decisions. Intelligence engine offline.');
+      console.warn('Failed to load manager decisions (retaining clean state):', err);
+      setDecisions([]);
+      setHistory([]);
     } finally {
       setLoading(false);
     }

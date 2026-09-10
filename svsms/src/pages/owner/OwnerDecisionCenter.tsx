@@ -22,15 +22,26 @@ export const OwnerDecisionCenter = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [pendingRes, histRes] = await Promise.all([
+      const [pendingRes, histRes] = await Promise.allSettled([
         decisionService.getPendingDecisions(selectedGarage),
         decisionService.getDecisionHistory(selectedGarage, 50)
       ]);
-      setDecisions(pendingRes.decisions || []);
-      setHistory(histRes.history || []);
+
+      if (pendingRes.status === 'fulfilled' && pendingRes.value) {
+        setDecisions(pendingRes.value.decisions || []);
+      } else {
+        setDecisions([]);
+      }
+
+      if (histRes.status === 'fulfilled' && histRes.value) {
+        setHistory(histRes.value.history || []);
+      } else {
+        setHistory([]);
+      }
     } catch (err) {
-      console.error('Failed to load owner decisions:', err);
-      toast.error('Failed to load enterprise decision feed.');
+      console.warn('Failed to load owner decisions (retaining clean state):', err);
+      setDecisions([]);
+      setHistory([]);
     } finally {
       setLoading(false);
     }
