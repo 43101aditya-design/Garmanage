@@ -23,6 +23,7 @@ import {
 import { digitalTwinService } from '../../../api/services/digitalTwinService';
 import { SimulationResult, ComparisonResult, SensitivityResult } from '../../../types/digitalTwin';
 import { useGarageStore } from '../../../store/garageStore';
+import { formatINR } from '../../../utils/format';
 
 export const DigitalTwinStudio: React.FC = () => {
   const { currentGarage } = useGarageStore();
@@ -791,7 +792,7 @@ export const DigitalTwinStudio: React.FC = () => {
                         <td className="p-3 text-foreground">~{pt.avg_wait_mins}m</td>
                         <td className="p-3 text-foreground">{pt.delayed_jobs}</td>
                         <td className="p-3 text-foreground">{pt.throughput_jobs_day}</td>
-                        <td className="p-3 text-emerald-400">₹{pt.realized_revenue_inr?.toLocaleString()}</td>
+                        <td className="p-3 text-emerald-500 font-semibold">{formatINR(pt.realized_revenue_inr || 0)}</td>
                       </tr>
                     ))}
                   </tbody>

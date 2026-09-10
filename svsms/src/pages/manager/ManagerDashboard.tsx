@@ -11,6 +11,7 @@ import {
   ArrowRight, ShieldCheck, Clock, UserCheck, Inbox, Sparkles, TrendingUp
 } from 'lucide-react';
 import { apiClient } from '../../api/services/apiClient';
+import { formatDateTime } from '../../utils/format';
 
 export const ManagerDashboard = () => {
   const { user } = useAuthStore();
@@ -24,6 +25,8 @@ export const ManagerDashboard = () => {
   const lowStockCount = inventory.filter(i => i.quantity_in_stock <= i.reorder_level).length;
 
   const pendingRequestsList = appointments.filter(a => a.status === 'Pending').slice(0, 4);
+  const topMechanic = mechanics.find(m => m.status === 'active') || mechanics[0];
+  const topMechanicJobs = topMechanic ? appointments.filter(a => a.mechanic_id === topMechanic.id && a.status === 'In Progress').length : 0;
 
   // Predictions states
   const [predictionsLoading, setPredictionsLoading] = useState(true);
@@ -254,31 +257,39 @@ export const ManagerDashboard = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 rounded-lg bg-background/50 border border-primary/10 space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-semibold text-foreground">Rahul Sharma (राहुल शर्मा)</span>
-                <Badge variant="success" className="font-mono text-[10px] tracking-wide bg-emerald-500/15 border-emerald-500/35">
-                  91% Match
-                </Badge>
+            {topMechanic ? (
+              <div className="p-4 rounded-lg bg-background/50 border border-primary/10 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-foreground">{topMechanic.first_name} {topMechanic.last_name}</span>
+                  <Badge variant="success" className="font-mono text-[10px] tracking-wide bg-emerald-500/15 border-emerald-500/35">
+                    Recommended
+                  </Badge>
+                </div>
+                <div className="space-y-2 text-xs text-muted-foreground font-mono">
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                    <span>Specialization: {topMechanic.specialization || 'General Systems'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-primary" />
+                    <span>Active workload: {topMechanicJobs} {topMechanicJobs === 1 ? 'job card' : 'job cards'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-primary" />
+                    <span>Contact: {topMechanic.phone || topMechanic.email}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2 text-xs text-muted-foreground font-mono">
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-                  <span>Expert Engine repair specialization</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-primary" />
-                  <span>Low workload (1 active job card)</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-primary" />
-                  <span>Strong historical feedback on BMW engine works</span>
-                </div>
+            ) : (
+              <div className="p-4 rounded-lg bg-background/50 border border-dashed border-border/60 text-center text-xs text-muted-foreground">
+                No active mechanics found in roster.
               </div>
-            </div>
+            )}
 
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Our automated system suggests Rahul for the next engine diagnostics request based on workload constraints and specializations.
+              {topMechanic
+                ? `Automated dispatch engine ranks ${topMechanic.first_name} highest for upcoming assignments based on workload constraints and specialization profile.`
+                : 'Add mechanics to the workshop roster to enable AI dispatching.'}
             </p>
           </CardContent>
           <CardFooter className="pt-2">
@@ -331,7 +342,7 @@ export const ManagerDashboard = () => {
                         </div>
                       </TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground">
-                        {new Date(app.appointment_date).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        {formatDateTime(app.appointment_date)}
                       </TableCell>
                       <TableCell>
                         <Badge variant="warning">{app.status}</Badge>

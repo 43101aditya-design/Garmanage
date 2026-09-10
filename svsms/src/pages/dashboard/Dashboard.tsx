@@ -4,6 +4,7 @@ import { useAuthStore } from '../../store/authStore';
 import { Activity, Users, Car, Calendar, Package, IndianRupee, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { apiClient } from '../../api/services/apiClient';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatINR } from '../../utils/format';
 
 export const Dashboard = () => {
   const [metrics, setMetrics] = useState<any>({});
@@ -83,9 +84,9 @@ export const Dashboard = () => {
   }
 
   const statCards = [
-    { title: 'Today\'s Revenue', value: `₹${Number(metrics.daily_revenue || 0).toLocaleString()}`, icon: IndianRupee, color: 'text-emerald-500', trend: '+12%' },
-    { title: 'Weekly Revenue', value: `₹${Number(metrics.weekly_revenue || 0).toLocaleString()}`, icon: Activity, color: 'text-blue-500', trend: '+5%' },
-    { title: 'Monthly Revenue', value: `₹${Number(metrics.monthly_revenue || 0).toLocaleString()}`, icon: TrendingUp, color: 'text-indigo-500', trend: '+18%' },
+    { title: 'Today\'s Revenue', value: formatINR(metrics.daily_revenue || 0), icon: IndianRupee, color: 'text-emerald-500', trend: '+12%' },
+    { title: 'Weekly Revenue', value: formatINR(metrics.weekly_revenue || 0), icon: Activity, color: 'text-blue-500', trend: '+5%' },
+    { title: 'Monthly Revenue', value: formatINR(metrics.monthly_revenue || 0), icon: TrendingUp, color: 'text-indigo-500', trend: '+18%' },
     { title: 'Total Customers', value: metrics.total_customers || 0, icon: Users, color: 'text-violet-500', trend: '+2 this week' },
     { title: 'Active Vehicles', value: metrics.active_vehicles || 0, icon: Car, color: 'text-amber-500', trend: 'Steady' },
     { title: 'Pending Appointments', value: metrics.pending_appointments || 0, icon: Calendar, color: 'text-orange-500', trend: 'Needs action' },
@@ -150,11 +151,11 @@ export const Dashboard = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.2} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} tickFormatter={(value) => `₹${value}`} dx={-10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} tickFormatter={(value) => formatINR(value, { compact: true })} dx={-10} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#f9fafb', borderRadius: '8px' }}
                   itemStyle={{ color: '#818cf8' }}
-                  formatter={(value: any) => [`₹${value}`, 'Revenue']}
+                  formatter={(value: any) => [formatINR(value), 'Revenue']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>

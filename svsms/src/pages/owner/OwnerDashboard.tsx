@@ -17,6 +17,7 @@ import {
   ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie
 } from 'recharts';
 import { apiClient } from '../../api/services/apiClient';
+import { formatINR } from '../../utils/format';
 
 export const OwnerDashboard = () => {
   const { user } = useAuthStore();
@@ -36,6 +37,7 @@ export const OwnerDashboard = () => {
   const [actualRevenue, setActualRevenue] = useState<number>(0);
   const [revenueGrowth, setRevenueGrowth] = useState<string>('0%');
   const [horizon, setHorizon] = useState<number>(30);
+  const [monthlyRevenueData, setMonthlyRevenueData] = useState<any[]>([]);
 
   useEffect(() => {
     fetchGarages();
@@ -71,7 +73,7 @@ export const OwnerDashboard = () => {
         setActualRevenue(filteredRevenue);
 
         if (Array.isArray(momRes) && momRes.length > 0) {
-          const sorted = [...momRes].sort((a, b) => a.month.localeCompare(b.month));
+          const sorted = [...momRes].sort((a, b) => (a.month || '').localeCompare(b.month || ''));
           const currentMonthStr = new Date().toISOString().slice(0, 7);
           const curIndex = sorted.findIndex(d => d.month === currentMonthStr);
           
@@ -91,8 +93,21 @@ export const OwnerDashboard = () => {
           }
           const prefix = growthPercent >= 0 ? '+' : '';
           setRevenueGrowth(`${prefix}${growthPercent.toFixed(1)}%`);
+
+          const chartMonths = sorted.map((m: any) => {
+            const d = new Date(`${m.month}-01T00:00:00`);
+            const name = isNaN(d.getTime()) ? m.month : d.toLocaleString('default', { month: 'short' });
+            return {
+              name,
+              revenue: parseFloat(m.revenue) || 0,
+              growth: parseFloat(m.growth_percentage) || 0,
+              jobs: parseInt(m.job_count) || 0
+            };
+          });
+          setMonthlyRevenueData(chartMonths);
         } else {
           setRevenueGrowth('0%');
+          setMonthlyRevenueData([]);
         }
       } catch (err: any) {
         console.error('Failed to fetch predictions:', err);
@@ -107,47 +122,23 @@ export const OwnerDashboard = () => {
   const activeGarages = garages.filter(g => g.status === 'ACTIVE').length;
   const totalMembers = garages.reduce((acc, g) => acc + (g.member_count || 0), 0);
 
-  // Revenue trend data
-  const revenueData = [
-    { name: 'Jan', revenue: 45000, jobs: 120 },
-    { name: 'Feb', revenue: 52000, jobs: 145 },
-    { name: 'Mar', revenue: 49000, jobs: 130 },
-    { name: 'Apr', revenue: 63000, jobs: 185 },
-    { name: 'May', revenue: 58000, jobs: 160 },
-    { name: 'Jun', revenue: 71000, jobs: 210 },
-    { name: 'Jul', revenue: 78000, jobs: 235 },
-  ];
+  // Dynamic multi-garage inventory analytics calculated across real active garages
+  const garageInventoryAnalytics = garages.map(g => {
+    const gItems = inventory.filter(i => i.garage_id === g.id);
+    return {
+      id: g.id,
+      name: g.name,
+      val: gItems.reduce((s, i) => s + ((i.quantity_in_stock || 0) * (i.unit_cost || 20)), 0),
+      lowStock: gItems.filter(i => ((i.quantity_in_stock || 0) - (i.reserved_quantity || 0)) <= (i.reorder_level || 5)).length,
+      skus: gItems.length
+    };
+  });
 
-  // Phase 6 Multi-Garage Inventory Analytics
-  const garageInventoryAnalytics = [
-    {
-      id: 'GAR-001',
-      name: 'Downtown Central',
-      val: inventory.filter(i => i.garage_id === 'GAR-001').reduce((s, i) => s + (i.quantity_in_stock * (i.unit_cost || 20)), 0),
-      lowStock: inventory.filter(i => i.garage_id === 'GAR-001' && (i.quantity_in_stock - (i.reserved_quantity || 0)) <= i.reorder_level).length,
-      skus: inventory.filter(i => i.garage_id === 'GAR-001').length
-    },
-    {
-      id: 'GAR-002',
-      name: 'Westside Express',
-      val: inventory.filter(i => i.garage_id === 'GAR-002').reduce((s, i) => s + (i.quantity_in_stock * (i.unit_cost || 20)), 0),
-      lowStock: inventory.filter(i => i.garage_id === 'GAR-002' && (i.quantity_in_stock - (i.reserved_quantity || 0)) <= i.reorder_level).length,
-      skus: inventory.filter(i => i.garage_id === 'GAR-002').length
-    },
-    {
-      id: 'GAR-003',
-      name: 'Suburban Hub',
-      val: inventory.filter(i => i.garage_id === 'GAR-003').reduce((s, i) => s + (i.quantity_in_stock * (i.unit_cost || 20)), 0),
-      lowStock: inventory.filter(i => i.garage_id === 'GAR-003' && (i.quantity_in_stock - (i.reserved_quantity || 0)) <= i.reorder_level).length,
-      skus: inventory.filter(i => i.garage_id === 'GAR-003').length
-    }
-  ];
-
-  // Dynamic garage bar chart data
+  // Dynamic garage bar chart data with true attributes
   const garageChartData = garages.map(g => ({
     name: g.name.length > 12 ? g.name.substring(0, 10) + '..' : g.name,
     members: g.member_count || 0,
-    rating: 4.5 + Math.random() * 0.5
+    rating: (g as any).rating || 4.8
   }));
 
   // Pie chart data
@@ -287,7 +278,7 @@ export const OwnerDashboard = () => {
             <div className="space-y-1">
               <p className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider">Monthly Revenue</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold tracking-tight">₹{actualRevenue.toLocaleString()}</span>
+                <span className="text-3xl font-extrabold tracking-tight">{formatINR(actualRevenue)}</span>
                 <span className={`text-xs font-semibold flex items-center font-mono ${revenueGrowth.startsWith('-') ? 'text-red-500' : 'text-emerald-500'}`}>
                   <TrendingUp className="w-3 h-3 mr-0.5" /> {revenueGrowth}
                 </span>
@@ -305,7 +296,7 @@ export const OwnerDashboard = () => {
               <p className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider">Inventory Valuation</p>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-extrabold tracking-tight">
-                  ₹{garageInventoryAnalytics.reduce((s, g) => s + g.val, 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  {formatINR(garageInventoryAnalytics.reduce((s, g) => s + g.val, 0))}
                 </span>
               </div>
             </div>
@@ -515,7 +506,7 @@ export const OwnerDashboard = () => {
                     <span className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider font-semibold">Inventory Risk</span>
                     {inventoryPrediction?.predictions && (
                       <Badge variant="destructive" className="font-mono text-[9px]">
-                        {inventoryPrediction.critical_count + inventoryPrediction.high_risk_count} Alert Items
+                        {(inventoryPrediction.critical_count || 0) + (inventoryPrediction.high_risk_count || 0)} Alert Items
                       </Badge>
                     )}
                   </div>
@@ -591,7 +582,7 @@ export const OwnerDashboard = () => {
                 </div>
                 <div className="pt-2 flex justify-between items-baseline border-t border-border/40 text-xs">
                   <span className="text-muted-foreground">Inventory Value:</span>
-                  <span className="font-extrabold font-mono text-foreground">₹{g.val.toLocaleString()}</span>
+                  <span className="font-extrabold font-mono text-foreground">{formatINR(g.val)}</span>
                 </div>
                 <div className="flex justify-between items-baseline text-xs">
                   <span className="text-muted-foreground">Active SKUs:</span>
@@ -614,8 +605,9 @@ export const OwnerDashboard = () => {
                     borderColor: 'hsl(var(--border))',
                     borderRadius: '8px'
                   }}
+                  formatter={(val) => [formatINR(Number(val)), 'Inventory Value']}
                 />
-                <Bar dataKey="val" name="Inventory Value (₹)" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="val" name="Inventory Value" fill="#6366f1" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -627,11 +619,14 @@ export const OwnerDashboard = () => {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg font-bold">Revenue Performance</CardTitle>
-            <CardDescription className="text-xs">Aggregated earnings across all garages</CardDescription>
+            <CardDescription className="text-xs">Month-over-month earnings across all garages</CardDescription>
           </CardHeader>
           <CardContent className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart 
+                data={monthlyRevenueData.length > 0 ? monthlyRevenueData : [{ name: 'Current', revenue: actualRevenue, jobs: 0 }]} 
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
                 <defs>
                   <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
@@ -646,7 +641,8 @@ export const OwnerDashboard = () => {
                     backgroundColor: isDark ? 'hsl(var(--card))' : '#ffffff',
                     borderColor: 'hsl(var(--border))',
                     borderRadius: '8px'
-                  }} 
+                  }}
+                  formatter={(val) => [formatINR(Number(val)), 'Revenue']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorRev)" />
               </AreaChart>

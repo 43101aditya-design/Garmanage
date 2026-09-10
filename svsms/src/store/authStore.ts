@@ -224,8 +224,16 @@ export const useAuthStore = create<AuthState>()(
             role: workspace.role,
             garageId: workspace.garage_id,
           });
-          const updatedUser: User = res?.user || { ...get().user!, role: workspace.role, activeWorkspace: workspace };
+
+          if (!res || (!res.user && !res.role)) {
+            throw new Error('Authoritative workspace switch failed: invalid response from server.');
+          }
+
+          const updatedUser: User = res.user || { ...get().user!, role: workspace.role, activeWorkspace: workspace };
           const newGarageId = workspace.garage_id || null;
+
+          // Invalidate and flush dependent garage state so old garage data never leaks
+          localStorage.removeItem('svsms-garage');
           set({
             user: updatedUser,
             selectedGarageId: newGarageId,
@@ -309,6 +317,7 @@ export const useAuthStore = create<AuthState>()(
             await signOut(auth);
           }
           localStorage.removeItem('svsms_token');
+          localStorage.removeItem('svsms-garage');
           set({ user: null, token: null, isAuthenticated: false, needsOnboarding: false, onboardingState: null, pendingRequests: [], selectedGarageId: null });
         } finally {
           set({ isLoading: false });

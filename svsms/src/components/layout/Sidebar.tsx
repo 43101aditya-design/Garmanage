@@ -137,36 +137,38 @@ export const Sidebar = () => {
             </nav>
           </div>
 
-          <div className="px-3">
-            <div className="flex items-center justify-between px-3 mb-3">
-              <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest font-mono flex items-center gap-1.5">
-                <Database className="w-3.5 h-3.5 text-primary" />
-                DBMS Intelligence
-              </h3>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold">MYSQL</span>
+          {(user?.role === 'owner' || (user?.role as string) === 'admin') && (
+            <div className="px-3">
+              <div className="flex items-center justify-between px-3 mb-3">
+                <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest font-mono flex items-center gap-1.5">
+                  <Database className="w-3.5 h-3.5 text-primary" />
+                  DBMS Intelligence
+                </h3>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold">MYSQL</span>
+              </div>
+              <nav className="space-y-1">
+                {dbmsNav.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={({ isActive }) => cn(
+                        "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
+                        isActive 
+                          ? "bg-primary/10 text-primary border-primary font-semibold" 
+                          : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
+                      )}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform text-primary/80" />
+                      {item.name}
+                    </NavLink>
+                  );
+                })}
+              </nav>
             </div>
-            <nav className="space-y-1">
-              {dbmsNav.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    className={({ isActive }) => cn(
-                      "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
-                      isActive 
-                        ? "bg-primary/10 text-primary border-primary font-semibold" 
-                        : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
-                    )}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform text-primary/80" />
-                    {item.name}
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
+          )}
         </div>
 
         <div className="p-4 border-t border-border/80 bg-muted/20 shrink-0">

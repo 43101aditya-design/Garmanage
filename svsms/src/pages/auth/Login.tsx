@@ -169,33 +169,35 @@ export const Login = () => {
             </CardContent>
           </Card>
 
-          {/* Demo Login Panel */}
-          <Card className="w-full shadow-lg border border-amber-200 bg-amber-50/80">
-            <CardHeader className="pb-2 pt-4 px-6">
-              <div className="flex items-center gap-2">
-                <FlaskConical className="w-4 h-4 text-amber-600" />
-                <CardTitle className="text-sm font-bold text-amber-800">Demo / Dev Mode</CardTitle>
-              </div>
-              <CardDescription className="text-xs text-amber-700">Instant login without Google. For testing only.</CardDescription>
-            </CardHeader>
-            <CardContent className="pb-5 px-6">
-              <div className="grid grid-cols-2 gap-2">
-                {(['owner', 'manager', 'mechanic', 'customer'] as const).map((role) => (
-                  <button
-                    key={role}
-                    onClick={() => handleDevLogin(role)}
-                    className="py-2 px-3 text-xs font-semibold rounded-lg border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 transition-colors capitalize flex items-center gap-1.5 justify-center"
-                  >
-                    {role === 'owner' && <Store className="w-3 h-3" />}
-                    {role === 'manager' && <Users className="w-3 h-3" />}
-                    {role === 'mechanic' && <Wrench className="w-3 h-3" />}
-                    {role === 'customer' && <Car className="w-3 h-3" />}
-                    {role.charAt(0).toUpperCase() + role.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Demo Login Panel (Visible only in Development / Test environments) */}
+          {!import.meta.env.PROD && (
+            <Card className="w-full shadow-lg border border-amber-200 bg-amber-50/80">
+              <CardHeader className="pb-2 pt-4 px-6">
+                <div className="flex items-center gap-2">
+                  <FlaskConical className="w-4 h-4 text-amber-600" />
+                  <CardTitle className="text-sm font-bold text-amber-800">Demo / Dev Mode (Local Only)</CardTitle>
+                </div>
+                <CardDescription className="text-xs text-amber-700">Instant login without Google. For development and testing only.</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-5 px-6">
+                <div className="grid grid-cols-2 gap-2">
+                  {(['owner', 'manager', 'mechanic', 'customer'] as const).map((role) => (
+                    <button
+                      key={role}
+                      onClick={() => handleDevLogin(role)}
+                      className="py-2 px-3 text-xs font-semibold rounded-lg border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 transition-colors capitalize flex items-center gap-1.5 justify-center"
+                    >
+                      {role === 'owner' && <Store className="w-3 h-3" />}
+                      {role === 'manager' && <Users className="w-3 h-3" />}
+                      {role === 'mechanic' && <Wrench className="w-3 h-3" />}
+                      {role === 'customer' && <Car className="w-3 h-3" />}
+                      {role.charAt(0).toUpperCase() + role.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
