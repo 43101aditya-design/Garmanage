@@ -98,7 +98,14 @@ exports.runSimulation = async (req, res, next) => {
             custom_snapshot: custom_snapshot || null
         };
 
+        console.log(`[DIGITAL_TWIN:SIMULATION] Running scenario '${simPayload.scenario_type}' for garage '${targetGarageId}' (User: ${req.user.id}, Role: ${req.user.role})`);
         const result = await callPythonService('/api/digital-twin/simulate', simPayload);
+        
+        // Attach explicit simulation mode flags to output
+        result.mode = 'SIMULATION';
+        result.is_simulated = true;
+        result.environment = process.env.NODE_ENV || 'production';
+
 
         // Optionally persist to Simulation_Scenario, Simulation_Run, and Simulation_Result
         if (save_to_history !== false && req.db) {

@@ -156,20 +156,23 @@ export const DigitalTwinStudio: React.FC = () => {
     <div className="flex flex-col space-y-6">
       
       {/* Top Banner: Isolation Guarantee & Navigation */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card/60 border border-border/80 p-4 rounded-xl backdrop-blur-sm shadow-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card/60 border-2 border-amber-500/30 p-4 rounded-xl backdrop-blur-sm shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 text-primary">
+          <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500">
             <BrainCircuit className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-foreground">Digital Twin Operations & Simulation Center</h2>
-              <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3" /> ZERO-MUTATION SANDBOX
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-bold text-foreground">Digital Twin Operations & What-If Studio</h2>
+              <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-full flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> READ-ONLY SIMULATION MODE
+              </span>
+              <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> ZERO PROD MUTATION
               </span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Simulate operational perturbations, solve multi-objective OR-Tools optimizations, and analyze capacity sensitivity.
+              Simulate operational perturbations, solve multi-objective OR-Tools optimizations, and analyze capacity sensitivity in complete read-only isolation.
             </p>
           </div>
         </div>

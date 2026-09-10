@@ -45,6 +45,7 @@ async function pyGet(path) {
  * Scan operational database and generate actionable pending decisions for a garage.
  */
 async function generatePendingDecisionsForGarage(db, garageId) {
+    console.log(`[PRODUCTION:REAL_DATA] Scanning operational database for garage '${garageId}' decisions.`);
     const generated = [];
 
     // 1. Unassigned Job Cards -> MECHANIC_ASSIGNMENT Decisions
