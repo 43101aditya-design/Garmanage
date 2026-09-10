@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { 
+  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult, 
+  GoogleAuthProvider, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
 import { auth, isFirebaseConfigured } from '../config/firebase';
 import { apiClient } from '../api/services/apiClient';
 
@@ -58,6 +65,7 @@ interface AuthState {
   setLoading: (loading: boolean) => void;
   setSelectedGarage: (garageId: string) => void;
   syncProfile: () => Promise<void>;
+  initAuthListener: () => () => void;
 }
 
 const provider = new GoogleAuthProvider();
@@ -128,6 +136,11 @@ const getInitialLoadingState = () => {
     const stored = localStorage.getItem('auth-storage');
     if (stored) {
       const parsed = JSON.parse(stored);
+      // If user session and token are both cached, hydrate immediately without blocking spinner
+      if (parsed?.state?.token && parsed?.state?.user && parsed?.state?.isAuthenticated) {
+        localStorage.setItem('svsms_token', parsed.state.token);
+        return false;
+      }
       if (parsed?.state?.token) {
         localStorage.setItem('svsms_token', parsed.state.token);
         return true;
@@ -181,13 +194,30 @@ export const useAuthStore = create<AuthState>()(
       },
 
       syncProfile: async () => {
+        const currentToken = get().token || localStorage.getItem('svsms_token');
+        if (!currentToken) return;
+
+        // Dev tokens are self-contained demo users (preserve offline & in production)
+        if (currentToken.startsWith('dev-token')) {
+          const role = currentToken.replace('dev-token-', '') as keyof typeof DEV_USERS;
+          if (DEV_USERS[role]) {
+            const user = get().user || DEV_USERS[role];
+            set({ 
+              user, 
+              isAuthenticated: true, 
+              needsOnboarding: false, 
+              onboardingState: 'ACTIVE',
+              selectedGarageId: user.activeWorkspace?.garage_id || user.memberships?.[0]?.garage_id || null
+            });
+            return;
+          }
+        }
+
         try {
           const res = await apiClient.get('/api/auth/me');
           const user: User = res?.user ?? res;
           if (!user || !user.id) {
             console.warn('[syncProfile] Unexpected response shape:', res);
-            localStorage.removeItem('svsms_token');
-            set({ user: null, isAuthenticated: false, token: null, needsOnboarding: false, onboardingState: null });
             return;
           }
           const onboardingState = user.onboarding_state || 'ACTIVE';
@@ -208,13 +238,76 @@ export const useAuthStore = create<AuthState>()(
             const onboardingState = data.onboarding_state || 'ONBOARDING';
             const pendingRequests: JoinRequest[] = data.pendingRequests || [];
             set({ needsOnboarding: true, isAuthenticated: false, user: null, onboardingState, pendingRequests });
+          } else if (error?.status === 401) {
+            // Check if Firebase auth can refresh the token before invalidating
+            let refreshed = false;
+            try {
+              if (auth.currentUser) {
+                const freshToken = await auth.currentUser.getIdToken(true);
+                localStorage.setItem('svsms_token', freshToken);
+                set({ token: freshToken });
+                refreshed = true;
+                const retryRes = await apiClient.get('/api/auth/me');
+                const retryUser: User = retryRes?.user ?? retryRes;
+                if (retryUser && retryUser.id) {
+                  set({ user: retryUser, isAuthenticated: true });
+                  return;
+                }
+              }
+            } catch (refErr) {
+              console.warn('[syncProfile] Automatic token refresh failed:', refErr);
+            }
+
+            if (!refreshed) {
+              console.warn('[syncProfile] Session expired or unauthorized.');
+              localStorage.removeItem('svsms_token');
+              localStorage.removeItem('svsms-garage');
+              localStorage.removeItem('auth-storage');
+              set({ user: null, isAuthenticated: false, token: null, needsOnboarding: false, onboardingState: null });
+            }
           } else {
-            console.error('Failed to sync profile', error);
-            localStorage.removeItem('svsms_token');
-            set({ user: null, isAuthenticated: false, token: null, needsOnboarding: false, onboardingState: null });
-            throw error;
+            // For temporary network glitches / offline / 500s:
+            // NEVER destroy existing login session! Retain the cached user credentials.
+            console.warn('[syncProfile] Non-fatal sync error (retaining cached session):', error?.message || error);
           }
         }
+      },
+
+      initAuthListener: () => {
+        if (!isFirebaseConfigured) return () => {};
+
+        let isFirstCheck = true;
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          if (firebaseUser) {
+            try {
+              const freshToken = await firebaseUser.getIdToken();
+              localStorage.setItem('svsms_token', freshToken);
+              set({ token: freshToken });
+              await get().syncProfile();
+            } catch (err) {
+              console.warn('[AUTH] Background token refresh error:', err);
+            } finally {
+              if (isFirstCheck) {
+                set({ isLoading: false });
+                isFirstCheck = false;
+              }
+            }
+          } else {
+            const currentToken = get().token || localStorage.getItem('svsms_token');
+            // If Firebase says no user and current token is a Firebase token (not dev), clear session
+            if (currentToken && !currentToken.startsWith('dev-token')) {
+              localStorage.removeItem('svsms_token');
+              localStorage.removeItem('auth-storage');
+              set({ user: null, token: null, isAuthenticated: false, onboardingState: null });
+            }
+            if (isFirstCheck) {
+              set({ isLoading: false });
+              isFirstCheck = false;
+            }
+          }
+        });
+
+        return unsubscribe;
       },
 
       switchWorkspace: async (workspace: Workspace) => {
@@ -318,7 +411,16 @@ export const useAuthStore = create<AuthState>()(
           }
           localStorage.removeItem('svsms_token');
           localStorage.removeItem('svsms-garage');
-          set({ user: null, token: null, isAuthenticated: false, needsOnboarding: false, onboardingState: null, pendingRequests: [], selectedGarageId: null });
+          localStorage.removeItem('auth-storage');
+          set({ 
+            user: null, 
+            token: null, 
+            isAuthenticated: false, 
+            needsOnboarding: false, 
+            onboardingState: null, 
+            pendingRequests: [], 
+            selectedGarageId: null 
+          });
         } finally {
           set({ isLoading: false });
         }
@@ -326,7 +428,14 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ token: state.token, selectedGarageId: state.selectedGarageId }),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+        selectedGarageId: state.selectedGarageId,
+        onboardingState: state.onboardingState,
+        needsOnboarding: state.needsOnboarding,
+      }),
     }
   )
 );

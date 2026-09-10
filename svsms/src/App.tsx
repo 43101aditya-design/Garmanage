@@ -23,22 +23,24 @@ function App() {
   const syncProfile = useAuthStore(state => state.syncProfile);
   const setLoading = useAuthStore(state => state.setLoading);
 
-  // Synchronize profile on app startup if a token exists but user profile is missing from memory
+  // Synchronize profile on app startup and attach Firebase auth listener
   useEffect(() => {
-    const initializeAuth = async () => {
-      if (token && !user) {
-        setLoading(true);
-        try {
-          await syncProfile();
-        } catch (e) {
-          console.error('[AUTH] Failed to restore session on startup:', e);
-        } finally {
-          setLoading(false);
-        }
+    const unsubscribe = useAuthStore.getState().initAuthListener();
+
+    // If token exists, verify and refresh profile in background without blocking cached session
+    const currentToken = useAuthStore.getState().token;
+    if (currentToken) {
+      useAuthStore.getState().syncProfile().catch((e) => {
+        console.warn('[AUTH] Background session verification skipped/offline:', e?.message || e);
+      });
+    }
+
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
       }
     };
-    initializeAuth();
-  }, [token, user, syncProfile, setLoading]);
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;

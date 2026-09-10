@@ -72,10 +72,14 @@ export const apiClient = {
         try {
             let response = await fetch(url, options);
             
-            // Handle token expiration for legacy tokens
-            if (response.status === 401 && !endpoint.startsWith('/auth/')) {
-                localStorage.removeItem('svsms_token');
-                console.warn('Token expired or unauthorized');
+            // Handle token expiration: only clear token if authoritative /api/auth/me explicitly rejects it
+            if (response.status === 401 && (endpoint === '/api/auth/me' || endpoint === '/auth/me')) {
+                const currentToken = localStorage.getItem('svsms_token');
+                if (currentToken && !currentToken.startsWith('dev-token')) {
+                    localStorage.removeItem('svsms_token');
+                    localStorage.removeItem('auth-storage');
+                    console.warn('[apiClient] Session expired on /api/auth/me');
+                }
             }
 
             const isJson = response.headers.get('content-type')?.includes('application/json');
