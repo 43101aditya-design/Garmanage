@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { apiClient } from '../../api/services/apiClient';
 import toast from 'react-hot-toast';
@@ -59,7 +59,7 @@ const INTENT_CONFIG: Record<Intent, IntentConfig> = {
 
 export const Onboarding = () => {
   const navigate = useNavigate();
-  const { syncProfile, needsOnboarding, isAuthenticated, user } = useAuthStore();
+  const { token, syncProfile, needsOnboarding, isAuthenticated, user, isLoading } = useAuthStore();
   const [step, setStep] = useState<Step>('role');
   const [intent, setIntent] = useState<Intent | null>(null);
   const [loading, setLoading] = useState(false);
@@ -89,10 +89,20 @@ export const Onboarding = () => {
   const [doneJoinCode, setDoneJoinCode] = useState('');
 
   useEffect(() => {
+    // If not authenticated, redirect to /login immediately
+    if (!token && !isAuthenticated && !isLoading) {
+      navigate('/login', { replace: true });
+      return;
+    }
+    // If authenticated and onboarding already completed, redirect to active dashboard
     if (isAuthenticated && user && !needsOnboarding) {
       navigate('/', { replace: true });
     }
-  }, [isAuthenticated, user, needsOnboarding, navigate]);
+  }, [token, isAuthenticated, user, needsOnboarding, isLoading, navigate]);
+
+  if (!token && !isAuthenticated && !isLoading) {
+    return <Navigate to="/login" replace />;
+  }
 
   const handleCreateGarage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
