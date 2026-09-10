@@ -60,9 +60,19 @@ const CustomerHistory = lazy(() => import('../pages/history/CustomerHistory').th
 const WorkflowTimeline = lazy(() => import('../pages/workflow/WorkflowTimeline').then(m => ({ default: m.WorkflowTimeline })));
 const Settings = lazy(() => import('../pages/settings/Settings').then(m => ({ default: m.Settings })));
 
-// Index routing component
+// Index routing component: smoothly routes to the user's dashboard if logged in
 const IndexRedirect = () => {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-900 text-slate-100">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span className="text-sm font-medium text-slate-400">Loading your profile...</span>
+        </div>
+      </div>
+    );
+  }
   if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
   const target = getDashboardRoute(user.role);
   return <Navigate to={target} replace />;

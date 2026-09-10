@@ -131,38 +131,63 @@ const DEV_USERS: Record<string, User> = {
   },
 };
 
-const getInitialLoadingState = () => {
+const getInitialAuthState = () => {
   try {
     const stored = localStorage.getItem('auth-storage');
     if (stored) {
       const parsed = JSON.parse(stored);
-      // If user session and token are both cached, hydrate immediately without blocking spinner
-      if (parsed?.state?.token && parsed?.state?.user && parsed?.state?.isAuthenticated) {
+      if (parsed?.state?.token && parsed?.state?.user) {
         localStorage.setItem('svsms_token', parsed.state.token);
-        return false;
+        return {
+          user: parsed.state.user,
+          token: parsed.state.token,
+          isAuthenticated: true,
+          selectedGarageId: parsed.state.selectedGarageId || null,
+          onboardingState: parsed.state.onboardingState || 'ACTIVE',
+          needsOnboarding: parsed.state.needsOnboarding || false,
+          isLoading: false,
+        };
       }
-      if (parsed?.state?.token) {
-        localStorage.setItem('svsms_token', parsed.state.token);
-        return true;
-      }
+    }
+    const rawToken = localStorage.getItem('svsms_token');
+    if (rawToken) {
+      return {
+        user: null,
+        token: rawToken,
+        isAuthenticated: false,
+        selectedGarageId: null,
+        onboardingState: null,
+        needsOnboarding: false,
+        isLoading: true,
+      };
     }
   } catch (e) {
     console.error('[AUTH] Failed to parse auth-storage', e);
   }
-  return false;
+  return {
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    selectedGarageId: null,
+    onboardingState: null,
+    needsOnboarding: false,
+    isLoading: false,
+  };
 };
+
+const initialAuthState = getInitialAuthState();
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      needsOnboarding: false,
-      onboardingState: null,
+      user: initialAuthState.user,
+      token: initialAuthState.token,
+      isAuthenticated: initialAuthState.isAuthenticated,
+      needsOnboarding: initialAuthState.needsOnboarding,
+      onboardingState: initialAuthState.onboardingState,
       pendingRequests: [],
-      selectedGarageId: null,
-      isLoading: getInitialLoadingState(),
+      selectedGarageId: initialAuthState.selectedGarageId,
+      isLoading: initialAuthState.isLoading,
 
       setLoading: (loading) => set({ isLoading: loading }),
       setUser: (user) => set({ user, isAuthenticated: !!user }),
@@ -276,7 +301,27 @@ export const useAuthStore = create<AuthState>()(
       initAuthListener: () => {
         if (!isFirebaseConfigured) return () => {};
 
-        let isFirstCheck = true;
+        // Wait for Firebase to finish restoring persistent credentials from IndexedDB
+        if (typeof (auth as any).authStateReady === 'function') {
+          (auth as any).authStateReady().then(async () => {
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+              try {
+                const freshToken = await currentUser.getIdToken();
+                localStorage.setItem('svsms_token', freshToken);
+                set({ token: freshToken });
+                await get().syncProfile();
+              } catch (err) {
+                console.warn('[AUTH] Token refresh error:', err);
+              }
+            }
+            set({ isLoading: false });
+          }).catch((err: any) => {
+            console.warn('[AUTH] authStateReady error:', err);
+            set({ isLoading: false });
+          });
+        }
+
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           if (firebaseUser) {
             try {
@@ -287,22 +332,7 @@ export const useAuthStore = create<AuthState>()(
             } catch (err) {
               console.warn('[AUTH] Background token refresh error:', err);
             } finally {
-              if (isFirstCheck) {
-                set({ isLoading: false });
-                isFirstCheck = false;
-              }
-            }
-          } else {
-            const currentToken = get().token || localStorage.getItem('svsms_token');
-            // If Firebase says no user and current token is a Firebase token (not dev), clear session
-            if (currentToken && !currentToken.startsWith('dev-token')) {
-              localStorage.removeItem('svsms_token');
-              localStorage.removeItem('auth-storage');
-              set({ user: null, token: null, isAuthenticated: false, onboardingState: null });
-            }
-            if (isFirstCheck) {
               set({ isLoading: false });
-              isFirstCheck = false;
             }
           }
         });

@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCuqbHR7XUoHtvccDxcy7VErSmKWWsGezg",
@@ -20,6 +20,16 @@ try {
 }
 
 export const auth = getAuth(app);
+
+// Explicitly guarantee browser local storage persistence so Google sessions never drop on reload/reopen
+try {
+  setPersistence(auth, browserLocalPersistence).catch((err) => {
+    console.warn("[Firebase] Persistence warning:", err);
+  });
+} catch (e) {
+  console.warn("[Firebase] Could not set persistence:", e);
+}
+
 export const isFirebaseConfigured = !!(
   firebaseConfig.apiKey &&
   firebaseConfig.apiKey !== 'missing' &&
