@@ -1,0 +1,14 @@
+.git
+.agents
+.gemini
+ui_evidence
+ui_evidence_actual
+*.zip
+evidence_log.json
+python_service/venv
+python_service/__pycache__
+capture_evidence.cjs
+capture_actual_evidence.cjs
+node_modules
+svsms/node_modules
+backend/node_modules
