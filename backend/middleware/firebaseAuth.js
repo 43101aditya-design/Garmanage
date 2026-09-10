@@ -13,22 +13,39 @@ const loadUserAndMemberships = async (req, res, next, userData) => {
             const [uidRecords] = await req.db.query('SELECT * FROM User_Account WHERE firebase_uid = ?', [userData.firebase_uid]);
             rows = uidRecords;
             
-            // 2. If not found by UID, check if there's a pre-existing email/password account with the same email
+            // 2. If not found by UID, check if there's a pre-existing email account with the same email
             if (rows.length === 0 && userData.email) {
                 const [emailRecords] = await req.db.query('SELECT * FROM User_Account WHERE email = ?', [userData.email]);
                 if (emailRecords.length > 0) {
                     const existingUser = emailRecords[0];
                     // Link the accounts by updating the firebase_uid field to avoid duplicates
                     await req.db.query('UPDATE User_Account SET firebase_uid = ? WHERE id = ?', [userData.firebase_uid, existingUser.id]);
-                    console.log(`[AUTH] Linked Firebase UID ${userData.firebase_uid} to pre-existing email/password user ID: ${existingUser.id}`);
+                    console.log(`[AUTH] Linked Firebase UID ${userData.firebase_uid} to pre-existing email user ID: ${existingUser.id}`);
                     
-                    // Fetch the updated user account
                     const [updatedRecords] = await req.db.query('SELECT * FROM User_Account WHERE id = ?', [existingUser.id]);
                     rows = updatedRecords;
                 }
             }
             
-            // 3. If still not found in the DB, delegate to the onboarding check
+            // 3. If still not found in User_Account, check if there is a Customer record with this email
+            if (rows.length === 0 && userData.email) {
+                const [custRecords] = await req.db.query('SELECT * FROM Customer WHERE email = ?', [userData.email]);
+                if (custRecords.length > 0) {
+                    const cust = custRecords[0];
+                    const newUserId = require('uuid').v4();
+                    const baseUsername = userData.email.split('@')[0];
+                    const username = `${baseUsername}_${Math.random().toString(36).substring(2, 7)}`;
+                    await req.db.query(
+                        `INSERT INTO User_Account (id, firebase_uid, name, email, role, reference_id, onboarding_state, username, password_hash)
+                         VALUES (?, ?, ?, ?, 'customer', ?, 'ACTIVE', ?, 'firebase_auth')`,
+                        [newUserId, userData.firebase_uid, `${cust.first_name || ''} ${cust.last_name || ''}`.trim() || userData.name || 'Customer', userData.email, cust.id, username]
+                    );
+                    const [createdRows] = await req.db.query('SELECT * FROM User_Account WHERE id = ?', [newUserId]);
+                    rows = createdRows;
+                }
+            }
+            
+            // 4. If still not found in the DB, delegate to the onboarding check
             if (rows.length === 0) {
                 const isOnboardingRoute = req.originalUrl.includes('/auth/me') || req.originalUrl.includes('/auth/onboard') || req.originalUrl.includes('/onboarding/');
                 if (isOnboardingRoute) {
@@ -49,22 +66,82 @@ const loadUserAndMemberships = async (req, res, next, userData) => {
         
         const user = rows[0];
         
-        // Destructure memberships properly to capture the rows array
+        // Destructure active memberships with Garage details
         const [memberships] = await req.db.query(`
-            SELECT gm.garage_id, r.name AS role_name, gm.id AS membership_id 
+            SELECT gm.garage_id, g.name AS garage_name, g.city AS garage_city, r.name AS role_name, gm.id AS membership_id 
             FROM Garage_Membership gm 
             JOIN Role r ON gm.role_id = r.id 
+            JOIN Garage g ON gm.garage_id = g.id
             WHERE gm.user_id = ? AND gm.status = 'ACTIVE'
         `, [user.id]);
+        
+        // Check customer profile
+        const [customerRows] = await req.db.query(`
+            SELECT id, first_name, last_name, email, phone, address 
+            FROM Customer 
+            WHERE id = ? OR email = ?
+        `, [user.reference_id || '', user.email]);
+        const customerProfile = customerRows.length > 0 ? customerRows[0] : null;
+
+        // Build list of all available workspaces authorized for this user
+        const availableWorkspaces = [];
+        if (customerProfile || user.role === 'customer') {
+            availableWorkspaces.push({
+                id: 'customer_personal',
+                type: 'customer',
+                role: 'customer',
+                name: 'Personal Customer Account',
+                description: 'Manage vehicles & book service appointments'
+            });
+        }
+        for (const m of memberships) {
+            availableWorkspaces.push({
+                id: m.membership_id,
+                type: 'garage',
+                role: m.role_name,
+                garage_id: m.garage_id,
+                garage_name: m.garage_name,
+                name: m.garage_name,
+                description: `${m.role_name.charAt(0).toUpperCase() + m.role_name.slice(1)} Workspace (${m.garage_city || 'General'})`
+            });
+        }
+
+        // Determine current active workspace
+        let activeWorkspace = null;
+        if (user.role === 'customer') {
+            activeWorkspace = {
+                id: 'customer_personal',
+                type: 'customer',
+                role: 'customer',
+                name: 'Personal Customer Account',
+                description: 'Manage vehicles & book service appointments'
+            };
+        } else {
+            const matched = memberships.find(m => m.role_name === user.role) || memberships[0];
+            if (matched) {
+                activeWorkspace = {
+                    id: matched.membership_id,
+                    type: 'garage',
+                    role: matched.role_name,
+                    garage_id: matched.garage_id,
+                    garage_name: matched.garage_name,
+                    name: matched.garage_name,
+                    description: `${matched.role_name.charAt(0).toUpperCase() + matched.role_name.slice(1)} Workspace`
+                };
+            }
+        }
         
         req.user = {
             id: user.id,
             firebase_uid: user.firebase_uid,
             name: user.name,
             email: user.email,
+            phone: user.phone || (customerProfile ? customerProfile.phone : undefined),
             role: user.role,
-            customer_id: user.reference_id,
-            memberships: memberships
+            customer_id: user.reference_id || (customerProfile ? customerProfile.id : null),
+            memberships: memberships,
+            availableWorkspaces: availableWorkspaces,
+            activeWorkspace: activeWorkspace
         };
         
         next();

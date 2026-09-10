@@ -11,6 +11,16 @@ export interface JoinRequest {
   garage_name: string;
 }
 
+export interface Workspace {
+  id: string;
+  type: 'customer' | 'garage';
+  role: 'owner' | 'manager' | 'mechanic' | 'customer';
+  garage_id?: string;
+  garage_name?: string;
+  name: string;
+  description: string;
+}
+
 export interface User {
   id: string;
   firebase_uid: string;
@@ -18,7 +28,12 @@ export interface User {
   email: string;
   phone?: string;
   role: 'owner' | 'manager' | 'mechanic' | 'customer';
-  memberships: Array<{ garage_id: string; role_name: string; membership_id: string }>;
+  customer_id?: string | null;
+  garage_id?: string | null;
+  garage_name?: string | null;
+  memberships: Array<{ garage_id: string; garage_name?: string; role_name: string; membership_id: string }>;
+  availableWorkspaces?: Workspace[];
+  activeWorkspace?: Workspace | null;
   onboarding_state?: 'ACTIVE' | 'PENDING_APPROVAL' | 'ONBOARDING';
   pendingRequests?: JoinRequest[];
 }
@@ -36,6 +51,7 @@ interface AuthState {
   handleRedirectResult: () => Promise<void>;
   devLogin: (role: 'owner' | 'manager' | 'mechanic' | 'customer') => void;
   onboard: (role: string) => Promise<void>;
+  switchWorkspace: (workspace: Workspace) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
@@ -56,7 +72,12 @@ const DEV_USERS: Record<string, User> = {
     email: 'admin@svsms.com',
     role: 'owner',
     onboarding_state: 'ACTIVE',
-    memberships: [{ garage_id: REAL_GARAGE_ID, role_name: 'owner', membership_id: 'dev-m-owner' }],
+    memberships: [{ garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', role_name: 'owner', membership_id: 'dev-m-owner' }],
+    availableWorkspaces: [
+      { id: 'dev-m-owner', type: 'garage', role: 'owner', garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', name: 'Apex Speed Garage', description: 'Owner Workspace' },
+      { id: 'customer_personal', type: 'customer', role: 'customer', name: 'Personal Customer Account', description: 'Manage vehicles & book services' }
+    ],
+    activeWorkspace: { id: 'dev-m-owner', type: 'garage', role: 'owner', garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', name: 'Apex Speed Garage', description: 'Owner Workspace' }
   },
   manager: {
     id: '75accc6d-2146-42fe-a1b9-3a744d9c4167',
@@ -65,7 +86,12 @@ const DEV_USERS: Record<string, User> = {
     email: 'manager@svsms.com',
     role: 'manager',
     onboarding_state: 'ACTIVE',
-    memberships: [{ garage_id: REAL_GARAGE_ID, role_name: 'manager', membership_id: 'dev-m-manager' }],
+    memberships: [{ garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', role_name: 'manager', membership_id: 'dev-m-manager' }],
+    availableWorkspaces: [
+      { id: 'dev-m-manager', type: 'garage', role: 'manager', garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', name: 'Apex Speed Garage', description: 'Manager Workspace' },
+      { id: 'customer_personal', type: 'customer', role: 'customer', name: 'Personal Customer Account', description: 'Manage vehicles & book services' }
+    ],
+    activeWorkspace: { id: 'dev-m-manager', type: 'garage', role: 'manager', garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', name: 'Apex Speed Garage', description: 'Manager Workspace' }
   },
   mechanic: {
     id: 'ef002b07-5614-4ec2-a8fe-9a933e13f6fc',
@@ -74,7 +100,12 @@ const DEV_USERS: Record<string, User> = {
     email: 'mechanic@svsms.com',
     role: 'mechanic',
     onboarding_state: 'ACTIVE',
-    memberships: [{ garage_id: REAL_GARAGE_ID, role_name: 'mechanic', membership_id: 'dev-m-mechanic' }],
+    memberships: [{ garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', role_name: 'mechanic', membership_id: 'dev-m-mechanic' }],
+    availableWorkspaces: [
+      { id: 'dev-m-mechanic', type: 'garage', role: 'mechanic', garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', name: 'Apex Speed Garage', description: 'Mechanic Workspace' },
+      { id: 'customer_personal', type: 'customer', role: 'customer', name: 'Personal Customer Account', description: 'Manage vehicles & book services' }
+    ],
+    activeWorkspace: { id: 'dev-m-mechanic', type: 'garage', role: 'mechanic', garage_id: REAL_GARAGE_ID, garage_name: 'Apex Speed Garage', name: 'Apex Speed Garage', description: 'Mechanic Workspace' }
   },
   customer: {
     id: 'dev-customer-1',
@@ -82,11 +113,15 @@ const DEV_USERS: Record<string, User> = {
     name: 'Dev Customer',
     email: 'customer@garmanage.dev',
     role: 'customer',
+    customer_id: 'customer-uuid-1',
     onboarding_state: 'ACTIVE',
     memberships: [],
+    availableWorkspaces: [
+      { id: 'customer_personal', type: 'customer', role: 'customer', name: 'Personal Customer Account', description: 'Manage vehicles & book services' }
+    ],
+    activeWorkspace: { id: 'customer_personal', type: 'customer', role: 'customer', name: 'Personal Customer Account', description: 'Manage vehicles & book services' }
   },
 };
-
 
 const getInitialLoadingState = () => {
   try {
@@ -94,7 +129,6 @@ const getInitialLoadingState = () => {
     if (stored) {
       const parsed = JSON.parse(stored);
       if (parsed?.state?.token) {
-        // Hydrate svsms_token in localStorage immediately for early apiClient requests
         localStorage.setItem('svsms_token', parsed.state.token);
         return true;
       }
@@ -149,10 +183,8 @@ export const useAuthStore = create<AuthState>()(
       syncProfile: async () => {
         try {
           const res = await apiClient.get('/api/auth/me');
-          // apiClient returns raw JSON — the body is { user: {...} }
           const user: User = res?.user ?? res;
           if (!user || !user.id) {
-            // Unexpected response shape — treat as unauthenticated
             console.warn('[syncProfile] Unexpected response shape:', res);
             localStorage.removeItem('svsms_token');
             set({ user: null, isAuthenticated: false, token: null, needsOnboarding: false, onboardingState: null });
@@ -160,12 +192,17 @@ export const useAuthStore = create<AuthState>()(
           }
           const onboardingState = user.onboarding_state || 'ACTIVE';
           const pendingRequests: JoinRequest[] = user.pendingRequests || [];
-          const selectedGarageId = user.memberships?.length === 1
-            ? user.memberships[0].garage_id
-            : get().selectedGarageId;
-          set({ user, isAuthenticated: true, needsOnboarding: false, onboardingState, pendingRequests, selectedGarageId });
+          const selectedGarageId = user.activeWorkspace?.garage_id 
+            || (user.memberships?.length === 1 ? user.memberships[0].garage_id : get().selectedGarageId);
+          set({ 
+            user, 
+            isAuthenticated: true, 
+            needsOnboarding: false, 
+            onboardingState, 
+            pendingRequests, 
+            selectedGarageId 
+          });
         } catch (error: any) {
-          // apiClient now attaches .response.data and .data to all error objects
           const data = error?.response?.data ?? error?.data ?? {};
           if (data.requiresOnboarding) {
             const onboardingState = data.onboarding_state || 'ONBOARDING';
@@ -180,9 +217,27 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      switchWorkspace: async (workspace: Workspace) => {
+        set({ isLoading: true });
+        try {
+          const res = await apiClient.post('/api/auth/switch-workspace', {
+            role: workspace.role,
+            garageId: workspace.garage_id,
+          });
+          const updatedUser: User = res?.user || { ...get().user!, role: workspace.role, activeWorkspace: workspace };
+          const newGarageId = workspace.garage_id || null;
+          set({
+            user: updatedUser,
+            selectedGarageId: newGarageId,
+            isLoading: false,
+          });
+          await get().syncProfile();
+        } catch (error) {
+          set({ isLoading: false });
+          throw error;
+        }
+      },
 
-
-      // Called when user clicks "Continue with Google" — opens a popup for instant login
       googleLogin: async () => {
         if (!isFirebaseConfigured) {
           throw new Error('Google sign-in is not available. Firebase is not configured.');
@@ -214,7 +269,6 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      // Call this on app startup — picks up Google token after redirect returns
       handleRedirectResult: async () => {
         if (!isFirebaseConfigured) return;
         set({ isLoading: true });
@@ -231,7 +285,6 @@ export const useAuthStore = create<AuthState>()(
           let msg = 'Google sign-in failed after redirect.';
           if (error.code === 'auth/unauthorized-domain') msg = 'Domain not authorized in Firebase Console.';
           else if (error.message) msg = error.message;
-          // Surface the error to Login page via a re-throw so it can show toast
           throw new Error(msg);
         } finally {
           set({ isLoading: false });

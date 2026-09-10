@@ -111,9 +111,90 @@ app.use('/api/digital-twin', digitalTwinRoutes);
 
 app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async (req, res) => { 
     if (!req.user && req.firebaseUser) {
-        // New Firebase user — check if they have a pending join request
+        // Double check if account exists in User_Account or Customer by firebase_uid or email
         try {
-            const [userRows] = await req.db.query('SELECT id, onboarding_state FROM User_Account WHERE firebase_uid = ?', [req.firebaseUser.firebase_uid]);
+            const [userRows] = await req.db.query(
+                'SELECT * FROM User_Account WHERE firebase_uid = ? OR email = ?',
+                [req.firebaseUser.firebase_uid, req.firebaseUser.email]
+            );
+
+            if (userRows.length > 0 && userRows[0].onboarding_state === 'ACTIVE') {
+                const user = userRows[0];
+                if (!user.firebase_uid && req.firebaseUser.firebase_uid) {
+                    await req.db.query('UPDATE User_Account SET firebase_uid = ? WHERE id = ?', [req.firebaseUser.firebase_uid, user.id]);
+                }
+
+                const [memberships] = await req.db.query(`
+                    SELECT gm.garage_id, g.name AS garage_name, g.city AS garage_city, r.name AS role_name, gm.id AS membership_id 
+                    FROM Garage_Membership gm 
+                    JOIN Role r ON gm.role_id = r.id 
+                    JOIN Garage g ON gm.garage_id = g.id
+                    WHERE gm.user_id = ? AND gm.status = 'ACTIVE'
+                `, [user.id]);
+
+                const [customerRows] = await req.db.query(
+                    'SELECT id, first_name, last_name, email, phone, address FROM Customer WHERE id = ? OR email = ?',
+                    [user.reference_id || '', user.email]
+                );
+                const customerProfile = customerRows.length > 0 ? customerRows[0] : null;
+
+                const availableWorkspaces = [];
+                if (customerProfile || user.role === 'customer') {
+                    availableWorkspaces.push({
+                        id: 'customer_personal',
+                        type: 'customer',
+                        role: 'customer',
+                        name: 'Personal Customer Account',
+                        description: 'Manage vehicles & book service appointments'
+                    });
+                }
+                for (const m of memberships) {
+                    availableWorkspaces.push({
+                        id: m.membership_id,
+                        type: 'garage',
+                        role: m.role_name,
+                        garage_id: m.garage_id,
+                        garage_name: m.garage_name,
+                        name: m.garage_name,
+                        description: `${m.role_name.charAt(0).toUpperCase() + m.role_name.slice(1)} Workspace (${m.garage_city || 'General'})`
+                    });
+                }
+
+                let activeWorkspace = null;
+                if (user.role === 'customer') {
+                    activeWorkspace = { id: 'customer_personal', type: 'customer', role: 'customer', name: 'Personal Customer Account' };
+                } else {
+                    const matched = memberships.find(m => m.role_name === user.role) || memberships[0];
+                    if (matched) {
+                        activeWorkspace = {
+                            id: matched.membership_id,
+                            type: 'garage',
+                            role: matched.role_name,
+                            garage_id: matched.garage_id,
+                            garage_name: matched.garage_name,
+                            name: matched.garage_name
+                        };
+                    }
+                }
+
+                return res.json({
+                    user: {
+                        id: user.id,
+                        firebase_uid: user.firebase_uid || req.firebaseUser.firebase_uid,
+                        name: user.name,
+                        email: user.email,
+                        phone: user.phone || (customerProfile ? customerProfile.phone : undefined),
+                        role: user.role,
+                        customer_id: user.reference_id || (customerProfile ? customerProfile.id : null),
+                        onboarding_state: 'ACTIVE',
+                        memberships,
+                        availableWorkspaces,
+                        activeWorkspace,
+                        pendingRequests: []
+                    }
+                });
+            }
+
             if (userRows.length > 0) {
                 const userId = userRows[0].id;
                 const [pending] = await req.db.query(
@@ -123,7 +204,7 @@ app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async 
                 );
                 return res.status(404).json({ 
                     error: 'User not registered', 
-                    requiresOnboarding: true, 
+                    requiresOnboarding: userRows[0].onboarding_state !== 'PENDING_APPROVAL', 
                     onboarding_state: userRows[0].onboarding_state || 'ONBOARDING',
                     pendingRequests: pending,
                     firebaseUser: req.firebaseUser 
@@ -132,8 +213,10 @@ app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async 
         } catch(e) { console.error('[/api/auth/me]', e); }
         return res.status(404).json({ error: 'User not registered', requiresOnboarding: true, onboarding_state: 'ONBOARDING', pendingRequests: [], firebaseUser: req.firebaseUser });
     }
+
     if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-    // Return enriched profile with onboarding_state and pending requests
+
+    // Return enriched profile with onboarding_state, availableWorkspaces, and pending requests
     try {
         const [pendingRows] = await req.db.query(
             `SELECT gjr.id, gjr.requested_role, gjr.status, g.name AS garage_name
@@ -146,6 +229,123 @@ app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async 
     } catch(e) {
         console.error('[/api/auth/me enriched]', e);
         res.json({ user: req.user });
+    }
+});
+
+// POST /api/auth/switch-workspace
+app.post(['/api/auth/switch-workspace', '/api/session/switch-workspace'], require('./middleware/firebaseAuth').requireAuth, async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const { role, garageId } = req.body;
+    if (!role) {
+        return res.status(400).json({ error: 'Role is required' });
+    }
+
+    const allowedRoles = ['customer', 'owner', 'manager', 'mechanic'];
+    const normRole = role.toLowerCase().trim();
+    if (!allowedRoles.includes(normRole)) {
+        return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    try {
+        if (normRole === 'customer') {
+            const [custRows] = await req.db.query(
+                'SELECT id FROM Customer WHERE id = ? OR email = ?',
+                [req.user.customer_id || '', req.user.email]
+            );
+
+            let customerId = req.user.customer_id;
+            if (custRows.length > 0) {
+                customerId = custRows[0].id;
+            } else {
+                customerId = require('uuid').v4();
+                const [first, ...rest] = (req.user.name || 'Customer').split(' ');
+                await req.db.query(
+                    'INSERT INTO Customer (id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)',
+                    [customerId, first, rest.join(' ') || '', req.user.email, req.user.phone || '']
+                );
+            }
+
+            await req.db.query(
+                'UPDATE User_Account SET role = ?, reference_id = ? WHERE id = ?',
+                ['customer', customerId, req.user.id]
+            );
+
+            const activeWorkspace = {
+                id: 'customer_personal',
+                type: 'customer',
+                role: 'customer',
+                name: 'Personal Customer Account',
+                description: 'Manage vehicles & book services'
+            };
+
+            return res.json({
+                success: true,
+                role: 'customer',
+                customer_id: customerId,
+                activeWorkspace,
+                user: {
+                    ...req.user,
+                    role: 'customer',
+                    customer_id: customerId,
+                    activeWorkspace
+                }
+            });
+        }
+
+        // For garage workspaces:
+        if (!garageId) {
+            return res.status(400).json({ error: 'garageId is required for garage workspaces' });
+        }
+
+        const [memberships] = await req.db.query(`
+            SELECT gm.id AS membership_id, gm.garage_id, g.name AS garage_name, r.name AS role_name
+            FROM Garage_Membership gm
+            JOIN Role r ON gm.role_id = r.id
+            JOIN Garage g ON gm.garage_id = g.id
+            WHERE gm.user_id = ? AND gm.garage_id = ? AND r.name = ? AND gm.status = 'ACTIVE'
+        `, [req.user.id, garageId, normRole]);
+
+        if (memberships.length === 0) {
+            return res.status(403).json({
+                error: `Unauthorized: You do not possess an active ${normRole} membership for this garage.`
+            });
+        }
+
+        const activeMembership = memberships[0];
+
+        await req.db.query(
+            'UPDATE User_Account SET role = ? WHERE id = ?',
+            [normRole, req.user.id]
+        );
+
+        const activeWorkspace = {
+            id: activeMembership.membership_id,
+            type: 'garage',
+            role: normRole,
+            garage_id: activeMembership.garage_id,
+            garage_name: activeMembership.garage_name,
+            name: activeMembership.garage_name,
+            description: `${normRole.charAt(0).toUpperCase() + normRole.slice(1)} Workspace`
+        };
+
+        return res.json({
+            success: true,
+            role: normRole,
+            garageId: activeMembership.garage_id,
+            activeWorkspace,
+            user: {
+                ...req.user,
+                role: normRole,
+                selectedGarageId: activeMembership.garage_id,
+                activeWorkspace
+            }
+        });
+    } catch (e) {
+        console.error('[/api/auth/switch-workspace]', e);
+        res.status(500).json({ error: 'Failed to switch workspace' });
     }
 });
 

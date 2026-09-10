@@ -58,6 +58,7 @@ const SqlPlayground = lazy(() => import('../pages/db/monitor/SqlPlayground').the
 const DatabaseStats = lazy(() => import('../pages/db/stats/DatabaseStats').then(m => ({ default: m.DatabaseStats })));
 const CustomerHistory = lazy(() => import('../pages/history/CustomerHistory').then(m => ({ default: m.CustomerHistory })));
 const WorkflowTimeline = lazy(() => import('../pages/workflow/WorkflowTimeline').then(m => ({ default: m.WorkflowTimeline })));
+const Settings = lazy(() => import('../pages/settings/Settings').then(m => ({ default: m.Settings })));
 
 // Index routing component
 const IndexRedirect = () => {
@@ -159,6 +160,7 @@ export const router = createBrowserRouter([
       { path: 'stats', element: <ProtectedRoute><DatabaseStats /></ProtectedRoute> },
       { path: 'customer-history/:id', element: <ProtectedRoute><CustomerHistory /></ProtectedRoute> },
       { path: 'timeline', element: <ProtectedRoute><WorkflowTimeline /></ProtectedRoute> },
+      { path: 'settings', element: <ProtectedRoute><Settings /></ProtectedRoute> },
       
       // Catch-all
       { path: '*', element: <Navigate to="/" replace /> },
