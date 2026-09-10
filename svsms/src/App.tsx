@@ -57,20 +57,33 @@ function App() {
   useEffect(() => {
     const isMock = import.meta.env.VITE_API_MODE === 'mock';
     if (!isMock) {
-      // Hydrate Zustand store from Real APIs to make UI components work seamlessly
-      Promise.all([
+      // Hydrate Zustand store from Real APIs with resilient per-service hydration
+      Promise.allSettled([
         CustomerService.getAllCustomers(),
         VehicleService.getAll(),
         MechanicService.getAll(),
         AppointmentService.getAll(),
         InventoryService.getAll()
-      ]).then(([customers, vehicles, mechanics, appointments, inventory]) => {
-        setCustomers(customers);
-        setVehicles(vehicles);
-        setMechanics(mechanics);
-        setAppointments(appointments);
-        setInventory(inventory);
-      }).catch(console.error);
+      ]).then(([cRes, vRes, mRes, aRes, iRes]) => {
+        if (cRes.status === 'fulfilled' && Array.isArray(cRes.value)) setCustomers(cRes.value);
+        if (vRes.status === 'fulfilled' && Array.isArray(vRes.value)) setVehicles(vRes.value);
+        if (mRes.status === 'fulfilled' && Array.isArray(mRes.value)) setMechanics(mRes.value);
+        if (aRes.status === 'fulfilled' && Array.isArray(aRes.value)) setAppointments(aRes.value);
+        if (iRes.status === 'fulfilled' && Array.isArray(iRes.value)) {
+          setInventory(iRes.value.map((item: any) => ({
+            ...item,
+            part_name: item.name || item.part_name || 'Part',
+            quantity_in_stock: Number(item.quantity_in_stock || 0),
+            unit_cost: Number(item.unit_cost || item.unit_price || 0),
+            unit_price: Number(item.unit_price || 0),
+            location: item.location || 'Warehouse'
+          })));
+        } else {
+          setInventory([]);
+        }
+      }).catch(err => {
+        console.warn('Real API hydration warning:', err?.message || err);
+      });
     }
   }, [setCustomers, setVehicles, setMechanics, setAppointments, setInventory]);
 

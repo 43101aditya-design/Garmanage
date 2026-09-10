@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDbStore } from '../../store/dbStore';
 import { useAuthStore } from '../../store/authStore';
 import { useGarageStore } from '../../store/garageStore';
+import { InventoryService } from '../../api/services/inventoryService';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -19,11 +20,11 @@ const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#e
 
 export const InventoryManagement = () => {
   const { user } = useAuthStore();
-  const { currentGarage } = useGarageStore();
+  const { currentGarage, garages, fetchGarages } = useGarageStore();
   const { 
     inventory, spareParts, inventoryMovements, purchaseRequests, 
     garageTransfers, receiveStock, transferStock, createPurchaseRequest, 
-    approvePurchaseRequest, addPartCatalogItem 
+    approvePurchaseRequest, addPartCatalogItem, setInventory 
   } = useDbStore();
 
   const [activeTab, setActiveTab] = useState<'stock' | 'movements' | 'purchase' | 'transfer' | 'catalog'>('stock');
@@ -43,19 +44,42 @@ export const InventoryManagement = () => {
   });
 
   const [prForm, setPrForm] = useState({
-    garage_id: 'GAR-001', part_id: 'PART-001', qty: 10, supplier: 'Castrol India Ltd', notes: ''
+    garage_id: '', part_id: '', qty: 10, supplier: 'AutoParts Supply Ltd', notes: ''
   });
 
   const [transferForm, setTransferForm] = useState({
-    source_garage_id: 'GAR-002', target_garage_id: 'GAR-001', part_id: 'PART-001', qty: 5
+    source_garage_id: '', target_garage_id: '', part_id: '', qty: 5
   });
+
+  // Fetch real inventory and garages on mount
+  useEffect(() => {
+    fetchGarages();
+    InventoryService.getAll()
+      .then(data => {
+        if (Array.isArray(data)) {
+          setInventory(data.map((item: any) => ({
+            ...item,
+            part_name: item.name || item.part_name || 'Part',
+            quantity_in_stock: Number(item.quantity_in_stock || 0),
+            unit_cost: Number(item.unit_cost || item.unit_price || 0),
+            unit_price: Number(item.unit_price || 0),
+            location: item.location || 'Warehouse'
+          })));
+        }
+      })
+      .catch(err => {
+        console.warn('[Inventory] Live inventory fetch skipped/offline:', err?.message || err);
+      });
+  }, [fetchGarages, setInventory]);
 
   // Effective Garage Scope
   const filteredInventory = useMemo(() => {
     return inventory.filter(item => {
       const matchGarage = selectedGarageFilter === 'ALL' || item.garage_id === selectedGarageFilter;
-      const matchSearch = item.part_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          item.part_number?.toLowerCase().includes(searchQuery.toLowerCase());
+      const partName = item.part_name || (item as any).name || '';
+      const partNumber = item.part_number || '';
+      const matchSearch = partName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          partNumber.toLowerCase().includes(searchQuery.toLowerCase());
       const matchCategory = categoryFilter === 'ALL' || item.category === categoryFilter;
       return matchGarage && matchSearch && matchCategory;
     });
@@ -157,9 +181,13 @@ export const InventoryManagement = () => {
               className="bg-transparent text-foreground font-semibold focus:outline-none"
             >
               <option value="ALL">All Garages (Master)</option>
-              <option value="GAR-001">GAR-001 (Downtown Central)</option>
-              <option value="GAR-002">GAR-002 (Westside Express)</option>
-              <option value="GAR-003">GAR-003 (Suburban Hub)</option>
+              {garages && garages.length > 0 ? (
+                garages.map(g => (
+                  <option key={g.id} value={g.id}>{g.name} ({g.city || 'Branch'})</option>
+                ))
+              ) : (
+                currentGarage && <option value={currentGarage.id}>{currentGarage.name}</option>
+              )}
             </select>
           </div>
 
@@ -316,7 +344,18 @@ export const InventoryManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredInventory.map(item => {
+                  {filteredInventory.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="h-36 text-center text-muted-foreground">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <Package className="w-8 h-8 text-muted-foreground/40" />
+                          <p className="font-semibold text-foreground">No parts in inventory (0 units)</p>
+                          <p className="text-xs text-muted-foreground">Your workshop inventory is currently empty (0 items). Click "New Catalog Part" to add parts.</p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredInventory.map(item => {
                     const available = item.quantity_in_stock - (item.reserved_quantity || 0);
                     const isLow = available <= item.reorder_level;
 
@@ -364,7 +403,7 @@ export const InventoryManagement = () => {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                  }))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -395,7 +434,18 @@ export const InventoryManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {inventoryMovements.map(mov => (
+                {inventoryMovements.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center justify-center gap-1.5">
+                        <History className="w-6 h-6 text-muted-foreground/40" />
+                        <p className="font-medium text-xs text-foreground">No stock movements recorded (0 entries)</p>
+                        <p className="text-[11px] text-muted-foreground">Ledger trail will show transactions as parts are received or consumed.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  inventoryMovements.map(mov => (
                   <TableRow key={mov.id}>
                     <TableCell className="font-mono text-xs font-bold">{mov.id}</TableCell>
                     <TableCell>
@@ -429,7 +479,7 @@ export const InventoryManagement = () => {
                       {new Date(mov.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           </CardContent>
@@ -464,7 +514,18 @@ export const InventoryManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {purchaseRequests.map(pr => (
+                {purchaseRequests.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center justify-center gap-1.5">
+                        <ShoppingCart className="w-6 h-6 text-muted-foreground/40" />
+                        <p className="font-medium text-xs text-foreground">No purchase requests (0 orders)</p>
+                        <p className="text-[11px] text-muted-foreground">Click "+ Create Request" to submit a parts purchase order.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  purchaseRequests.map(pr => (
                   <TableRow key={pr.id}>
                     <TableCell className="font-mono text-xs font-bold">{pr.request_number}</TableCell>
                     <TableCell className="font-medium text-xs text-foreground">{pr.part_name || pr.part_id}</TableCell>
@@ -496,7 +557,7 @@ export const InventoryManagement = () => {
                       )}
                     </TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           </CardContent>
@@ -530,7 +591,18 @@ export const InventoryManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {garageTransfers.map(tr => (
+                {garageTransfers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center justify-center gap-1.5">
+                        <Truck className="w-6 h-6 text-muted-foreground/40" />
+                        <p className="font-medium text-xs text-foreground">No inter-garage transfers (0 transfers)</p>
+                        <p className="text-[11px] text-muted-foreground">Stock transfers between branches will appear here.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  garageTransfers.map(tr => (
                   <TableRow key={tr.id}>
                     <TableCell className="font-mono text-xs font-bold">{tr.transfer_number}</TableCell>
                     <TableCell className="font-medium text-xs text-foreground">{tr.part_name || tr.part_id}</TableCell>
@@ -545,7 +617,7 @@ export const InventoryManagement = () => {
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{tr.requested_by_name}</TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           </CardContent>
@@ -579,7 +651,18 @@ export const InventoryManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {spareParts.map(part => (
+                {spareParts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-36 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Layers className="w-8 h-8 text-muted-foreground/40" />
+                        <p className="font-semibold text-foreground">Parts catalog is empty (0 SKUs)</p>
+                        <p className="text-xs text-muted-foreground">Click "+ Add SKU Item" above to register parts in your master catalog.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  spareParts.map(part => (
                   <TableRow key={part.id}>
                     <TableCell className="font-mono text-xs font-bold">{part.id}</TableCell>
                     <TableCell>
@@ -596,7 +679,7 @@ export const InventoryManagement = () => {
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{part.supplier || 'N/A'}</TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           </CardContent>
