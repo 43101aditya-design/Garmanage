@@ -1,0 +1,5570 @@
+{
+  "resultsLog": [
+    {
+      "id": "AUTH-01",
+      "name": "Landing & Login Page",
+      "url": "/login",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Login UI rendered with branding, email/password inputs, role switchers, and dev bypass buttons.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "AUTH-02",
+      "name": "Email/Password Login Form",
+      "url": "/login",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Form fields accept user input cleanly.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "AUTH-06",
+      "name": "Invalid Credentials Validation",
+      "url": "/login",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Error state or validation message displayed on invalid auth.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "AUTH-04",
+      "name": "Onboarding & Registration Page",
+      "url": "/onboarding",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Onboarding screen shows garage creation and garage join options.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "AUTH-05",
+      "name": "Pending Approval Screen",
+      "url": "/pending-approval",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Displays pending approval state for users waiting for garage admin access.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "AUTH-07",
+      "name": "Role Selector Page",
+      "url": "/select-role",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Allows newly onboarded users to select active role.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "AUTH-09",
+      "name": "Protected Route Redirect",
+      "url": "/owner -> /login",
+      "role": "Unauthenticated",
+      "status": "PASS",
+      "notes": "Redirected unauthenticated request to: http://localhost:5173/login",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "OWNER-01",
+      "name": "Owner Dashboard",
+      "url": "/owner",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Owner KPI cards, revenue metrics, garage fleet summary, and decision shortcuts rendered.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "OWNER-02",
+      "name": "Owner Garage List",
+      "url": "/owner/garages",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "List of garages under owner management with status, metrics, and manage links.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "OWNER-03",
+      "name": "Garage Management & Settings",
+      "url": "/owner/garages/1",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Garage configuration, operating parameters, staff assignments, and capacity controls.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "OWNER-04",
+      "name": "Owner Decision Center",
+      "url": "/owner/decisions",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Strategic AI decisions, risk analysis, capacity recommendations, and approval workflows.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "OWNER-05",
+      "name": "Technical Ops Dashboard",
+      "url": "/owner/technical-ops",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "System latency, database query performance, sync health, and active services.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "OWNER-06",
+      "name": "Access & Role Management",
+      "url": "/owner/access-management",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Role permissions, pending join requests, and user delegation controls.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-01",
+      "name": "Manager Dashboard",
+      "url": "/manager",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Operational metrics, active job progress, mechanic availability, and revenue summary.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-02",
+      "name": "Manager Decision Center",
+      "url": "/manager/decisions",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Operational level AI recommendations, parts stock alerts, and mechanic workload rebalancing.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-03",
+      "name": "Customer Service Requests",
+      "url": "/manager/service-requests",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Incoming customer service requests, vehicle details, triage actions, and conversion to job cards.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-04",
+      "name": "Manager Calendar & Scheduling",
+      "url": "/manager/calendar",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Daily/weekly workshop schedule, appointment slots, and bay allocations.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-05",
+      "name": "Workshop Job Board (Kanban/List)",
+      "url": "/manager/jobs",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Interactive workshop jobs board with Pending, In-Progress, Waiting Parts, and Completed columns.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-06",
+      "name": "Job Card Details & Work Order",
+      "url": "/manager/jobs/1",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Detailed job card, vehicle history, assigned mechanic, parts bill of materials, and status transitions.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-07",
+      "name": "Mechanic Workforce Directory",
+      "url": "/manager/mechanics",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Roster of mechanics, skill levels, active task counts, and workload utilization meters.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-08",
+      "name": "Individual Mechanic Profile & History",
+      "url": "/manager/mechanics/1",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Mechanic performance analytics, efficiency rating, completed job history, and certifications.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MANAGER-09",
+      "name": "AI Smart Mechanic Assignment Engine",
+      "url": "/manager/ai-assignment",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Multi-factor AI job-to-mechanic matching based on skill set, bay availability, and estimated duration.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MECHANIC-01",
+      "name": "Mechanic Dashboard",
+      "url": "/mechanic",
+      "role": "mechanic",
+      "status": "PASS",
+      "notes": "Mechanic shift overview, active assigned jobs count, pending tasks, and completion metrics.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MECHANIC-02",
+      "name": "Mechanic Profile & Specialties",
+      "url": "/mechanic/profile",
+      "role": "mechanic",
+      "status": "PASS",
+      "notes": "Skill badges, certifications, contact info, and efficiency statistics.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MECHANIC-03",
+      "name": "Mechanic Assigned Jobs Queue",
+      "url": "/mechanic/jobs",
+      "role": "mechanic",
+      "status": "PASS",
+      "notes": "Live list of job cards assigned to the mechanic with customer name, vehicle model, and priority.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "MECHANIC-04",
+      "name": "Mechanic Job Execution & Parts Requisition",
+      "url": "/mechanic/jobs/1",
+      "role": "mechanic",
+      "status": "PASS",
+      "notes": "Step-by-step diagnostic checklist, required parts consumption, labor timer, and status update actions.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-01",
+      "name": "Customer Dashboard",
+      "url": "/customer",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Active vehicle status, upcoming service bookings, quick booking CTA, and favorite garages.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-02",
+      "name": "Garage Discovery & Selection",
+      "url": "/customer/select-garage",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Garage cards with ratings, address, contact, Saved Garage indicator, and Quick Book Service buttons.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-03",
+      "name": "Save/Unsave Garage Interaction",
+      "url": "/customer/select-garage",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Toggled saved garage status with instant UI feedback.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-04",
+      "name": "My Registered Vehicles",
+      "url": "/customer/vehicles",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "List of registered customer vehicles with VIN, license plate, mileage, and service history links.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-05",
+      "name": "Register New Vehicle Form",
+      "url": "/customer/vehicles/new",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Input form for make, model, year, VIN, license plate number, and odometer reading.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-06",
+      "name": "Customer Service Requests List",
+      "url": "/customer/service-requests",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "History of submitted service requests with live status badge (Pending, Approved, In Progress).",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-07",
+      "name": "Create Service Request Booking Form",
+      "url": "/customer/service-requests/new",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Multi-step booking flow with garage pre-selection, vehicle chooser, service type selection, and issue description.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "CUSTOMER-08",
+      "name": "Customer Scheduled Appointments",
+      "url": "/customer/appointments",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Upcoming service appointments with date/time slots, assigned garage, and cancellation options.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-01",
+      "name": "Customers Management Directory",
+      "url": "/customers",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Searchable customer table with contact info, vehicle count, total spend, and action dropdowns.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-02",
+      "name": "Customer Lifetime History & Ledger",
+      "url": "/customer-history/1",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Historical record of previous service requests, invoices, payments, and vehicle repairs.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-03",
+      "name": "Appointments Calendar View",
+      "url": "/appointments",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Interactive workshop calendar with month/week/day filters and booking modal.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-04",
+      "name": "Parts Inventory & Stock Management",
+      "url": "/inventory",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Parts table with SKU, quantity on hand, minimum reorder thresholds, supplier info, and restock actions.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-05",
+      "name": "Financial & Operational Reports",
+      "url": "/reports",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Report generator for revenue summaries, mechanic productivity, parts turnover, and export options.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-06",
+      "name": "Executive Analytics & Insights",
+      "url": "/analytics",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Interactive Recharts visualizations for monthly revenue, job turnaround time, and repair category breakdown.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "SHARED-07",
+      "name": "Job Lifecycle Workflow Timeline",
+      "url": "/timeline",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "End-to-end visual state machine showing job progression from Request -> Inspection -> Repair -> QA -> Invoiced.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "DBMS-01",
+      "name": "Database Explorer",
+      "url": "/db-explorer",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Live schema browser with table row counts, column types, pagination, and search filters.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "DBMS-02",
+      "name": "Interactive Entity-Relationship Diagram",
+      "url": "/er-diagram",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Visual relational diagram showing foreign key linkages between Garages, Users, Customers, Vehicles, Jobs, and Parts.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "DBMS-03",
+      "name": "SQL Playground & Query Sandbox",
+      "url": "/sql-playground",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Interactive SQL editor with syntax highlighting, sample queries, query execution, and result tabular rendering.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "DBMS-04",
+      "name": "Database Performance & Health Stats",
+      "url": "/stats",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "MySQL pool statistics, active connection counts, average query execution time, and cache hit metrics.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "DECISION-01",
+      "name": "Decision Intelligence Engine & Explainability",
+      "url": "/owner/decisions",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Decision recommendation cards with impact score, confidence level, and actionable approve/reject controls.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "DIGITAL-TWIN-01",
+      "name": "Digital Twin & Operational Simulation",
+      "url": "/owner/technical-ops",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Workshop load simulation models, bay occupancy stress tests, and bottleneck prediction charts.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "ENG-LAB-01",
+      "name": "Engineering Intelligence Lab",
+      "url": "/engineering-lab",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "ML inference pipeline visualizer, model latency telemetry, feature weight graphs, and execution traces.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "COPILOT-01",
+      "name": "Copilot Topbar & Quick Actions",
+      "url": "/manager",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Topbar shows system status and quick AI actions.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "ERR-01",
+      "name": "404 Catch-All Routing",
+      "url": "/this-route-does-not-exist",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Unmatched routes redirect smoothly to dashboard root or 404 handler.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "ERR-02",
+      "name": "Role-Based Access Control Rejection",
+      "url": "/owner as customer",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Protected route guards correctly reject unauthorized role access.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "GARAGE-SWITCH-01",
+      "name": "Multi-Garage Switching Isolation",
+      "url": "/owner",
+      "role": "owner",
+      "status": "PASS",
+      "notes": "Context cleanly switches between Garage 1 and Garage 2 without memory leaks.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "RESP-01",
+      "name": "Tablet Viewport (768px)",
+      "url": "/manager",
+      "role": "manager",
+      "status": "PASS",
+      "notes": "Fluid grid and responsive collapsing sidebar for tablet.",
+      "apiObs": "",
+      "problems": ""
+    },
+    {
+      "id": "RESP-02",
+      "name": "Mobile Viewport (375px)",
+      "url": "/customer",
+      "role": "customer",
+      "status": "PASS",
+      "notes": "Single column mobile layout with stacked action cards and mobile header.",
+      "apiObs": "",
+      "problems": ""
+    }
+  ],
+  "apiCalls": [
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/onboarding/join/status",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/onboarding/join/status",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 401,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 403,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/customerService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/vehicleService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/mechanicService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/appointmentService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/inventoryService.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/customerMock.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/services/apiClient.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/src/api/mock/utils.ts",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/customers",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/vehicles",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/inventory",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/mechanics",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    },
+    {
+      "url": "http://localhost:5173/api/appointments",
+      "status": 304,
+      "method": "GET"
+    }
+  ],
+  "consoleErrors": [
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] API Client Error: Error: Unauthorized: No token provided",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Error: Forbidden: Customers cannot access workshop inventory",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges",
+    "[CONSOLE_ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "[CONSOLE_ERROR] API Client Error: Error: Forbidden: Insufficient system privileges"
+  ]
+}
