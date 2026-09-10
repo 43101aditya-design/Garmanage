@@ -16,6 +16,7 @@ export interface Garage {
   logo_url?: string;
   latitude?: number;
   longitude?: number;
+  garage_type?: string;
   member_count?: number;
   mechanic_count?: number;
 }

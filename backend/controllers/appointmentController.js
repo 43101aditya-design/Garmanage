@@ -57,7 +57,7 @@ exports.createAppointment = async (req, res, next) => {
 exports.getManagerAppointments = async (req, res, next) => {
     try {
         const [appointments] = await req.db.query(
-            'SELECT * FROM Appointment WHERE garage_id = ? ORDER BY appointment_date DESC, appointment_time DESC',
+            'SELECT * FROM Appointment WHERE garage_id = ? AND (deleted_at IS NULL) ORDER BY appointment_date DESC, appointment_time DESC',
             [req.garageId]
         );
         res.json(appointments);
@@ -68,15 +68,54 @@ exports.getManagerAppointments = async (req, res, next) => {
 
 exports.getCustomerAppointments = async (req, res, next) => {
     try {
-        const [customers] = await req.db.query('SELECT id FROM Customer WHERE email = ?', [req.user.email]);
-        if (!customers.length) return res.json([]);
+        let customerId = req.user && req.user.customer_id;
+        if (!customerId && req.user && req.user.email) {
+            const [customers] = await req.db.query('SELECT id FROM Customer WHERE email = ? AND (deleted_at IS NULL)', [req.user.email]);
+            if (customers.length) customerId = customers[0].id;
+        }
+        if (!customerId && req.user && req.user.id) {
+            const [ua] = await req.db.query('SELECT reference_id FROM User_Account WHERE id = ?', [req.user.id]);
+            if (ua.length && ua[0].reference_id) customerId = ua[0].reference_id;
+        }
+        if (!customerId) return res.json([]);
         
-        const customerId = customers[0].id;
         const [appointments] = await req.db.query(
-            'SELECT * FROM Appointment WHERE customer_id = ? ORDER BY appointment_date DESC, appointment_time DESC',
+            `SELECT a.*, 
+                    a.appointment_date AS scheduled_date,
+                    a.appointment_time AS start_time,
+                    g.name AS garage_name,
+                    g.address AS garage_address,
+                    g.city AS garage_city,
+                    g.phone AS garage_phone,
+                    v.make AS vehicle_brand,
+                    v.model AS vehicle_model,
+                    v.license_plate AS vehicle_plate
+             FROM Appointment a
+             LEFT JOIN Garage g ON a.garage_id = g.id
+             LEFT JOIN Vehicle v ON a.vehicle_id = v.id
+             WHERE a.customer_id = ? AND (a.deleted_at IS NULL)
+             ORDER BY a.appointment_date DESC, a.appointment_time DESC`,
             [customerId]
         );
-        res.json(appointments);
+
+        const formatted = appointments.map(apt => ({
+            ...apt,
+            garage: {
+                id: apt.garage_id,
+                name: apt.garage_name || 'Service Garage',
+                address: apt.garage_address || '',
+                city: apt.garage_city || '',
+                phone: apt.garage_phone || ''
+            },
+            vehicle: {
+                id: apt.vehicle_id,
+                brand: apt.vehicle_brand || '',
+                model: apt.vehicle_model || '',
+                license_plate: apt.vehicle_plate || ''
+            }
+        }));
+
+        res.json(formatted);
     } catch (error) {
         next(error);
     }
@@ -85,7 +124,7 @@ exports.getCustomerAppointments = async (req, res, next) => {
 exports.getAllAppointments = async (req, res, next) => {
     try {
         const [appointments] = await req.db.query(
-            'SELECT * FROM Appointment ORDER BY appointment_date DESC, appointment_time DESC'
+            'SELECT * FROM Appointment WHERE (deleted_at IS NULL) ORDER BY appointment_date DESC, appointment_time DESC'
         );
         res.json(appointments);
     } catch (error) {

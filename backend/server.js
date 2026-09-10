@@ -65,6 +65,8 @@ const anomalyRoutes = require('./routes/anomalyRoutes');
 const benchmarkRoutes = require('./routes/benchmarkRoutes');
 const benchmarkController = require('./controllers/benchmarkController');
 const onboardingRoutes = require('./routes/onboardingRoutes');
+const savedGarageRoutes = require('./routes/savedGarageRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 // Mount Routes
 app.get('/health', benchmarkController.checkHealth);
 app.use('/api/auth', authRoutes);
@@ -90,6 +92,8 @@ app.use('/api/engineering', engineeringRoutes);
 app.use('/api/garages', garageRoutes);
 app.use('/api/garages', memberRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/customer/saved-garages', savedGarageRoutes);
 app.use('/api/customer/vehicles', customerVehicleRoutes);
 app.use('/api/customer/service-requests', serviceRequestRoutes);
 app.use('/api/customer/appointments', customerAppointmentRoutes);

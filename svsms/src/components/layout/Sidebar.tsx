@@ -2,7 +2,8 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Calendar, Wrench, FileText, 
-  Settings, X, BarChart, Database, Map, Box, BrainCircuit, ChevronLeft, ShieldAlert, ShieldCheck
+  Settings, X, BarChart, Database, Map, Box, BrainCircuit, 
+  ChevronLeft, ShieldAlert, ShieldCheck, Terminal, Network, Activity
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useAuthStore } from '../../store/authStore';
@@ -18,7 +19,7 @@ const roleNavs: Record<string, { name: string; href: string; icon: any }[]> = {
     { name: 'My Garages', href: '/owner/garages', icon: Map },
     { name: 'Access Management', href: '/owner/access-management', icon: ShieldCheck },
     { name: 'Inventory & Parts', href: '/inventory', icon: Box },
-    { name: 'Engineering Lab', href: '/engineering-lab', icon: Database },
+    { name: 'Engineering Lab', href: '/engineering-lab', icon: Activity },
   ],
   manager: [
     { name: 'Dashboard', href: '/manager', icon: LayoutDashboard },
@@ -40,17 +41,18 @@ const roleNavs: Record<string, { name: string; href: string; icon: any }[]> = {
   ],
   customer: [
     { name: 'Dashboard', href: '/customer', icon: LayoutDashboard },
-    { name: 'Select Garage', href: '/customer/select-garage', icon: Map },
+    { name: 'Find / Saved Garages', href: '/customer/select-garage', icon: Map },
     { name: 'My Vehicles', href: '/customer/vehicles', icon: Box },
     { name: 'Service Requests', href: '/customer/service-requests', icon: FileText },
     { name: 'My Appointments', href: '/customer/appointments', icon: Calendar },
   ]
 };
 
-const devNav = [
+const dbmsNav = [
   { name: 'DB Explorer', href: '/db-explorer', icon: Database },
-  { name: 'ER Diagram', href: '/er-diagram', icon: Database },
-  { name: 'SQL Playground', href: '/sql-playground', icon: Database },
+  { name: 'SQL Playground', href: '/sql-playground', icon: Terminal },
+  { name: 'ER Diagram', href: '/er-diagram', icon: Network },
+  { name: 'Database Stats', href: '/stats', icon: BarChart },
 ];
 
 export const Sidebar = () => {
@@ -136,11 +138,15 @@ export const Sidebar = () => {
           </div>
 
           <div className="px-3">
-            <h3 className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 font-mono">
-              DBMS Intelligence
-            </h3>
+            <div className="flex items-center justify-between px-3 mb-3">
+              <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest font-mono flex items-center gap-1.5">
+                <Database className="w-3.5 h-3.5 text-primary" />
+                DBMS Intelligence
+              </h3>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold">MYSQL</span>
+            </div>
             <nav className="space-y-1">
-              {devNav.map((item) => {
+              {dbmsNav.map((item) => {
                 const Icon = item.icon;
                 return (
                   <NavLink
@@ -154,7 +160,7 @@ export const Sidebar = () => {
                     )}
                     onClick={() => setSidebarOpen(false)}
                   >
-                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform" />
+                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform text-primary/80" />
                     {item.name}
                   </NavLink>
                 );
