@@ -25,7 +25,8 @@ exports.listGarages = async (req, res) => {
 // POST /api/onboarding/garage/create
 // Creates: Garage + User_Account + Garage_Membership (owner role) — transactional
 exports.createGarageAndOwner = async (req, res) => {
-  if (!req.firebaseUser) return res.status(401).json({ error: 'Authentication required' });
+  const fbUser = req.firebaseUser || (req.user ? { firebase_uid: req.user.firebase_uid, email: req.user.email, name: req.user.name } : null);
+  if (!fbUser) return res.status(401).json({ error: 'Authentication required' });
 
   const { garageName, garageAddress, garageCity, garageState, garagePhone, garageType, garageDescription } = req.body;
   if (!garageName || !garageAddress) return res.status(400).json({ error: 'Garage name and address are required' });
@@ -36,19 +37,19 @@ exports.createGarageAndOwner = async (req, res) => {
 
     // 1. Check if user already has a User_Account
     let userId;
-    const [existing] = await conn.query('SELECT id FROM User_Account WHERE firebase_uid = ?', [req.firebaseUser.firebase_uid]);
+    const [existing] = await conn.query('SELECT id FROM User_Account WHERE firebase_uid = ? OR email = ?', [fbUser.firebase_uid, fbUser.email]);
 
     if (existing.length > 0) {
       userId = existing[0].id;
     } else {
       // Create User_Account
       userId = uuidv4();
-      const baseUsername = req.firebaseUser.email ? req.firebaseUser.email.split('@')[0] : 'user';
+      const baseUsername = fbUser.email ? fbUser.email.split('@')[0] : 'user';
       const username = `${baseUsername}_${Math.random().toString(36).substring(2, 7)}`;
       await conn.query(
         `INSERT INTO User_Account (id, firebase_uid, name, email, role, onboarding_state, username, password_hash)
          VALUES (?, ?, ?, ?, 'owner', 'ACTIVE', ?, 'firebase_auth')`,
-        [userId, req.firebaseUser.firebase_uid, req.firebaseUser.name || 'User', req.firebaseUser.email, username]
+        [userId, fbUser.firebase_uid, fbUser.name || 'User', fbUser.email, username]
       );
     }
 
@@ -115,44 +116,80 @@ exports.createGarageAndOwner = async (req, res) => {
 
 // POST /api/onboarding/customer/create
 exports.createCustomerProfile = async (req, res) => {
-  if (!req.firebaseUser) return res.status(401).json({ error: 'Authentication required' });
+  const fbUser = req.firebaseUser || (req.user ? { firebase_uid: req.user.firebase_uid, email: req.user.email, name: req.user.name } : null);
+  if (!fbUser) return res.status(401).json({ error: 'Authentication required' });
+
+  const { name, fullName, phone, address } = req.body;
+  const customerName = (name || fullName || fbUser.name || 'Customer').trim();
+  const customerPhone = (phone || '').trim();
+  const customerAddress = (address || '').trim();
+
+  if (!customerName) {
+    return res.status(400).json({ error: 'Full name is required' });
+  }
 
   const conn = await req.db.getConnection();
   try {
     await conn.beginTransaction();
 
-    const [existing] = await conn.query('SELECT id FROM User_Account WHERE firebase_uid = ?', [req.firebaseUser.firebase_uid]);
-    if (existing.length > 0) {
-      // User already exists — return their profile
-      const userId = existing[0].id;
-      const [userRecord] = await conn.query('SELECT * FROM User_Account WHERE id = ?', [userId]);
-      await conn.commit();
-      return res.json({ user: { id: userRecord[0].id, name: userRecord[0].name, email: userRecord[0].email, role: userRecord[0].role, memberships: [] } });
-    }
-
-    const [firstName, ...lastParts] = (req.firebaseUser.name || 'User').split(' ');
+    const [firstName, ...lastParts] = customerName.split(' ');
     const lastName = lastParts.join(' ') || '';
 
-    // Create Customer profile record
-    const customerId = uuidv4();
-    await conn.query(
-      `INSERT INTO Customer (id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)`,
-      [customerId, firstName, lastName, req.firebaseUser.email, req.body.phone || null]
+    // Check if Customer record already exists for this email
+    let customerId;
+    const [existingCustomer] = await conn.query('SELECT id FROM Customer WHERE email = ?', [fbUser.email]);
+    if (existingCustomer.length > 0) {
+      customerId = existingCustomer[0].id;
+      await conn.query(
+        'UPDATE Customer SET first_name = ?, last_name = ?, phone = ?, address = ? WHERE id = ?',
+        [firstName, lastName, customerPhone, customerAddress, customerId]
+      );
+    } else {
+      customerId = uuidv4();
+      await conn.query(
+        'INSERT INTO Customer (id, first_name, last_name, email, phone, address) VALUES (?, ?, ?, ?, ?, ?)',
+        [customerId, firstName, lastName, fbUser.email, customerPhone, customerAddress]
+      );
+    }
+
+    // Check User_Account record
+    let userId;
+    const [existingUser] = await conn.query(
+      'SELECT id, role, onboarding_state FROM User_Account WHERE firebase_uid = ? OR email = ?',
+      [fbUser.firebase_uid, fbUser.email]
     );
 
-    // Create User_Account
-    const userId = uuidv4();
-    const baseUsername = req.firebaseUser.email ? req.firebaseUser.email.split('@')[0] : 'user';
-    const username = `${baseUsername}_${Math.random().toString(36).substring(2, 7)}`;
-    await conn.query(
-      `INSERT INTO User_Account (id, firebase_uid, name, email, role, reference_id, onboarding_state, username, password_hash)
-       VALUES (?, ?, ?, ?, 'customer', ?, 'ACTIVE', ?, 'firebase_auth')`,
-      [userId, req.firebaseUser.firebase_uid, req.firebaseUser.name || 'User', req.firebaseUser.email, customerId, username]
-    );
+    if (existingUser.length > 0) {
+      userId = existingUser[0].id;
+      await conn.query(
+        `UPDATE User_Account 
+         SET name = ?, role = 'customer', reference_id = ?, onboarding_state = 'ACTIVE', firebase_uid = COALESCE(firebase_uid, ?)
+         WHERE id = ?`,
+        [customerName, customerId, fbUser.firebase_uid, userId]
+      );
+    } else {
+      userId = uuidv4();
+      const baseUsername = fbUser.email ? fbUser.email.split('@')[0] : 'customer';
+      const username = `${baseUsername}_${Math.random().toString(36).substring(2, 7)}`;
+      await conn.query(
+        `INSERT INTO User_Account (id, firebase_uid, name, email, role, reference_id, onboarding_state, username, password_hash)
+         VALUES (?, ?, ?, ?, 'customer', ?, 'ACTIVE', ?, 'firebase_auth')`,
+        [userId, fbUser.firebase_uid, customerName, fbUser.email, customerId, username]
+      );
+    }
 
     await conn.commit();
     res.json({
-      user: { id: userId, firebase_uid: req.firebaseUser.firebase_uid, name: req.firebaseUser.name, email: req.firebaseUser.email, role: 'customer', memberships: [] }
+      user: { 
+        id: userId, 
+        firebase_uid: fbUser.firebase_uid, 
+        name: customerName, 
+        email: fbUser.email, 
+        role: 'customer', 
+        customer_id: customerId,
+        onboarding_state: 'ACTIVE',
+        memberships: [] 
+      }
     });
   } catch (e) {
     await conn.rollback();
@@ -165,11 +202,13 @@ exports.createCustomerProfile = async (req, res) => {
 
 // POST /api/onboarding/join/request
 exports.submitJoinRequest = async (req, res) => {
-  if (!req.firebaseUser) return res.status(401).json({ error: 'Authentication required' });
+  const fbUser = req.firebaseUser || (req.user ? { firebase_uid: req.user.firebase_uid, email: req.user.email, name: req.user.name } : null);
+  if (!fbUser) return res.status(401).json({ error: 'Authentication required' });
 
   const { joinCode, requestedRole, message } = req.body;
   if (!joinCode || !requestedRole) return res.status(400).json({ error: 'Join code and requested role are required' });
-  if (!['manager', 'mechanic'].includes(requestedRole)) return res.status(400).json({ error: 'Invalid role. Must be manager or mechanic' });
+  const roleNorm = requestedRole.toLowerCase().trim();
+  if (!['manager', 'mechanic'].includes(roleNorm)) return res.status(400).json({ error: 'Invalid role. Must be manager or mechanic' });
 
   const conn = await req.db.getConnection();
   try {
@@ -182,25 +221,25 @@ exports.submitJoinRequest = async (req, res) => {
 
     // 2. Ensure User_Account exists (create if new Firebase user)
     let userId;
-    const [existing] = await conn.query('SELECT id FROM User_Account WHERE firebase_uid = ?', [req.firebaseUser.firebase_uid]);
+    const [existing] = await conn.query('SELECT id FROM User_Account WHERE firebase_uid = ? OR email = ?', [fbUser.firebase_uid, fbUser.email]);
     if (existing.length > 0) {
       userId = existing[0].id;
     } else {
       userId = uuidv4();
-      const baseUsername = req.firebaseUser.email ? req.firebaseUser.email.split('@')[0] : 'user';
+      const baseUsername = fbUser.email ? fbUser.email.split('@')[0] : 'user';
       const username = `${baseUsername}_${Math.random().toString(36).substring(2, 7)}`;
       await conn.query(
         `INSERT INTO User_Account (id, firebase_uid, name, email, role, onboarding_state, username, password_hash)
          VALUES (?, ?, ?, ?, ?, 'PENDING_APPROVAL', ?, 'firebase_auth')`,
-        [userId, req.firebaseUser.firebase_uid, req.firebaseUser.name || 'User', req.firebaseUser.email, requestedRole, username]
+        [userId, fbUser.firebase_uid, fbUser.name || 'User', fbUser.email, roleNorm, username]
       );
     }
 
-    // 3. Check if already a member of this garage
+    // 3. Check if already an ACTIVE member of this garage
     const [membership] = await conn.query('SELECT id FROM Garage_Membership WHERE user_id = ? AND garage_id = ? AND status = ?', [userId, garage.id, 'ACTIVE']);
     if (membership.length > 0) {
       await conn.rollback();
-      return res.status(409).json({ error: 'You are already a member of this garage.' });
+      return res.status(409).json({ error: 'You are already an active member of this garage.' });
     }
 
     // 4. Check for existing PENDING request
@@ -210,14 +249,14 @@ exports.submitJoinRequest = async (req, res) => {
     );
     if (pendingReqs.length > 0) {
       await conn.rollback();
-      return res.status(409).json({ error: 'You already have a pending request for this garage.' });
+      return res.status(409).json({ error: 'You already have a pending join request for this garage.' });
     }
 
     // 5. Create request
     const requestId = uuidv4();
     await conn.query(
       `INSERT INTO Garage_Join_Request (id, requester_id, garage_id, requested_role, status, message) VALUES (?, ?, ?, ?, 'PENDING', ?)`,
-      [requestId, userId, garage.id, requestedRole, message || null]
+      [requestId, userId, garage.id, roleNorm, message || null]
     );
 
     // 6. Set user onboarding_state to PENDING_APPROVAL
@@ -236,10 +275,11 @@ exports.submitJoinRequest = async (req, res) => {
 
 // GET /api/onboarding/join/status
 exports.getJoinStatus = async (req, res) => {
-  if (!req.firebaseUser) return res.status(401).json({ error: 'Authentication required' });
+  const fbUser = req.firebaseUser || (req.user ? { firebase_uid: req.user.firebase_uid, email: req.user.email, name: req.user.name } : null);
+  if (!fbUser) return res.status(401).json({ error: 'Authentication required' });
 
   try {
-    const [userRows] = await req.db.query('SELECT id FROM User_Account WHERE firebase_uid = ?', [req.firebaseUser.firebase_uid]);
+    const [userRows] = await req.db.query('SELECT id FROM User_Account WHERE firebase_uid = ? OR email = ?', [fbUser.firebase_uid, fbUser.email]);
     if (userRows.length === 0) return res.json({ requests: [] });
 
     const userId = userRows[0].id;

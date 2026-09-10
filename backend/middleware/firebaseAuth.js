@@ -5,6 +5,7 @@ const db = require('../config/db');
 
 const loadUserAndMemberships = async (req, res, next, userData) => {
     try {
+        req.firebaseUser = userData;
         let rows = [];
         
         if (userData.firebase_uid) {

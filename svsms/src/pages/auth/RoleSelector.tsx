@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { Building2, Users, Wrench, Car, ArrowRight, PlusCircle } from 'lucide-react';
 
-const ROLE_CONFIG = {
-  owner: { icon: '👑', color: 'from-violet-500 to-purple-600', bg: 'bg-violet-500/10 border-violet-500/30', path: '/owner' },
-  manager: { icon: '👔', color: 'from-blue-500 to-cyan-600', bg: 'bg-blue-500/10 border-blue-500/30', path: '/manager' },
-  mechanic: { icon: '🔧', color: 'from-orange-500 to-amber-600', bg: 'bg-orange-500/10 border-orange-500/30', path: '/mechanic/jobs' },
-  customer: { icon: '🚗', color: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-500/10 border-emerald-500/30', path: '/customer' },
+const ROLE_CONFIG: Record<string, { icon: any; emoji: string; badge: string; badgeColor: string; path: string }> = {
+  owner: { icon: Building2, emoji: '👑', badge: 'Owner', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', path: '/owner' },
+  manager: { icon: Users, emoji: '👔', badge: 'Manager', badgeColor: 'bg-sky-50 text-sky-700 border-sky-200', path: '/manager' },
+  mechanic: { icon: Wrench, emoji: '🔧', badge: 'Mechanic', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', path: '/mechanic/jobs' },
+  customer: { icon: Car, emoji: '🚗', badge: 'Customer', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', path: '/customer' },
 };
 
 export const RoleSelector = () => {
@@ -26,62 +27,84 @@ export const RoleSelector = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/3 w-72 h-72 bg-cyan-600/8 rounded-full blur-3xl" />
-      </div>
-
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-violet-500/30">G</div>
-            <span className="text-2xl font-bold text-white">Garmanage</span>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-2.5 mb-3">
+            <div className="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-primary-500/20">
+              IG
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-slate-900">IntelliGarage</span>
           </div>
-          <div className="w-14 h-14 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 border border-slate-600">
+
+          <div className="w-14 h-14 bg-primary-50 border border-primary-200 rounded-full flex items-center justify-center text-xl font-bold text-primary-700 mx-auto mb-3">
             {user.name?.[0]?.toUpperCase() || '?'}
           </div>
-          <h1 className="text-xl font-bold text-white">Welcome back, {user.name?.split(' ')[0]}!</h1>
-          <p className="text-slate-400 text-sm mt-1">You have access to multiple workspaces. Select one to continue.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-1">
+            Welcome back, {user.name?.split(' ')[0]}!
+          </h1>
+          <p className="text-sm text-slate-600">
+            You have access to multiple garage workspaces. Choose one to launch your workspace.
+          </p>
         </div>
 
-        <div className="space-y-3">
+        {/* Memberships List */}
+        <div className="space-y-3 mb-6">
           {memberships.length === 0 ? (
-            <div className="bg-slate-900/70 border border-slate-700/50 rounded-2xl p-6 text-center">
-              <p className="text-slate-400 mb-4">No active garage memberships found.</p>
-              <button onClick={() => navigate('/onboarding')} className="text-violet-400 hover:text-violet-300 text-sm font-medium">
-                → Join or Create a Garage
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+              <p className="text-slate-600 text-sm mb-3">No active garage memberships found.</p>
+              <button 
+                onClick={() => navigate('/onboarding')} 
+                className="text-primary-600 hover:text-primary-700 text-sm font-semibold inline-flex items-center gap-1"
+              >
+                Join or Create a Garage <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           ) : (
             memberships.map((m) => {
-              const cfg = ROLE_CONFIG[m.role_name as keyof typeof ROLE_CONFIG];
+              const cfg = ROLE_CONFIG[m.role_name as keyof typeof ROLE_CONFIG] || ROLE_CONFIG.owner;
               return (
                 <button
                   key={m.membership_id}
                   id={`select-garage-${m.garage_id}`}
                   onClick={() => handleSelect(m.garage_id, m.role_name)}
-                  className={`w-full p-4 rounded-2xl border ${cfg?.bg || 'bg-slate-800 border-slate-700'} flex items-center gap-4 text-left transition-all duration-200 hover:scale-[1.01] hover:shadow-lg group`}
+                  className="w-full p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50/80 hover:border-primary-500 hover:shadow-sm flex items-center gap-4 text-left transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cfg?.color || 'from-slate-600 to-slate-700'} flex items-center justify-center text-2xl shadow-lg flex-shrink-0`}>
-                    {cfg?.icon || '🏠'}
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-2xl group-hover:bg-primary-50 group-hover:border-primary-200 transition-colors flex-shrink-0">
+                    <span>{cfg.emoji}</span>
                   </div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-white">Garage ID: {m.garage_id.slice(0, 8)}...</div>
-                    <div className="text-xs text-slate-400 capitalize mt-0.5">Role: {m.role_name}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-semibold text-slate-900 group-hover:text-primary-700 transition-colors text-sm sm:text-base">
+                        Garage ID: {m.garage_id.slice(0, 8)}...
+                      </span>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${cfg.badgeColor}`}>
+                        {cfg.badge}
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-500 capitalize">
+                      Active Role: <strong className="text-slate-700">{m.role_name}</strong>
+                    </div>
                   </div>
-                  <span className="text-slate-600 group-hover:text-slate-400 transition-colors">→</span>
+                  <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-primary-600 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                 </button>
               );
             })
           )}
         </div>
 
-        <div className="mt-6 text-center">
-          <button onClick={() => navigate('/onboarding')} className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
-            + Join another garage
+        {/* Footer actions */}
+        <div className="text-center">
+          <button 
+            onClick={() => navigate('/onboarding')} 
+            className="text-xs font-semibold text-primary-600 hover:text-primary-700 inline-flex items-center gap-1.5 transition-colors"
+          >
+            <PlusCircle className="w-3.5 h-3.5" /> Join another garage or create a new workspace
           </button>
         </div>
+
       </div>
     </div>
   );
