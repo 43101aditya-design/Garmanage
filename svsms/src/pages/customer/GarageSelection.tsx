@@ -241,100 +241,100 @@ export const GarageSelection = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto animate-in fade-in duration-200 bg-white">
       {/* Top Navigation & Title */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-2 border-b border-purple-500/20">
-        <div className="space-y-1">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-4 border-b border-purple-100">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/customer')} className="text-xs h-7 px-2 text-purple-300 hover:text-white hover:bg-purple-950/40">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Customer Dashboard
+            <Button variant="ghost" size="sm" onClick={() => navigate('/customer')} className="text-xs h-7 px-2.5 text-slate-800 hover:text-black hover:bg-purple-50 rounded-lg">
+              <ArrowLeft className="w-3.5 h-3.5 mr-1 text-purple-600" /> Customer Dashboard
             </Button>
-            <Badge variant="outline" className="text-[10px] font-mono border-purple-500/40 text-purple-300 bg-purple-950/40">
+            <Badge variant="outline" className="text-[10px] font-mono border-purple-200 text-purple-700 bg-purple-50">
               DBMS SPATIAL ENGINE
             </Badge>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight flex items-center gap-2.5">
             Personalized Garage Discovery
-            <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+            <Sparkles className="w-5 h-5 text-purple-600 animate-pulse" />
           </h1>
-          <p className="text-xs sm:text-sm text-purple-200/80 font-normal max-w-3xl">
-            Ranked by customer area locality, MySQL spherical distance (<code className="text-purple-300 font-mono">ST_Distance_Sphere</code>), service matching, service history, and real-time workshop availability.
+          <p className="text-xs sm:text-sm text-slate-700 font-normal max-w-3xl">
+            Ranked by customer area locality, MySQL spherical distance (<code className="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200 font-mono font-semibold">ST_Distance_Sphere</code>), service matching, service history, and real-time workshop availability.
           </p>
         </div>
 
         {/* View Switcher (Grid vs Map) */}
         <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
-          <div className="bg-purple-950/40 p-1 rounded-xl border border-purple-500/30 flex items-center">
+          <div className="bg-slate-50 p-1 rounded-xl border border-purple-200 flex items-center">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setViewMode('grid')}
-              className={`text-xs h-8 px-3 rounded-lg ${viewMode === 'grid' ? 'bg-purple-600 text-white' : 'text-purple-300 hover:text-white'}`}
+              className={`text-xs h-8 px-3.5 rounded-lg font-semibold ${viewMode === 'grid' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-800 hover:text-purple-700'}`}
             >
-              <LayoutGrid className="w-3.5 h-3.5 mr-1.5" /> List & Cards
+              <LayoutGrid className={`w-3.5 h-3.5 mr-1.5 ${viewMode === 'grid' ? 'text-white' : 'text-purple-600'}`} /> List & Cards
             </Button>
             <Button
               variant={viewMode === 'map' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setViewMode('map')}
-              className={`text-xs h-8 px-3 rounded-lg ${viewMode === 'map' ? 'bg-purple-600 text-white' : 'text-purple-300 hover:text-white'}`}
+              className={`text-xs h-8 px-3.5 rounded-lg font-semibold ${viewMode === 'map' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-800 hover:text-purple-700'}`}
             >
-              <MapIcon className="w-3.5 h-3.5 mr-1.5" /> Interactive Map
+              <MapIcon className={`w-3.5 h-3.5 mr-1.5 ${viewMode === 'map' ? 'text-white' : 'text-purple-600'}`} /> Interactive Map
             </Button>
           </div>
         </div>
       </div>
 
       {/* Control Bar: Location, Search, Service Filter, Radius */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 p-4 rounded-2xl bg-card border border-purple-500/20 shadow-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3.5 p-5 rounded-2xl bg-white border border-purple-200 shadow-md shadow-purple-500/5">
         {/* 1. Name or General Search */}
-        <div className="lg:col-span-3 space-y-1">
-          <label className="text-[11px] font-semibold text-purple-200/90 uppercase tracking-wider">
+        <div className="lg:col-span-3 space-y-1.5">
+          <label className="text-[11px] font-bold text-black uppercase tracking-wider">
             Search Garage
           </label>
           <div className="relative">
-            <Search className="w-4 h-4 text-purple-300 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-purple-600 absolute left-3 top-1/2 -translate-y-1/2" />
             <Input 
               placeholder="Search by name..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && loadRecommendations()}
-              className="pl-9 text-xs h-9 border-purple-500/30 text-white placeholder:text-purple-300/50 focus:border-purple-400 bg-purple-950/20"
+              className="pl-9 text-xs h-9 border-purple-200 text-black font-medium placeholder:text-slate-400 focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-white"
             />
           </div>
         </div>
 
         {/* 2. Customer Area / Locality Search */}
-        <div className="lg:col-span-3 space-y-1">
+        <div className="lg:col-span-3 space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-[11px] font-semibold text-purple-200/90 uppercase tracking-wider">
+            <label className="text-[11px] font-bold text-black uppercase tracking-wider">
               Area / Locality
             </label>
             <button
               type="button"
               onClick={detectBrowserLocation}
               disabled={isLocating}
-              className="text-[10px] text-purple-300 hover:text-white flex items-center gap-1 transition-colors"
+              className="text-[10px] font-semibold text-slate-800 hover:text-purple-700 flex items-center gap-1 transition-colors"
               title="Use GPS Coordinates"
             >
-              {isLocating ? <Loader2 className="w-3 h-3 animate-spin text-purple-400" /> : <Navigation className="w-3 h-3 text-emerald-400" />}
+              {isLocating ? <Loader2 className="w-3 h-3 animate-spin text-purple-600" /> : <Navigation className="w-3 h-3 text-purple-600" />}
               <span>GPS Pin</span>
             </button>
           </div>
           <div className="relative flex items-center">
-            <MapPin className="w-4 h-4 text-purple-300 absolute left-3 top-1/2 -translate-y-1/2" />
+            <MapPin className="w-4 h-4 text-purple-600 absolute left-3 top-1/2 -translate-y-1/2" />
             <Input 
               placeholder="e.g. Velachery, Guindy, Powai" 
               value={areaInput}
               onChange={(e) => setAreaInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleManualAreaSearch()}
-              className="pl-9 pr-14 text-xs h-9 border-purple-500/30 text-white placeholder:text-purple-300/50 focus:border-purple-400 bg-purple-950/20"
+              className="pl-9 pr-14 text-xs h-9 border-purple-200 text-black font-medium placeholder:text-slate-400 focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-white"
             />
             <Button
               type="button"
               size="sm"
               onClick={handleManualAreaSearch}
-              className="absolute right-1 h-7 px-2 text-[10px] bg-purple-600/80 hover:bg-purple-600 text-white rounded-md"
+              className="absolute right-1 h-7 px-2.5 text-[10px] bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md"
             >
               Set
             </Button>
@@ -342,8 +342,8 @@ export const GarageSelection = () => {
         </div>
 
         {/* 3. Service Filter Dropdown */}
-        <div className="lg:col-span-3 space-y-1">
-          <label className="text-[11px] font-semibold text-purple-200/90 uppercase tracking-wider">
+        <div className="lg:col-span-3 space-y-1.5">
+          <label className="text-[11px] font-bold text-black uppercase tracking-wider">
             Required Service
           </label>
           <select
@@ -352,11 +352,11 @@ export const GarageSelection = () => {
               setSelectedServiceId(e.target.value);
               loadRecommendations(undefined, undefined, undefined, e.target.value);
             }}
-            className="w-full h-9 rounded-md border border-purple-500/30 bg-purple-950/20 px-3 text-xs text-white focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400"
+            className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-xs text-black font-medium focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600"
           >
-            <option value="" className="bg-slate-900 text-white">All Services</option>
+            <option value="" className="bg-white text-black font-medium">All Services</option>
             {masterServices.map(s => (
-              <option key={s.id} value={s.id} className="bg-slate-900 text-white">
+              <option key={s.id} value={s.id} className="bg-white text-black font-medium">
                 {s.name}
               </option>
             ))}
@@ -364,8 +364,8 @@ export const GarageSelection = () => {
         </div>
 
         {/* 4. Radius Selector */}
-        <div className="lg:col-span-2 space-y-1">
-          <label className="text-[11px] font-semibold text-purple-200/90 uppercase tracking-wider">
+        <div className="lg:col-span-2 space-y-1.5">
+          <label className="text-[11px] font-bold text-black uppercase tracking-wider">
             Search Radius
           </label>
           <select
@@ -375,13 +375,13 @@ export const GarageSelection = () => {
               setRadiusKm(val);
               loadRecommendations(undefined, undefined, undefined, undefined, val);
             }}
-            className="w-full h-9 rounded-md border border-purple-500/30 bg-purple-950/20 px-3 text-xs text-white focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400"
+            className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-xs text-black font-medium focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600"
           >
-            <option value={5} className="bg-slate-900 text-white">Within 5 km</option>
-            <option value={10} className="bg-slate-900 text-white">Within 10 km</option>
-            <option value={25} className="bg-slate-900 text-white">Within 25 km</option>
-            <option value={50} className="bg-slate-900 text-white">Within 50 km</option>
-            <option value={100} className="bg-slate-900 text-white">Within 100 km</option>
+            <option value={5} className="bg-white text-black font-medium">Within 5 km</option>
+            <option value={10} className="bg-white text-black font-medium">Within 10 km</option>
+            <option value={25} className="bg-white text-black font-medium">Within 25 km</option>
+            <option value={50} className="bg-white text-black font-medium">Within 50 km</option>
+            <option value={100} className="bg-white text-black font-medium">Within 100 km</option>
           </select>
         </div>
 
@@ -391,7 +391,7 @@ export const GarageSelection = () => {
             size="sm"
             onClick={() => loadRecommendations()}
             disabled={loadingGarages}
-            className="w-full h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center gap-1 text-xs"
+            className="w-full h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center gap-1 text-xs font-semibold shadow-sm"
             title="Re-run Database Recommendation Query"
           >
             {loadingGarages ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
@@ -400,27 +400,27 @@ export const GarageSelection = () => {
       </div>
 
       {/* Active Location & Recommendation Context Indicator */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-purple-950/30 border border-purple-500/20 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 rounded-xl bg-purple-50/70 border border-purple-200 text-xs">
         <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 relative">
+          <span className="flex h-2.5 w-2.5 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
           </span>
-          <span className="text-purple-200/80 font-normal">Active Search Context:</span>
-          <span className="text-white font-semibold flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-purple-400" />
+          <span className="text-slate-700 font-medium">Active Search Context:</span>
+          <span className="text-black font-bold flex items-center gap-1">
+            <MapPin className="w-3.5 h-3.5 text-purple-600" />
             {locationLabel}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           {selectedServiceId && (
-            <Badge variant="secondary" className="bg-purple-900/60 text-purple-200 border-purple-500/40 text-[10px]">
+            <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200 text-[10px] font-semibold">
               Service Filter Active
             </Badge>
           )}
-          <span className="text-purple-300/80 text-[11px]">
-            Showing <strong className="text-white font-medium">{recommendedGarages.length}</strong> eligible centers
+          <span className="text-slate-700 text-[11px]">
+            Showing <strong className="text-black font-bold">{recommendedGarages.length}</strong> eligible centers
           </span>
         </div>
       </div>
@@ -428,7 +428,7 @@ export const GarageSelection = () => {
       {/* Main Content: Map View OR Cards Grid View */}
       {viewMode === 'map' ? (
         <div className="space-y-3">
-          <div className="rounded-2xl overflow-hidden border border-purple-500/30 shadow-2xl">
+          <div className="rounded-2xl overflow-hidden border border-purple-200 shadow-xl bg-white">
             <GarageDiscoveryMap
               customerCoords={customerCoords}
               garages={recommendedGarages}
@@ -438,25 +438,25 @@ export const GarageSelection = () => {
               className="h-[550px]"
             />
           </div>
-          <p className="text-[11px] text-purple-300/70 text-center">
+          <p className="text-[11px] text-slate-600 text-center font-medium">
             📍 Blue Pin = Your Coordinates &nbsp;|&nbsp; 🔧 Purple/Emerald Pins = Ranked Garages (Click pin for service details)
           </p>
         </div>
       ) : (
         <div>
           {loadingGarages ? (
-            <div className="py-24 text-center space-y-3">
-              <Loader2 className="w-8 h-8 mx-auto animate-spin text-purple-400" />
-              <p className="text-sm font-semibold text-white">Running Spatial & Relational Query...</p>
-              <p className="text-xs text-purple-200/75">
+            <div className="py-24 text-center space-y-3 bg-white rounded-2xl border border-purple-100">
+              <Loader2 className="w-8 h-8 mx-auto animate-spin text-purple-600" />
+              <p className="text-sm font-bold text-black">Running Spatial & Relational Query...</p>
+              <p className="text-xs text-slate-600">
                 Computing MySQL ST_Distance_Sphere & deterministic scoring model
               </p>
             </div>
           ) : recommendedGarages.length === 0 ? (
-            <div className="py-20 text-center rounded-2xl border border-dashed border-purple-500/30 bg-purple-950/10 p-8 space-y-3">
-              <AlertCircle className="w-10 h-10 mx-auto text-purple-400/60" />
-              <h3 className="text-base font-semibold text-white">No garages found within {radiusKm} km</h3>
-              <p className="text-xs text-purple-200/75 max-w-md mx-auto">
+            <div className="py-20 text-center rounded-2xl border border-dashed border-purple-300 bg-purple-50/40 p-8 space-y-3">
+              <AlertCircle className="w-10 h-10 mx-auto text-purple-600" />
+              <h3 className="text-base font-bold text-black">No garages found within {radiusKm} km</h3>
+              <p className="text-xs text-slate-600 max-w-md mx-auto">
                 No active workshops matched your current location and service criteria. Try expanding your search radius to 50 km or clearing the service filter.
               </p>
               <div className="pt-2 flex items-center justify-center gap-2">
@@ -468,7 +468,7 @@ export const GarageSelection = () => {
                     setRadiusKm(50);
                     loadRecommendations(customerCoords, '', '', '', 50);
                   }}
-                  className="text-xs border-purple-500/40 text-purple-200 hover:text-white"
+                  className="text-xs border-purple-300 text-purple-700 hover:bg-purple-50 font-semibold"
                 >
                   Expand Radius to 50 km
                 </Button>
@@ -487,12 +487,12 @@ export const GarageSelection = () => {
                 return (
                   <Card 
                     key={garage.id} 
-                    className={`group relative overflow-hidden transition-all duration-200 hover:shadow-2xl hover:border-purple-500/60 flex flex-col justify-between ${
+                    className={`group relative overflow-hidden transition-all duration-200 hover:shadow-xl hover:border-purple-400 flex flex-col justify-between bg-white ${
                       isSelected 
-                        ? "border-emerald-500 ring-1 ring-emerald-500/40 bg-purple-950/30" 
+                        ? "border-emerald-500 ring-2 ring-emerald-500/20 shadow-md" 
                         : isTopMatch
-                          ? "border-purple-500/80 ring-1 ring-purple-500/30 bg-purple-950/20"
-                          : "border-border/60 bg-card"
+                          ? "border-purple-400 ring-2 ring-purple-500/15 shadow-md"
+                          : "border-purple-200/90 shadow-sm"
                     }`}
                   >
                     {/* Top gradient accent */}
@@ -504,35 +504,35 @@ export const GarageSelection = () => {
 
                     <CardHeader className="pb-2.5 pt-5 px-5">
                       <div className="flex justify-between items-start gap-2">
-                        <div className="space-y-1 flex-1">
+                        <div className="space-y-1.5 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             {isTopMatch && (
-                              <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/40 text-[9px] uppercase font-bold py-0.5 px-2 flex items-center gap-1">
-                                <Sparkles className="w-2.5 h-2.5" /> Top Recommendation
+                              <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[9px] uppercase font-bold py-0.5 px-2 flex items-center gap-1">
+                                <Sparkles className="w-2.5 h-2.5 text-purple-600" /> Top Recommendation
                               </Badge>
                             )}
-                            <Badge className="bg-purple-900/60 text-purple-200 border-purple-500/40 text-[9px] font-mono py-0.5 px-2">
+                            <Badge className="bg-purple-100 text-purple-900 border-purple-200 text-[9px] font-mono font-bold py-0.5 px-2">
                               Match: {score}%
                             </Badge>
                           </div>
 
-                          <CardTitle className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">
+                          <CardTitle className="text-lg font-bold text-black group-hover:text-purple-700 transition-colors">
                             {garage.name}
                           </CardTitle>
 
-                          <div className="flex items-center gap-3 text-xs text-purple-200/80 font-normal">
+                          <div className="flex items-center gap-3 text-xs text-slate-800 font-medium">
                             <span className="flex items-center gap-1">
-                              <MapPin className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                              <MapPin className="w-3.5 h-3.5 text-purple-600 shrink-0" />
                               {garage.area || garage.city || 'Workshop'}
                             </span>
                             {garage.distance_km != null && (
-                              <span className="font-mono text-emerald-400 font-medium">
+                              <span className="font-mono text-emerald-700 font-semibold">
                                 📍 {garage.distance_km.toFixed(1)} km
                               </span>
                             )}
                             {garage.rating != null && (
-                              <span className="flex items-center gap-0.5 text-amber-300">
-                                <Star className="w-3 h-3 fill-amber-300" />
+                              <span className="flex items-center gap-0.5 text-amber-700 font-semibold">
+                                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                                 {Number(garage.rating).toFixed(1)}
                               </span>
                             )}
@@ -542,7 +542,7 @@ export const GarageSelection = () => {
                         {/* Save / Favorite toggle */}
                         <div className="flex items-center gap-1">
                           {isSelected && (
-                            <Badge variant="default" className="text-[10px] uppercase font-mono px-2 py-0.5 bg-emerald-600 text-white">
+                            <Badge variant="default" className="text-[10px] uppercase font-mono px-2 py-0.5 bg-emerald-600 text-white font-semibold">
                               Active
                             </Badge>
                           )}
@@ -553,12 +553,12 @@ export const GarageSelection = () => {
                             title={isSaved ? "Remove from favorites" : "Save to favorites"}
                             className={`p-2 rounded-xl transition-all ${
                               isSaved 
-                                ? 'text-red-400 bg-red-500/10 hover:bg-red-500/20 ring-1 ring-red-500/30' 
-                                : 'text-purple-300/70 hover:text-red-400 hover:bg-purple-900/30'
+                                ? 'text-red-500 bg-red-50 hover:bg-red-100 ring-1 ring-red-300' 
+                                : 'text-purple-600 hover:text-red-500 hover:bg-purple-50'
                             }`}
                           >
                             {isToggling ? (
-                              <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+                              <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
                             ) : (
                               <Heart className={`w-4 h-4 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
                             )}
@@ -573,19 +573,19 @@ export const GarageSelection = () => {
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {garage.badges && garage.badges.map((b) => {
                             const badgeStyles: Record<string, string> = {
-                              area: 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40',
-                              service: 'bg-purple-950/60 text-purple-300 border-purple-500/40',
-                              history: 'bg-amber-950/60 text-amber-300 border-amber-500/40',
-                              saved: 'bg-pink-950/60 text-pink-300 border-pink-500/40',
-                              availability: 'bg-teal-950/60 text-teal-300 border-teal-500/40',
-                              distance: 'bg-blue-950/60 text-blue-300 border-blue-500/40'
+                              area: 'bg-emerald-50 text-emerald-900 border-emerald-300 font-semibold',
+                              service: 'bg-purple-50 text-purple-900 border-purple-300 font-semibold',
+                              history: 'bg-amber-50 text-amber-900 border-amber-300 font-semibold',
+                              saved: 'bg-pink-50 text-pink-900 border-pink-300 font-semibold',
+                              availability: 'bg-teal-50 text-teal-900 border-teal-300 font-semibold',
+                              distance: 'bg-blue-50 text-blue-900 border-blue-300 font-semibold'
                             };
 
                             return (
                               <span 
                                 key={b.id} 
-                                className={`text-[10px] px-2 py-0.5 rounded-full border font-medium flex items-center gap-1 ${
-                                  badgeStyles[b.variant] || 'bg-purple-950/40 text-purple-200 border-purple-500/30'
+                                className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold flex items-center gap-1 ${
+                                  badgeStyles[b.variant] || 'bg-purple-50 text-purple-900 border-purple-300'
                                 }`}
                               >
                                 {b.label}
@@ -595,18 +595,18 @@ export const GarageSelection = () => {
                         </div>
 
                         {/* Address & Details snippet */}
-                        <div className="p-3 rounded-xl bg-muted/40 border border-purple-500/20 space-y-1">
-                          <p className="text-[11px] text-purple-200/80 truncate">
-                            <strong className="text-white font-medium">Address:</strong> {garage.address}
+                        <div className="p-3 rounded-xl bg-slate-50 border border-purple-100 space-y-1">
+                          <p className="text-[11px] text-slate-800 truncate">
+                            <strong className="text-black font-semibold">Address:</strong> {garage.address}
                           </p>
                           {garage.phone && (
-                            <p className="text-[11px] text-purple-200/80 flex items-center gap-1">
-                              <Phone className="w-3 h-3 text-purple-400 shrink-0" /> {garage.phone}
+                            <p className="text-[11px] text-slate-800 flex items-center gap-1 font-medium">
+                              <Phone className="w-3 h-3 text-purple-600 shrink-0" /> {garage.phone}
                             </p>
                           )}
                           {garage.garage_type && (
-                            <p className="text-[11px] text-purple-200/80 capitalize">
-                              <strong className="text-white font-medium">Type:</strong> {garage.garage_type} workshop
+                            <p className="text-[11px] text-slate-800 capitalize font-medium">
+                              <strong className="text-black font-semibold">Type:</strong> {garage.garage_type} workshop
                             </p>
                           )}
                         </div>
@@ -617,45 +617,45 @@ export const GarageSelection = () => {
                             <button
                               type="button"
                               onClick={() => setExpandedBreakdownId(isBreakdownOpen ? null : garage.id)}
-                              className="text-[10px] text-purple-300/80 hover:text-white flex items-center gap-1 transition-colors"
+                              className="text-[10px] text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1 transition-colors"
                             >
-                              <Info className="w-3 h-3 text-purple-400" />
+                              <Info className="w-3 h-3 text-purple-600" />
                               <span>{isBreakdownOpen ? 'Hide scoring audit' : 'View recommendation score breakdown'}</span>
                             </button>
 
                             {isBreakdownOpen && (
-                              <div className="mt-2 p-2.5 rounded-lg bg-slate-950/80 border border-purple-500/30 text-[10px] font-mono space-y-1 text-purple-200/90 animate-in fade-in duration-150">
+                              <div className="mt-2 p-3 rounded-lg bg-slate-50 border border-purple-200 text-[10px] font-mono space-y-1.5 text-slate-800 shadow-inner animate-in fade-in duration-150">
                                 <div className="flex justify-between">
                                   <span>Area Match (30 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.area_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.area_score} pts</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span>Service Match (25 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.service_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.service_score} pts</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span>Availability (15 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.availability_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.availability_score} pts</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span>Customer History (10 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.history_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.history_score} pts</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span>Saved Favorite (10 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.saved_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.saved_score} pts</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span>Distance Proximity (5 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.distance_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.distance_score} pts</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span>Rating Signal (5 pts max):</span>
-                                  <span className="text-white font-bold">{garage.breakdown.rating_score} pts</span>
+                                  <span className="text-black font-bold">{garage.breakdown.rating_score} pts</span>
                                 </div>
-                                <div className="border-t border-purple-500/30 pt-1 flex justify-between text-purple-300 font-bold">
+                                <div className="border-t border-purple-200 pt-1.5 flex justify-between text-purple-900 font-bold">
                                   <span>Total MySQL Calculated:</span>
-                                  <span className="text-emerald-400">{garage.recommendation_score} / 100</span>
+                                  <span className="text-emerald-700 font-bold">{garage.recommendation_score} / 100</span>
                                 </div>
                               </div>
                             )}
@@ -664,26 +664,26 @@ export const GarageSelection = () => {
                       </div>
 
                       {/* Primary Actions */}
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-purple-500/20">
+                      <div className="grid grid-cols-2 gap-2 pt-2.5 border-t border-purple-100">
                         <Button
                           size="sm"
                           onClick={() => handleOpenQuickBooking(garage)}
-                          className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 flex items-center justify-center gap-1.5"
+                          className="w-full text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 flex items-center justify-center gap-1.5 rounded-lg"
                         >
-                          <Sparkles className="w-3.5 h-3.5" /> Book Service
+                          <Sparkles className="w-3.5 h-3.5 text-white" /> Book Service
                         </Button>
 
                         <Button 
                           size="sm" 
-                          className="w-full text-xs" 
+                          className="w-full text-xs font-semibold rounded-lg" 
                           variant={isSelected ? "secondary" : "outline"}
                           onClick={() => handleSelect(garage)}
                           disabled={isSelected}
                         >
                           {isSelected ? (
-                            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Selected</span>
+                            <span className="flex items-center gap-1 text-emerald-700 font-bold"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Selected</span>
                           ) : (
-                            'Set Active'
+                            <span className="text-black hover:text-purple-700">Set Active</span>
                           )}
                         </Button>
                       </div>

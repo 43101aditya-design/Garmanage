@@ -40,56 +40,55 @@
 
 @layer base {
   :root {
-    --background: 265 30% 98%;
-    --foreground: 265 40% 12%;
+    /* Pure white background */
+    --background: 0 0% 100%;
+    /* Pure black font for all headings, titles and body text */
+    --foreground: 0 0% 5%;
+    /* Pure white cards */
     --card: 0 0% 100%;
-    --card-foreground: 265 40% 12%;
+    /* Pure black card text */
+    --card-foreground: 0 0% 5%;
     --popover: 0 0% 100%;
-    --popover-foreground: 265 40% 12%;
-    --primary: 267 85% 60%;
+    --popover-foreground: 0 0% 5%;
+    /* Vibrant purple for icons, accents and primary buttons */
+    --primary: 271 81% 56%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 265 25% 94%;
-    --secondary-foreground: 265 40% 15%;
-    --muted: 265 20% 93%;
-    --muted-foreground: 265 30% 45%;
-    --accent: 265 25% 92%;
-    --accent-foreground: 265 40% 12%;
+    --secondary: 265 30% 96%;
+    --secondary-foreground: 0 0% 5%;
+    --muted: 265 25% 96%;
+    /* Dark charcoal/black for subtitles and secondary font */
+    --muted-foreground: 0 0% 25%;
+    --accent: 265 30% 94%;
+    --accent-foreground: 0 0% 5%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     --border: 265 20% 88%;
     --input: 265 20% 88%;
-    --ring: 267 85% 60%;
+    --ring: 271 81% 56%;
     --radius: 0.75rem;
   }
 
   .dark {
-    /* Deep obsidian-violet backdrop */
-    --background: 265 35% 6%;
-    /* Pure white font for crisp primary text and headings */
-    --foreground: 0 0% 100%;
-    /* Dark card with subtle rich violet undertone */
-    --card: 265 30% 10%;
-    /* Pure white font for card contents */
-    --card-foreground: 0 0% 100%;
-    --popover: 265 30% 10%;
-    --popover-foreground: 0 0% 100%;
-    /* Vibrant electric violet/purple */
-    --primary: 267 90% 66%;
+    /* White background with purple icons and black fonts */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 271 81% 56%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 265 24% 16%;
-    /* Light lavender-white */
-    --secondary-foreground: 268 85% 93%;
-    --muted: 265 24% 14%;
-    /* "Little little purple" - delicate soft lavender font for descriptions, subtitles & secondary text */
-    --muted-foreground: 268 75% 82%;
-    --accent: 266 32% 18%;
-    --accent-foreground: 0 0% 100%;
+    --secondary: 265 30% 96%;
+    --secondary-foreground: 0 0% 5%;
+    --muted: 265 25% 96%;
+    --muted-foreground: 0 0% 25%;
+    --accent: 265 30% 94%;
+    --accent-foreground: 0 0% 5%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
-    /* Sleek violet-slate borders */
-    --border: 265 20% 18%;
-    --input: 265 20% 18%;
-    --ring: 267 90% 66%;
+    --border: 265 20% 88%;
+    --input: 265 20% 88%;
+    --ring: 271 81% 56%;
   }
 }
 
