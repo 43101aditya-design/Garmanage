@@ -20,6 +20,13 @@ const validateCustomer = [
     }
 ];
 
+const locationController = require('../controllers/customerLocationController');
+const { requireAuth } = require('../middleware/firebaseAuth');
+
+// Customer location management
+router.get('/me/location', requireAuth, locationController.getCustomerLocation);
+router.post('/me/location', requireAuth, locationController.updateCustomerLocation);
+
 router.get('/', verifyToken, customerController.getAllCustomers);
 router.get('/:id', verifyToken, customerController.getCustomerById);
 router.post('/', verifyToken, validateCustomer, customerController.createCustomer);

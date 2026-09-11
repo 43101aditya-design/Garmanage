@@ -1,7 +1,11 @@
 @import "tailwindcss";
 @import "tailwindcss/utilities";
+@import "leaflet/dist/leaflet.css";
 
 @theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -36,48 +40,56 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 224 71% 4%;
+    --background: 265 30% 98%;
+    --foreground: 265 40% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 265 40% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 220 14% 92%;
-    --secondary-foreground: 224 71% 4%;
-    --muted: 220 14% 92%;
-    --muted-foreground: 220 14% 34%;
-    --accent: 220 14% 92%;
-    --accent-foreground: 224 71% 4%;
+    --popover-foreground: 265 40% 12%;
+    --primary: 267 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 265 25% 94%;
+    --secondary-foreground: 265 40% 15%;
+    --muted: 265 20% 93%;
+    --muted-foreground: 265 30% 45%;
+    --accent: 265 25% 92%;
+    --accent-foreground: 265 40% 12%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 14% 82%;
-    --input: 220 14% 82%;
-    --ring: 221.2 83.2% 53.3%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 265 20% 88%;
+    --input: 265 20% 88%;
+    --ring: 267 85% 60%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222 47% 4%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 7%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 222 47% 12%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 12%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 222 47% 15%;
-    --accent-foreground: 210 40% 98%;
+    /* Deep obsidian-violet backdrop */
+    --background: 265 35% 6%;
+    /* Pure white font for crisp primary text and headings */
+    --foreground: 0 0% 100%;
+    /* Dark card with subtle rich violet undertone */
+    --card: 265 30% 10%;
+    /* Pure white font for card contents */
+    --card-foreground: 0 0% 100%;
+    --popover: 265 30% 10%;
+    --popover-foreground: 0 0% 100%;
+    /* Vibrant electric violet/purple */
+    --primary: 267 90% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 265 24% 16%;
+    /* Light lavender-white */
+    --secondary-foreground: 268 85% 93%;
+    --muted: 265 24% 14%;
+    /* "Little little purple" - delicate soft lavender font for descriptions, subtitles & secondary text */
+    --muted-foreground: 268 75% 82%;
+    --accent: 266 32% 18%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 47% 13%;
-    --input: 222 47% 13%;
-    --ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 0 0% 100%;
+    /* Sleek violet-slate borders */
+    --border: 265 20% 18%;
+    --input: 265 20% 18%;
+    --ring: 267 90% 66%;
   }
 }
 
@@ -86,8 +98,10 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 

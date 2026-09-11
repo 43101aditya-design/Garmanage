@@ -1,11 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { requireAuth, requireRole, requireGarageAccess } = require('../middleware/firebaseAuth');
+const { requireAuth, requireRole, requireGarageAccess, optionalAuth } = require('../middleware/firebaseAuth');
 const garageController = require('../controllers/garageController');
 const joinCtrl = require('../controllers/garageJoinController');
 
-router.get('/', requireAuth, garageController.getAllGarages);
-router.get('/:id', requireAuth, garageController.getGarageById);
+// Recommendation & Nearby Discovery (Spatial DBMS engine)
+// Uses optionalAuth so unauthenticated guests can discover garages, while authenticated users get personalized history & saved garage boosts
+router.get('/recommendations', optionalAuth, garageController.getRecommendations);
+router.get('/nearby', optionalAuth, garageController.getRecommendations);
+
+router.get('/', optionalAuth, garageController.getAllGarages);
+router.get('/:id', optionalAuth, garageController.getGarageById);
+router.get('/:id/services', optionalAuth, garageController.getGarageServices);
+router.post('/:id/services', requireAuth, requireRole(['owner', 'manager']), requireGarageAccess, garageController.setGarageServices);
+
 router.post('/', requireAuth, requireRole(['owner']), garageController.createGarage);
 router.put('/:id', requireAuth, requireRole(['owner']), requireGarageAccess, garageController.updateGarage);
 router.patch('/:id/status', requireAuth, requireRole(['owner']), requireGarageAccess, garageController.updateGarageStatus);

@@ -138,7 +138,7 @@ export const OwnerDashboard = () => {
   const garageChartData = garages.map(g => ({
     name: g.name.length > 12 ? g.name.substring(0, 10) + '..' : g.name,
     members: g.member_count || 0,
-    rating: (g as any).rating || 4.8
+    rating: (g as any).rating != null ? Number((g as any).rating) : 0
   }));
 
   // Pie chart data
@@ -149,22 +149,22 @@ export const OwnerDashboard = () => {
 
   // Color variables for Recharts based on theme
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const gridColor = isDark ? '#1e293b' : '#e2e8f0';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
+  const gridColor = isDark ? '#2b2342' : '#e2e8f0';
+  const textColor = isDark ? '#d8b4fe' : '#64748b';
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-300">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/40 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-primary font-bold">
-            <Award className="w-4 h-4 text-primary" />
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-purple-400 font-semibold">
+            <Award className="w-4 h-4 text-purple-400" />
             Enterprise Control Center
           </div>
-          <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-1">
+          <h1 className="text-3xl font-bold text-white tracking-tight mt-1">
             Welcome back, {user?.name}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-purple-200/80 mt-1 font-normal">
             Overviewing operations across {garages.length} active service locations.
           </p>
         </div>

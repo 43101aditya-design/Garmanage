@@ -234,9 +234,9 @@ export const Topbar = () => {
           </div>
         )}
 
-        <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-colors relative" aria-label="Notifications">
-          <Bell className="w-4.5 h-4.5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full shadow-[0_0_6px_rgba(59,130,246,0.8)]" />
+        <button className="p-2 rounded-lg text-purple-300/70 hover:text-white hover:bg-purple-900/30 transition-colors relative" aria-label="Notifications">
+          <Bell className="w-4.5 h-4.5 text-purple-300" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-purple-500 rounded-full shadow-[0_0_6px_rgba(168,85,247,0.8)]" />
         </button>
 
         <NavLink 

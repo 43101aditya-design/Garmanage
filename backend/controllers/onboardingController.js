@@ -28,7 +28,7 @@ exports.createGarageAndOwner = async (req, res) => {
   const fbUser = req.firebaseUser || (req.user ? { firebase_uid: req.user.firebase_uid, email: req.user.email, name: req.user.name } : null);
   if (!fbUser) return res.status(401).json({ error: 'Authentication required' });
 
-  const { garageName, garageAddress, garageCity, garageState, garagePhone, garageType, garageDescription } = req.body;
+  const { garageName, garageAddress, garageCity, garageState, garagePhone, garageType, garageDescription, area, pincode, latitude, longitude } = req.body;
   if (!garageName || !garageAddress) return res.status(400).json({ error: 'Garage name and address are required' });
 
   const conn = await req.db.getConnection();
@@ -53,13 +53,32 @@ exports.createGarageAndOwner = async (req, res) => {
       );
     }
 
-    // 2. Create Garage
+    // 2. Create Garage with spatial coordinates
     const garageId = uuidv4();
     const joinCode = generateJoinCode();
+    const lat = latitude != null ? Number(latitude) : 12.9784;
+    const lng = longitude != null ? Number(longitude) : 80.2206;
+
     await conn.query(
-      `INSERT INTO Garage (id, name, description, address, city, state, phone, garage_type, join_code, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE')`,
-      [garageId, garageName, garageDescription || null, garageAddress, garageCity || null, garageState || null, garagePhone || null, garageType || 'general', joinCode]
+      `INSERT INTO Garage (id, name, description, address, area, city, state, pincode, phone, garage_type, join_code, status, location, latitude, longitude)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ST_SRID(POINT(?, ?), 4326), ?, ?)`,
+      [
+        garageId,
+        garageName,
+        garageDescription || null,
+        garageAddress,
+        area || garageCity || null,
+        garageCity || null,
+        garageState || null,
+        pincode || null,
+        garagePhone || null,
+        garageType || 'general',
+        joinCode,
+        lng, // POINT(X=longitude, Y=latitude)
+        lat,
+        lat,
+        lng
+      ]
     );
 
     // 3. Get owner Role id
@@ -119,7 +138,7 @@ exports.createCustomerProfile = async (req, res) => {
   const fbUser = req.firebaseUser || (req.user ? { firebase_uid: req.user.firebase_uid, email: req.user.email, name: req.user.name } : null);
   if (!fbUser) return res.status(401).json({ error: 'Authentication required' });
 
-  const { name, fullName, phone, address } = req.body;
+  const { name, fullName, phone, address, area, city, state, pincode, latitude, longitude } = req.body;
   const customerName = (name || fullName || fbUser.name || 'Customer').trim();
   const customerPhone = (phone || '').trim();
   const customerAddress = (address || '').trim();
@@ -135,21 +154,46 @@ exports.createCustomerProfile = async (req, res) => {
     const [firstName, ...lastParts] = customerName.split(' ');
     const lastName = lastParts.join(' ') || '';
 
+    const hasCoords = latitude != null && longitude != null;
+    const lat = hasCoords ? Number(latitude) : null;
+    const lng = hasCoords ? Number(longitude) : null;
+
     // Check if Customer record already exists for this email
     let customerId;
     const [existingCustomer] = await conn.query('SELECT id FROM Customer WHERE email = ?', [fbUser.email]);
     if (existingCustomer.length > 0) {
       customerId = existingCustomer[0].id;
-      await conn.query(
-        'UPDATE Customer SET first_name = ?, last_name = ?, phone = ?, address = ? WHERE id = ?',
-        [firstName, lastName, customerPhone, customerAddress, customerId]
-      );
+      if (hasCoords) {
+        await conn.query(
+          `UPDATE Customer 
+           SET first_name = ?, last_name = ?, phone = ?, address = ?, area = ?, city = ?, state = ?, pincode = ?, 
+               latitude = ?, longitude = ?, location = ST_SRID(POINT(?, ?), 4326) 
+           WHERE id = ?`,
+          [firstName, lastName, customerPhone, customerAddress, area || null, city || null, state || null, pincode || null, lat, lng, lng, lat, customerId]
+        );
+      } else {
+        await conn.query(
+          `UPDATE Customer 
+           SET first_name = ?, last_name = ?, phone = ?, address = ?, area = ?, city = ?, state = ?, pincode = ?
+           WHERE id = ?`,
+          [firstName, lastName, customerPhone, customerAddress, area || null, city || null, state || null, pincode || null, customerId]
+        );
+      }
     } else {
       customerId = uuidv4();
-      await conn.query(
-        'INSERT INTO Customer (id, first_name, last_name, email, phone, address) VALUES (?, ?, ?, ?, ?, ?)',
-        [customerId, firstName, lastName, fbUser.email, customerPhone, customerAddress]
-      );
+      if (hasCoords) {
+        await conn.query(
+          `INSERT INTO Customer (id, first_name, last_name, email, phone, address, area, city, state, pincode, latitude, longitude, location) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_SRID(POINT(?, ?), 4326))`,
+          [customerId, firstName, lastName, fbUser.email, customerPhone, customerAddress, area || null, city || null, state || null, pincode || null, lat, lng, lng, lat]
+        );
+      } else {
+        await conn.query(
+          `INSERT INTO Customer (id, first_name, last_name, email, phone, address, area, city, state, pincode) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [customerId, firstName, lastName, fbUser.email, customerPhone, customerAddress, area || null, city || null, state || null, pincode || null]
+        );
+      }
     }
 
     // Check User_Account record

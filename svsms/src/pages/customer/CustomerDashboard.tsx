@@ -349,7 +349,7 @@ export const CustomerDashboard = () => {
                   <div className="flex items-center md:justify-center md:w-full md:mb-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center border font-mono text-xs font-bold transition-all duration-300 ${
                       step.done 
-                        ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_8px_rgba(59,130,246,0.35)]'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_8px_rgba(168,85,247,0.35)]'
                         : isActive 
                           ? 'bg-amber-500/10 border-amber-500 text-amber-500 animate-pulse'
                           : 'bg-card text-muted-foreground border-border/80'

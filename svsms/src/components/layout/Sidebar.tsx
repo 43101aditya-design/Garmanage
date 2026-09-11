@@ -86,14 +86,14 @@ export const Sidebar = () => {
       )}>
         {/* Header with logo and collapse button */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-border/80 shrink-0">
-          <span className="text-lg font-bold text-foreground flex items-center gap-2 font-mono tracking-wider">
-            <Wrench className="w-5 h-5 text-primary animate-pulse" />
+          <span className="text-lg font-bold text-white flex items-center gap-2 font-mono tracking-wider">
+            <Wrench className="w-5 h-5 text-purple-400 animate-pulse" />
             GARMANAGE
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 inline-block shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
           </span>
           {/* Desktop collapse button */}
           <button 
-            className="hidden lg:flex p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+            className="hidden lg:flex p-1.5 rounded-lg text-purple-300/70 hover:text-white hover:bg-purple-900/30 transition-colors"
             onClick={toggleSidebarCollapsed}
             title="Collapse Sidebar"
           >
@@ -101,7 +101,7 @@ export const Sidebar = () => {
           </button>
           {/* Mobile close button */}
           <button 
-            className="lg:hidden p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+            className="lg:hidden p-1.5 rounded-lg text-purple-300/70 hover:text-white hover:bg-purple-900/30 transition-colors"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="w-5 h-5" />
@@ -110,7 +110,7 @@ export const Sidebar = () => {
 
         <div className="flex-1 overflow-y-auto py-6 space-y-6 custom-scrollbar">
           <div className="px-3">
-            <h3 className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 font-mono">
+            <h3 className="px-3 text-[10px] font-bold text-purple-300/80 uppercase tracking-widest mb-3 font-mono">
               Operational Workspace
             </h3>
             <nav className="space-y-1">
@@ -124,12 +124,12 @@ export const Sidebar = () => {
                     className={({ isActive }) => cn(
                       "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
                       isActive 
-                        ? "bg-primary/10 text-primary border-primary font-semibold" 
-                        : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
+                        ? "bg-purple-500/15 text-white border-purple-500 font-semibold shadow-sm" 
+                        : "text-purple-200/70 border-transparent hover:bg-purple-900/20 hover:text-white"
                     )}
                     onClick={() => setSidebarOpen(false)}
                   >
-                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform" />
+                    <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform text-purple-400" />
                     {item.name}
                   </NavLink>
                 );
@@ -140,11 +140,11 @@ export const Sidebar = () => {
           {(user?.role === 'owner' || (user?.role as string) === 'admin') && (
             <div className="px-3">
               <div className="flex items-center justify-between px-3 mb-3">
-                <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest font-mono flex items-center gap-1.5">
-                  <Database className="w-3.5 h-3.5 text-primary" />
+                <h3 className="text-[10px] font-bold text-purple-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                  <Database className="w-3.5 h-3.5 text-purple-400" />
                   DBMS Intelligence
                 </h3>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold">MYSQL</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono font-bold">MYSQL</span>
               </div>
               <nav className="space-y-1">
                 {dbmsNav.map((item) => {
@@ -156,12 +156,12 @@ export const Sidebar = () => {
                       className={({ isActive }) => cn(
                         "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg group transition-all duration-200 border-l-2",
                         isActive 
-                          ? "bg-primary/10 text-primary border-primary font-semibold" 
-                          : "text-muted-foreground border-transparent hover:bg-muted/40 hover:text-foreground"
+                          ? "bg-purple-500/15 text-white border-purple-500 font-semibold shadow-sm" 
+                          : "text-purple-200/70 border-transparent hover:bg-purple-900/20 hover:text-white"
                       )}
                       onClick={() => setSidebarOpen(false)}
                     >
-                      <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform text-primary/80" />
+                      <Icon className="mr-3 flex-shrink-0 h-4.5 w-4.5 group-hover:scale-105 transition-transform text-purple-400" />
                       {item.name}
                     </NavLink>
                   );

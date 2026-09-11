@@ -283,4 +283,25 @@ const requireGarageAccess = (req, res, next) => {
     next();
 };
 
-module.exports = { requireAuth, requireRole, requireGarageAccess };
+const optionalAuth = async (req, res, next) => {
+    try {
+        if (!req.db) req.db = db;
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            req.user = null;
+            return next();
+        }
+        return requireAuth(req, res, (err) => {
+            if (err) {
+                req.user = null;
+                return next();
+            }
+            next();
+        });
+    } catch (e) {
+        req.user = null;
+        next();
+    }
+};
+
+module.exports = { requireAuth, requireRole, requireGarageAccess, optionalAuth };

@@ -304,7 +304,7 @@ export const SimulationPanel = () => {
 
                      {/* Column 3: RECOMMENDED ACTION (Phase 8 Decision Engine) */}
                      {result.recommended_action && (
-                       <div className="bg-background p-5 rounded-xl border border-primary/40 flex flex-col justify-between space-y-4 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                       <div className="bg-background p-5 rounded-xl border border-primary/40 flex flex-col justify-between space-y-4 shadow-[0_0_20px_rgba(168,85,247,0.15)]">
                          <div>
                            <div className="flex items-center justify-between">
                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded flex items-center gap-1">
@@ -347,7 +347,7 @@ export const SimulationPanel = () => {
                {/* Mechanic Assignment Result */}
                {activeSim === 'mechanic-assignment' && result.recommended_mechanic && (
                  <div className="grid grid-cols-2 gap-6">
-                   <div className="bg-background p-6 rounded-lg border border-primary/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                   <div className="bg-background p-6 rounded-lg border border-primary/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
                      <h3 className="text-sm font-semibold text-textSecondary uppercase tracking-wider mb-4">Recommended Candidate</h3>
                      <div className="flex items-center justify-between mb-6">
                        <div>

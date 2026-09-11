@@ -73,17 +73,17 @@ export const OwnerDecisionCenter = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-primary font-bold">
-            <Award className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-primary font-semibold">
+            <Award className="w-4 h-4 text-purple-400" />
             Enterprise Strategic Governance
           </div>
-          <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-1 flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-white tracking-tight mt-1 flex items-center gap-2">
             <span>Owner Decision Deck</span>
-            <Badge className="font-mono text-[9px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+            <Badge className="font-mono text-[9px] bg-purple-500/10 text-purple-300 border border-purple-500/20">
               Multi-Garage Intelligence
             </Badge>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-purple-200/75 mt-1 font-normal">
             High-level operational interventions across all authorized garage branches.
           </p>
         </div>
@@ -92,7 +92,7 @@ export const OwnerDecisionCenter = () => {
           <select 
             value={selectedGarage} 
             onChange={(e) => setSelectedGarage(e.target.value)}
-            className="bg-card border border-border/80 text-foreground rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none focus:border-primary shadow-sm"
+            className="bg-card border border-border/80 text-white rounded-lg px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-primary shadow-sm"
           >
             <option value="all">All Garages ({garages.length} branches)</option>
             {garages.map(g => (
@@ -100,8 +100,8 @@ export const OwnerDecisionCenter = () => {
             ))}
           </select>
 
-          <Button variant="outline" size="sm" onClick={loadData} disabled={loading}>
-            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={loadData} disabled={loading} className="text-purple-200 border-border/70 hover:text-white hover:bg-purple-900/20">
+            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 text-purple-400 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
         </div>
@@ -109,35 +109,35 @@ export const OwnerDecisionCenter = () => {
 
       {/* Proposals Grid */}
       <div className="space-y-4">
-        <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-          <BrainCircuit className="w-4 h-4 text-primary" /> Active Decision Proposals Awaiting Authorization
+        <h2 className="text-base font-semibold text-white flex items-center gap-2">
+          <BrainCircuit className="w-4 h-4 text-purple-400" /> Active Decision Proposals Awaiting Authorization
         </h2>
 
         {loading ? (
-          <div className="py-16 text-center text-muted-foreground">
+          <div className="py-16 text-center text-purple-200/70">
             <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <p className="text-xs font-mono">Consolidating cross-garage predictive intelligence...</p>
           </div>
         ) : decisions.length === 0 ? (
           <div className="py-12 text-center bg-card border border-dashed border-border/60 rounded-xl space-y-2">
-            <ShieldCheck className="w-10 h-10 text-emerald-500 mx-auto" />
-            <p className="text-sm font-bold text-foreground">All Branches Operating Optimally</p>
-            <p className="text-xs text-muted-foreground">No urgent cross-garage reallocations or stock authorizations pending.</p>
+            <ShieldCheck className="w-10 h-10 text-purple-400 mx-auto" />
+            <p className="text-sm font-semibold text-white">All Branches Operating Optimally</p>
+            <p className="text-xs text-purple-200/70 font-normal">No urgent cross-garage reallocations or stock authorizations pending.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {decisions.map((decision) => (
-              <Card key={decision.id} className="border-primary/20 bg-gradient-to-br from-card to-primary/5 shadow-md flex flex-col justify-between">
+              <Card key={decision.id} className="border-border/60 bg-gradient-to-br from-card via-card to-purple-950/20 shadow-lg flex flex-col justify-between hover:border-purple-500/40 transition-all">
                 <CardHeader className="pb-3 border-b border-border/40">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary">
+                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-300">
                       {decision.garage_name || decision.garage_id}
                     </span>
-                    <Badge variant="outline" className="font-mono text-[9px]">
+                    <Badge variant="outline" className="font-mono text-[9px] text-purple-300 border-purple-500/30 bg-purple-500/10">
                       {decision.confidence_level.replace('_', ' ')}
                     </Badge>
                   </div>
-                  <CardTitle className="text-sm font-bold text-foreground mt-1">
+                  <CardTitle className="text-sm font-semibold text-white mt-1">
                     {decision.action_title || decision.decision_type.replace(/_/g, ' ')}
                   </CardTitle>
                 </CardHeader>
@@ -146,7 +146,7 @@ export const OwnerDecisionCenter = () => {
                   {decision.why && decision.why.length > 0 && (
                     <div className="bg-muted/40 p-2.5 rounded-lg border border-border/50 space-y-1">
                       {decision.why.slice(0, 2).map((w, i) => (
-                        <p key={i} className="text-muted-foreground text-[11px]">• {w}</p>
+                        <p key={i} className="text-purple-200/80 text-[11px] font-normal">• {w}</p>
                       ))}
                     </div>
                   )}

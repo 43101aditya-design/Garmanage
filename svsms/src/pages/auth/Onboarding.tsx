@@ -15,8 +15,10 @@ import {
   ShieldCheck, 
   Sparkles,
   Wrench,
-  UserCheck
+  UserCheck,
+  MapPin
 } from 'lucide-react';
+import { LocationPickerMap } from '../../components/map/LocationPickerMap';
 
 type Step = 'role' | 'form' | 'done';
 type Intent = 'create_garage' | 'join_garage' | 'customer';
@@ -68,11 +70,16 @@ export const Onboarding = () => {
   // Garage creation form state
   const [garageName, setGarageName] = useState('');
   const [garageAddress, setGarageAddress] = useState('');
+  const [garageArea, setGarageArea] = useState('');
   const [garageCity, setGarageCity] = useState('');
   const [garageState, setGarageState] = useState('');
+  const [garagePincode, setGaragePincode] = useState('');
   const [garagePhone, setGaragePhone] = useState('');
   const [garageType, setGarageType] = useState('general');
   const [garageDescription, setGarageDescription] = useState('');
+  const [garageLat, setGarageLat] = useState<number | null>(null);
+  const [garageLng, setGarageLng] = useState<number | null>(null);
+  const [showMapPicker, setShowMapPicker] = useState(false);
 
   // Join form state
   const [joinCode, setJoinCode] = useState('');
@@ -115,8 +122,12 @@ export const Onboarding = () => {
       const res = await apiClient.post('/api/onboarding/garage/create', {
         garageName: garageName.trim(),
         garageAddress: garageAddress.trim(),
+        area: garageArea.trim() || undefined,
         garageCity: garageCity.trim() || undefined,
         garageState: garageState.trim() || undefined,
+        pincode: garagePincode.trim() || undefined,
+        latitude: garageLat,
+        longitude: garageLng,
         garagePhone: garagePhone.trim() || undefined,
         garageType,
         garageDescription: garageDescription.trim() || undefined,
@@ -124,7 +135,7 @@ export const Onboarding = () => {
       setDoneGarageName(res.garage?.name || garageName);
       setDoneJoinCode(res.garage?.join_code || '');
       await syncProfile();
-      toast.success('Garage created successfully!');
+      toast.success('Garage created successfully with spatial coordinates!');
       setStep('done');
     } catch (e: any) {
       toast.error(e.response?.data?.error || 'Failed to create garage');
@@ -360,6 +371,73 @@ export const Onboarding = () => {
                       placeholder="Maharashtra" 
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Area / Locality
+                    </label>
+                    <input 
+                      value={garageArea} 
+                      onChange={e => setGarageArea(e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 transition-all text-sm"
+                      placeholder="e.g. Andheri East / Velachery" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Pincode / Postal Code
+                    </label>
+                    <input 
+                      value={garagePincode} 
+                      onChange={e => setGaragePincode(e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 transition-all text-sm"
+                      placeholder="e.g. 400069 / 600042" 
+                    />
+                  </div>
+                </div>
+
+                {/* Spatial Map Pinning */}
+                <div className="rounded-xl border border-slate-200 p-3 bg-slate-50 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-primary-600" />
+                      <span className="text-xs font-semibold text-slate-800">Precise Workshop Map Pin</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowMapPicker(!showMapPicker)}
+                      className="text-xs font-medium text-primary-600 hover:text-primary-700 underline"
+                    >
+                      {showMapPicker ? 'Collapse Map' : (garageLat ? 'Adjust Map Pin' : 'Select on Map')}
+                    </button>
+                  </div>
+
+                  {garageLat != null && garageLng != null && (
+                    <div className="text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg flex items-center justify-between">
+                      <span>Coordinates: {garageLat.toFixed(5)}, {garageLng.toFixed(5)}</span>
+                      <span className="text-[10px] uppercase font-bold text-emerald-600">Saved</span>
+                    </div>
+                  )}
+
+                  {showMapPicker && (
+                    <div className="mt-2">
+                      <LocationPickerMap
+                        initialLat={garageLat || 19.0760}
+                        initialLng={garageLng || 72.8777}
+                        onLocationSelect={(loc) => {
+                          setGarageLat(loc.latitude);
+                          setGarageLng(loc.longitude);
+                          if (loc.area && !garageArea) setGarageArea(loc.area);
+                          if (loc.city && !garageCity) setGarageCity(loc.city);
+                          if (loc.state && !garageState) setGarageState(loc.state);
+                          if (loc.pincode && !garagePincode) setGaragePincode(loc.pincode);
+                        }}
+                        className="h-[260px]"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
