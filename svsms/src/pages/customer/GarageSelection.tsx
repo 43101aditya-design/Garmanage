@@ -28,6 +28,10 @@ export const GarageSelection = () => {
   const [radiusKm, setRadiusKm] = useState<number>(25);
   const [requireServiceOnly, setRequireServiceOnly] = useState<boolean>(false);
 
+  // Error state
+  const [apiError, setApiError] = useState<string | null>(null);
+  const isInitialSearchMount = useRef(true);
+
   // Customer Location state
   const [customerCoords, setCustomerCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLabel, setLocationLabel] = useState<string>('Detecting location...');
@@ -81,6 +85,7 @@ export const GarageSelection = () => {
     strictService?: boolean
   ) => {
     setLoadingGarages(true);
+    setApiError(null);
     try {
       const activeCoords = coords !== undefined ? coords : customerCoords;
       const activeArea = area !== undefined ? area : areaInput;
@@ -103,7 +108,8 @@ export const GarageSelection = () => {
       setRecommendedGarages(data);
     } catch (err: any) {
       console.error('Recommendation fetch error:', err);
-      toast.error('Failed to fetch personalized recommendations');
+      setApiError('Unable to load garages. Please try again.');
+      toast.error('Unable to load garages. Please try again.');
     } finally {
       setLoadingGarages(false);
     }
@@ -179,6 +185,18 @@ export const GarageSelection = () => {
     fetchMasterServices();
     detectBrowserLocation();
   }, []);
+
+  // Debounced search on search term change
+  useEffect(() => {
+    if (isInitialSearchMount.current) {
+      isInitialSearchMount.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      loadRecommendations(customerCoords, areaInput, searchTerm);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // Handle Manual Area / Locality Search
   const handleManualAreaSearch = (e?: React.FormEvent) => {
@@ -286,116 +304,136 @@ export const GarageSelection = () => {
       </div>
 
       {/* Control Bar: Location, Search, Service Filter, Radius */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3.5 p-5 rounded-2xl bg-white border border-purple-200 shadow-md shadow-purple-500/5">
-        {/* 1. Name or General Search */}
-        <div className="lg:col-span-3 space-y-1.5">
-          <label className="text-[11px] font-bold text-black uppercase tracking-wider">
-            Search Garage
-          </label>
-          <div className="relative">
-            <Search className="w-4 h-4 text-purple-600 absolute left-3 top-1/2 -translate-y-1/2" />
+      <div className="p-5 rounded-2xl bg-white border border-purple-200 shadow-md shadow-purple-500/5 space-y-3.5">
+        {/* Row 1: Prominent IntelliGarage Database Search Bar & Use My Location */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-purple-600 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <Input 
-              placeholder="Search by name..." 
+              placeholder="Search garage, area, city, pincode, or service..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && loadRecommendations()}
-              className="pl-9 text-xs h-9 border-purple-200 text-black font-medium placeholder:text-slate-400 focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-white"
+              onKeyDown={(e) => e.key === 'Enter' && loadRecommendations(customerCoords, areaInput, e.currentTarget.value)}
+              className="pl-10 pr-20 text-xs sm:text-sm h-10 border-purple-200 text-black font-medium placeholder:text-slate-400 focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-white shadow-sm rounded-xl"
             />
-          </div>
-        </div>
-
-        {/* 2. Customer Area / Locality Search */}
-        <div className="lg:col-span-3 space-y-1.5">
-          <div className="flex items-center justify-between">
-            <label className="text-[11px] font-bold text-black uppercase tracking-wider">
-              Area / Locality
-            </label>
-            <button
-              type="button"
-              onClick={detectBrowserLocation}
-              disabled={isLocating}
-              className="text-[10px] font-semibold text-slate-800 hover:text-purple-700 flex items-center gap-1 transition-colors"
-              title="Use GPS Coordinates"
-            >
-              {isLocating ? <Loader2 className="w-3 h-3 animate-spin text-purple-600" /> : <Navigation className="w-3 h-3 text-purple-600" />}
-              <span>GPS Pin</span>
-            </button>
-          </div>
-          <div className="relative flex items-center">
-            <MapPin className="w-4 h-4 text-purple-600 absolute left-3 top-1/2 -translate-y-1/2" />
-            <Input 
-              placeholder="e.g. Velachery, Guindy, Powai" 
-              value={areaInput}
-              onChange={(e) => setAreaInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleManualAreaSearch()}
-              className="pl-9 pr-14 text-xs h-9 border-purple-200 text-black font-medium placeholder:text-slate-400 focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-white"
-            />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchTerm('');
+                  loadRecommendations(customerCoords, areaInput, '');
+                }}
+                className="absolute right-14 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-black font-bold p-1"
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
             <Button
               type="button"
               size="sm"
-              onClick={handleManualAreaSearch}
-              className="absolute right-1 h-7 px-2.5 text-[10px] bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md"
+              onClick={() => loadRecommendations(customerCoords, areaInput, searchTerm)}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 px-3 text-[11px] bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg"
             >
-              Set
+              Search
             </Button>
           </div>
-        </div>
 
-        {/* 3. Service Filter Dropdown */}
-        <div className="lg:col-span-3 space-y-1.5">
-          <label className="text-[11px] font-bold text-black uppercase tracking-wider">
-            Required Service
-          </label>
-          <select
-            value={selectedServiceId}
-            onChange={(e) => {
-              setSelectedServiceId(e.target.value);
-              loadRecommendations(undefined, undefined, undefined, e.target.value);
-            }}
-            className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-xs text-black font-medium focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600"
-          >
-            <option value="" className="bg-white text-black font-medium">All Services</option>
-            {masterServices.map(s => (
-              <option key={s.id} value={s.id} className="bg-white text-black font-medium">
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* 4. Radius Selector */}
-        <div className="lg:col-span-2 space-y-1.5">
-          <label className="text-[11px] font-bold text-black uppercase tracking-wider">
-            Search Radius
-          </label>
-          <select
-            value={radiusKm}
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              setRadiusKm(val);
-              loadRecommendations(undefined, undefined, undefined, undefined, val);
-            }}
-            className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-xs text-black font-medium focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600"
-          >
-            <option value={5} className="bg-white text-black font-medium">Within 5 km</option>
-            <option value={10} className="bg-white text-black font-medium">Within 10 km</option>
-            <option value={25} className="bg-white text-black font-medium">Within 25 km</option>
-            <option value={50} className="bg-white text-black font-medium">Within 50 km</option>
-            <option value={100} className="bg-white text-black font-medium">Within 100 km</option>
-          </select>
-        </div>
-
-        {/* 5. Refresh / Apply Button */}
-        <div className="lg:col-span-1 flex items-end">
           <Button
-            size="sm"
-            onClick={() => loadRecommendations()}
-            disabled={loadingGarages}
-            className="w-full h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center gap-1 text-xs font-semibold shadow-sm"
-            title="Re-run Database Recommendation Query"
+            type="button"
+            variant="outline"
+            onClick={detectBrowserLocation}
+            disabled={isLocating}
+            className="h-10 px-4 text-xs font-semibold text-black border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl flex items-center gap-2 shrink-0 bg-white"
           >
-            {loadingGarages ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            {isLocating ? <Loader2 className="w-4 h-4 animate-spin text-purple-600" /> : <Navigation className="w-4 h-4 text-purple-600" />}
+            <span>Use My Location</span>
           </Button>
+        </div>
+
+        {/* Row 2: Secondary Controls: Area / Locality, Service Dropdown, Radius Dropdown, Refresh */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-2 border-t border-purple-100">
+          {/* Locality Input */}
+          <div className="md:col-span-4 space-y-1">
+            <label className="text-[11px] font-bold text-black uppercase tracking-wider">
+              Area / Locality
+            </label>
+            <div className="relative flex items-center">
+              <MapPin className="w-4 h-4 text-purple-600 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Input 
+                placeholder="e.g. Velachery, Andheri East, Mumbai" 
+                value={areaInput}
+                onChange={(e) => setAreaInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleManualAreaSearch()}
+                className="pl-9 pr-14 text-xs h-9 border-purple-200 text-black font-medium placeholder:text-slate-400 focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-white"
+              />
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleManualAreaSearch}
+                className="absolute right-1 h-7 px-2.5 text-[10px] bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md"
+              >
+                Set
+              </Button>
+            </div>
+          </div>
+
+          {/* Service Filter Dropdown */}
+          <div className="md:col-span-4 space-y-1">
+            <label className="text-[11px] font-bold text-black uppercase tracking-wider">
+              Service
+            </label>
+            <select
+              value={selectedServiceId}
+              onChange={(e) => {
+                setSelectedServiceId(e.target.value);
+                loadRecommendations(undefined, undefined, undefined, e.target.value);
+              }}
+              className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-xs text-black font-medium focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600"
+            >
+              <option value="" className="bg-white text-black font-medium">All Services</option>
+              {masterServices.map(s => (
+                <option key={s.id} value={s.id} className="bg-white text-black font-medium">
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Radius Selector */}
+          <div className="md:col-span-3 space-y-1">
+            <label className="text-[11px] font-bold text-black uppercase tracking-wider">
+              Radius
+            </label>
+            <select
+              value={radiusKm}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                setRadiusKm(val);
+                loadRecommendations(undefined, undefined, undefined, undefined, val);
+              }}
+              className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-xs text-black font-medium focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600"
+            >
+              <option value={5} className="bg-white text-black font-medium">Within 5 km</option>
+              <option value={10} className="bg-white text-black font-medium">Within 10 km</option>
+              <option value={25} className="bg-white text-black font-medium">Within 25 km</option>
+              <option value={50} className="bg-white text-black font-medium">Within 50 km</option>
+              <option value={100} className="bg-white text-black font-medium">Within 100 km</option>
+            </select>
+          </div>
+
+          {/* Refresh / Re-query */}
+          <div className="md:col-span-1 flex items-end">
+            <Button
+              size="sm"
+              onClick={() => loadRecommendations()}
+              disabled={loadingGarages}
+              className="w-full h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center gap-1 text-xs font-semibold shadow-sm"
+              title="Refresh recommendations"
+            >
+              {loadingGarages ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -447,35 +485,87 @@ export const GarageSelection = () => {
           {loadingGarages ? (
             <div className="py-24 text-center space-y-3 bg-white rounded-2xl border border-purple-100">
               <Loader2 className="w-8 h-8 mx-auto animate-spin text-purple-600" />
-              <p className="text-sm font-bold text-black">Running Spatial & Relational Query...</p>
+              <p className="text-sm font-bold text-black">Searching IntelliGarage Database...</p>
               <p className="text-xs text-slate-600">
-                Computing MySQL ST_Distance_Sphere & deterministic scoring model
+                Computing MySQL spatial distance & scoring genuine registered workshops
               </p>
             </div>
-          ) : recommendedGarages.length === 0 ? (
-            <div className="py-20 text-center rounded-2xl border border-dashed border-purple-300 bg-purple-50/40 p-8 space-y-3">
-              <AlertCircle className="w-10 h-10 mx-auto text-purple-600" />
-              <h3 className="text-base font-bold text-black">No garages found within {radiusKm} km</h3>
+          ) : apiError ? (
+            <div className="py-20 text-center rounded-2xl border border-red-200 bg-red-50/50 p-8 space-y-3">
+              <AlertCircle className="w-10 h-10 mx-auto text-red-500" />
+              <h3 className="text-base font-bold text-black">{apiError}</h3>
               <p className="text-xs text-slate-600 max-w-md mx-auto">
-                No active workshops matched your current location and service criteria. Try expanding your search radius to 50 km or clearing the service filter.
+                Could not connect to the IntelliGarage database. Please check your network connection and try again.
               </p>
               <div className="pt-2 flex items-center justify-center gap-2">
                 <Button 
                   size="sm" 
-                  variant="outline" 
-                  onClick={() => {
-                    setSelectedServiceId('');
-                    setRadiusKm(50);
-                    loadRecommendations(customerCoords, '', '', '', 50);
-                  }}
-                  className="text-xs border-purple-300 text-purple-700 hover:bg-purple-50 font-semibold"
+                  onClick={() => loadRecommendations()}
+                  className="text-xs bg-purple-600 hover:bg-purple-700 text-white font-semibold"
                 >
-                  Expand Radius to 50 km
+                  Retry
                 </Button>
               </div>
             </div>
+          ) : recommendedGarages.length === 0 ? (
+            searchTerm.trim() ? (
+              <div className="py-20 text-center rounded-2xl border border-dashed border-purple-300 bg-purple-50/40 p-8 space-y-3">
+                <AlertCircle className="w-10 h-10 mx-auto text-purple-600" />
+                <h3 className="text-base font-bold text-black">No IntelliGarage garage found for '{searchTerm.trim()}'.</h3>
+                <p className="text-xs text-slate-600 max-w-md mx-auto">
+                  Try another garage name, area or service. Only genuine registered workshops in the IntelliGarage database are displayed.
+                </p>
+                <div className="pt-2 flex items-center justify-center gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchTerm('');
+                      loadRecommendations(customerCoords, areaInput, '');
+                    }}
+                    className="text-xs border-purple-300 text-purple-700 hover:bg-purple-50 font-semibold"
+                  >
+                    Clear Search
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="py-20 text-center rounded-2xl border border-dashed border-purple-300 bg-purple-50/40 p-8 space-y-3">
+                <AlertCircle className="w-10 h-10 mx-auto text-purple-600" />
+                <h3 className="text-base font-bold text-black">No garages available near you yet.</h3>
+                <p className="text-xs text-slate-600 max-w-md mx-auto">
+                  No active workshops matched your current location and service criteria within {radiusKm} km. Try expanding your search radius to 50 km or clearing filters.
+                </p>
+                <div className="pt-2 flex items-center justify-center gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      setSelectedServiceId('');
+                      setRadiusKm(50);
+                      loadRecommendations(customerCoords, '', '', '', 50);
+                    }}
+                    className="text-xs border-purple-300 text-purple-700 hover:bg-purple-50 font-semibold"
+                  >
+                    Expand Radius to 50 km
+                  </Button>
+                </div>
+              </div>
+            )
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base sm:text-lg font-bold text-black flex items-center gap-2">
+                  <span>Recommended near you</span>
+                  <Badge variant="secondary" className="bg-purple-100 text-purple-900 border-purple-200 text-xs font-semibold">
+                    {recommendedGarages.length} {recommendedGarages.length === 1 ? 'Garage' : 'Garages'} Available
+                  </Badge>
+                </h2>
+                <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+                  Ranked by proximity & match quality
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {recommendedGarages.map((garage, index) => {
                 const isSelected = currentGarage?.id === garage.id;
                 const isSaved = savedIds.has(garage.id);
@@ -691,6 +781,7 @@ export const GarageSelection = () => {
                   </Card>
                 );
               })}
+            </div>
             </div>
           )}
         </div>

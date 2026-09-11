@@ -81,18 +81,21 @@ async function getRecommendedGarages(db, params = {}) {
   const cleanedCity = city ? city.trim() : null;
 
   // 2. Build eligibility WHERE constraints
-  // Strictly filter out inactive or deleted garages
+  // Strictly filter for genuine registered IntelliGarage workshops: active, not soft-deleted, and with verified owner membership
   const whereClauses = [
     "g.status = 'ACTIVE'",
-    "g.deleted_at IS NULL"
+    "g.deleted_at IS NULL",
+    `EXISTS (
+      SELECT 1 FROM Garage_Membership gm_reg 
+      JOIN Role r_reg ON gm_reg.role_id = r_reg.id 
+      WHERE gm_reg.garage_id = g.id AND r_reg.name = 'owner' AND gm_reg.status = 'ACTIVE'
+    )`
   ];
   const queryParams = [];
 
-  // Spatial Radius eligibility filter (when coordinates provided)
-  // SPATIAL INDEX OPTIMIZATION:
-  // 1. MBRContains evaluates bounding-box candidates using SPATIAL INDEX idx_garage_location
-  // 2. ST_Distance_Sphere evaluates exact spherical distance on the candidate subset
-  if (hasCoords) {
+  // Spatial Radius eligibility filter (when coordinates provided and no specific text search keyword)
+  // When a text search is provided, we search across all registered garages in IntelliGarage and use distance for ranking
+  if (hasCoords && !cleanedSearch) {
     const deltaLat = radius / 111.0;
     const deltaLng = radius / (111.0 * Math.cos(custLat * Math.PI / 180.0));
     const minLng = custLng - deltaLng;
@@ -128,18 +131,27 @@ async function getRecommendedGarages(db, params = {}) {
     queryParams.push(serviceId);
   }
 
-  // Search keyword filter
+  // Search keyword filter (garage name, area, city, pincode, or offered service capability)
   if (cleanedSearch) {
     whereClauses.push(`
       (
         LOWER(g.name) LIKE ? OR 
         LOWER(COALESCE(g.area, '')) LIKE ? OR 
         LOWER(COALESCE(g.city, '')) LIKE ? OR 
-        LOWER(COALESCE(g.postal_code, '')) LIKE ?
+        LOWER(COALESCE(g.pincode, '')) LIKE ? OR
+        LOWER(COALESCE(g.postal_code, '')) LIKE ? OR
+        EXISTS (
+          SELECT 1 FROM Garage_Service gs_search
+          JOIN Service s_search ON gs_search.service_id = s_search.id
+          WHERE gs_search.garage_id = g.id 
+            AND gs_search.is_available = TRUE 
+            AND s_search.deleted_at IS NULL
+            AND LOWER(s_search.name) LIKE ?
+        )
       )
     `);
     const sTerm = `%${cleanedSearch.toLowerCase()}%`;
-    queryParams.push(sTerm, sTerm, sTerm, sTerm);
+    queryParams.push(sTerm, sTerm, sTerm, sTerm, sTerm, sTerm);
   }
 
   // 3. Construct the DBMS Scoring Query
