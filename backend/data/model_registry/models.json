@@ -1,5 +1,94 @@
 [
   {
+    "model_id": "model_1789150322856_8716bb",
+    "model_version": "model_v1789150322",
+    "model_name": "Duration_XGBoost_Synthetic",
+    "model_type": "regression",
+    "dataset_id": "ds_test_3",
+    "dataset_version": "synthetic_v1.0",
+    "feature_schema_version": "v1.2.0",
+    "training_environment": "undefined",
+    "training_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "training_timestamp": "2026-09-11T18:12:02.856Z",
+    "metrics": {
+      "mae": 4.82,
+      "rmse": 6.91,
+      "r2": 0.912,
+      "test_loss": 0.088
+    },
+    "hyperparameters": {
+      "n_estimators": 100,
+      "learning_rate": 0.05,
+      "max_depth": 5,
+      "random_state": 42
+    },
+    "random_seed": 42,
+    "status": "VALIDATED",
+    "promoted_by": "lead_engineer@intelligarage.internal",
+    "promoted_at": "2026-09-11T18:12:02.857Z",
+    "promotion_notes": "Passed benchmark suite with MAE < 5.0 mins."
+  },
+  {
+    "model_id": "model_1789150322856_aeb9e9",
+    "model_version": "model_v1789150322",
+    "model_name": "Duration_XGBoost_Synthetic",
+    "model_type": "regression",
+    "dataset_id": "ds_test_2",
+    "dataset_version": "synthetic_v1.0",
+    "feature_schema_version": "v1.2.0",
+    "training_environment": "undefined",
+    "training_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "training_timestamp": "2026-09-11T18:12:02.856Z",
+    "metrics": {
+      "mae": 4.82,
+      "rmse": 6.91,
+      "r2": 0.912,
+      "test_loss": 0.088
+    },
+    "hyperparameters": {
+      "n_estimators": 100,
+      "learning_rate": 0.05,
+      "max_depth": 5,
+      "random_state": 42
+    },
+    "random_seed": 42,
+    "status": "DEV_ONLY",
+    "promoted_by": null,
+    "promoted_at": null,
+    "promotion_notes": null
+  },
+  {
+    "model_id": "model_1789150322856_20b4ec",
+    "model_version": "model_v1789150322",
+    "model_name": "Duration_XGBoost_Synthetic",
+    "model_type": "regression",
+    "dataset_id": "ds_test_1",
+    "dataset_version": "synthetic_v1.0",
+    "feature_schema_version": "v1.2.0",
+    "training_environment": "undefined",
+    "training_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "training_timestamp": "2026-09-11T18:12:02.856Z",
+    "metrics": {
+      "mae": 4.5,
+      "rmse": 6.2,
+      "r2": 0.93
+    },
+    "hyperparameters": {
+      "n_estimators": 100,
+      "learning_rate": 0.05,
+      "max_depth": 5,
+      "random_state": 42
+    },
+    "random_seed": 42,
+    "status": "DEV_ONLY",
+    "promoted_by": null,
+    "promoted_at": null,
+    "promotion_notes": null
+  },
+  {
     "model_id": "model_1789042831015_ee46c4",
     "model_version": "model_v1789042831",
     "model_name": "Duration_XGBoost_Synthetic",

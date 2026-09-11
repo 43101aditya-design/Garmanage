@@ -1,5 +1,93 @@
 [
   {
+    "dataset_id": "synth_ds_1789150322854_1e4030",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "undefined",
+    "total_records": 20,
+    "random_seed": 777,
+    "generated_at": "2026-09-11T18:12:02.854Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322854_1e4030.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322854_a163fa",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "undefined",
+    "total_records": 20,
+    "random_seed": 777,
+    "generated_at": "2026-09-11T18:12:02.854Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322854_a163fa.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322853_59dc43",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "undefined",
+    "total_records": 100,
+    "random_seed": 606,
+    "generated_at": "2026-09-11T18:12:02.853Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322853_59dc43.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322852_15f855",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "undefined",
+    "total_records": 40,
+    "random_seed": 505,
+    "generated_at": "2026-09-11T18:12:02.852Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322852_15f855.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322852_8be09d",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "undefined",
+    "total_records": 25,
+    "random_seed": 404,
+    "generated_at": "2026-09-11T18:12:02.852Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322852_8be09d.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322851_5f10eb",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "undefined",
+    "total_records": 30,
+    "random_seed": 303,
+    "generated_at": "2026-09-11T18:12:02.851Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322851_5f10eb.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322850_fdf011",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "test",
+    "total_records": 20,
+    "random_seed": 202,
+    "generated_at": "2026-09-11T18:12:02.850Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322850_fdf011.json"
+  },
+  {
+    "dataset_id": "synth_ds_1789150322848_f797fe",
+    "dataset_version": "synthetic_v1789150322",
+    "data_source": "SYNTHETIC_DEV",
+    "synthetic": true,
+    "environment": "development",
+    "total_records": 50,
+    "random_seed": 101,
+    "generated_at": "2026-09-11T18:12:02.848Z",
+    "file_path": "/Users/adityasingh/Desktop/DBMS project/backend/data/synthetic/synth_ds_1789150322848_f797fe.json"
+  },
+  {
     "dataset_id": "synth_ds_1789042831013_a2d8c2",
     "dataset_version": "synthetic_v1789042831",
     "data_source": "SYNTHETIC_DEV",
