@@ -232,6 +232,7 @@ async function runTests() {
     const testSavedGarage = t1[0];
     if (testSavedGarage) {
       const savedId = uuidv4();
+      await pool.query('DELETE FROM Saved_Garage WHERE customer_id = ? AND garage_id = ?', [testCustId, testSavedGarage.id]);
       await pool.query(`INSERT INTO Saved_Garage (id, customer_id, garage_id) VALUES (?, ?, ?)`, [
         savedId, testCustId, testSavedGarage.id
       ]);

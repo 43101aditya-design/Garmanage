@@ -602,8 +602,13 @@ export const GarageSelection = () => {
                               </Badge>
                             )}
                             <Badge className="bg-purple-100 text-purple-900 border-purple-200 text-[9px] font-mono font-bold py-0.5 px-2">
-                              Match: {score}%
+                              Match: {garage.base_score != null ? garage.base_score : Math.min(100, score)}%
                             </Badge>
+                            {garage.breakdown && garage.breakdown.name_bonus > 0 && (
+                              <Badge className="bg-purple-50 text-purple-800 border-purple-300 text-[9px] font-mono font-semibold py-0.5 px-1.5">
+                                +{garage.breakdown.name_bonus} Search Match
+                              </Badge>
+                            )}
                           </div>
 
                           <CardTitle className="text-lg font-bold text-black group-hover:text-purple-700 transition-colors">
@@ -620,10 +625,14 @@ export const GarageSelection = () => {
                                 📍 {garage.distance_km.toFixed(1)} km
                               </span>
                             )}
-                            {garage.rating != null && (
+                            {garage.rating != null ? (
                               <span className="flex items-center gap-0.5 text-amber-700 font-semibold">
                                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                                 {Number(garage.rating).toFixed(1)}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-slate-500 font-medium italic">
+                                Not yet rated
                               </span>
                             )}
                           </div>
@@ -743,9 +752,19 @@ export const GarageSelection = () => {
                                   <span>Rating Signal (5 pts max):</span>
                                   <span className="text-black font-bold">{garage.breakdown.rating_score} pts</span>
                                 </div>
-                                <div className="border-t border-purple-200 pt-1.5 flex justify-between text-purple-900 font-bold">
-                                  <span>Total MySQL Calculated:</span>
-                                  <span className="text-emerald-700 font-bold">{garage.recommendation_score} / 100</span>
+                                <div className="border-t border-purple-200 pt-1.5 flex justify-between text-purple-950 font-bold">
+                                  <span>Base Recommendation Score:</span>
+                                  <span className="text-purple-900 font-extrabold">{garage.breakdown.base_score || garage.base_score || (garage.recommendation_score - (garage.breakdown.name_bonus || 0))} / 100</span>
+                                </div>
+                                {(garage.breakdown.name_bonus > 0 || (garage.recommendation_score > (garage.breakdown.base_score || garage.base_score || 0))) && (
+                                  <div className="flex justify-between text-purple-700 font-bold">
+                                    <span>Search Relevance Bonus:</span>
+                                    <span className="text-purple-700 font-extrabold">+{garage.breakdown.name_bonus || (garage.recommendation_score - (garage.breakdown.base_score || 0))} pts</span>
+                                  </div>
+                                )}
+                                <div className="border-t border-dashed border-purple-200 pt-1 flex justify-between text-black font-extrabold">
+                                  <span>Total Priority Score:</span>
+                                  <span className="text-emerald-700 font-black">{garage.recommendation_score} pts</span>
                                 </div>
                               </div>
                             )}

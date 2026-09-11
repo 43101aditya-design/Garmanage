@@ -33,6 +33,7 @@ export interface RecommendedGarage {
   longitude?: number | null;
   distance_km?: number | null;
   recommendation_score: number;
+  base_score?: number;
   badges: { id: string; label: string; variant: string }[];
   match_reasons: string[];
   breakdown?: {
@@ -44,6 +45,7 @@ export interface RecommendedGarage {
     availability_score: number;
     rating_score: number;
     name_bonus: number;
+    base_score?: number;
   };
 }
 
