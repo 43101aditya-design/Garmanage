@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../..
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { 
-  Building2, Users, DollarSign, Activity, TrendingUp, 
+  Building2, Users, Activity, TrendingUp, 
   ChevronRight, Calendar, ArrowUpRight, Award, Box, AlertTriangle, IndianRupee, Layers,
   BrainCircuit, Sparkles, RefreshCw, ShieldAlert
 } from 'lucide-react';

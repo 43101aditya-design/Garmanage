@@ -11,6 +11,7 @@ import { Input } from '../../../components/ui/Input';
 import { apiClient } from '../../../api/services/apiClient';
 import { savedGarageService, CatalogService } from '../../../api/services/savedGarageService';
 import { toast } from 'sonner';
+import { formatINR } from '../../../utils/format';
 
 interface QuickBookingModalProps {
   isOpen: boolean;
@@ -447,7 +448,7 @@ export const QuickBookingModal: React.FC<QuickBookingModalProps> = ({
                             </div>
                             <div className="text-right shrink-0">
                               <span className="font-mono text-xs font-bold text-primary">
-                                {Number(s.base_price) > 0 ? `$${Number(s.base_price).toFixed(2)}` : 'Custom Quote'}
+                                {Number(s.base_price) > 0 ? formatINR(s.base_price, true) : 'Custom Quote'}
                               </span>
                             </div>
                           </div>
@@ -575,7 +576,7 @@ export const QuickBookingModal: React.FC<QuickBookingModalProps> = ({
                     <div className="flex justify-between items-center pt-2.5 border-t border-border/30 font-bold">
                       <span className="text-foreground">Estimated Base Cost:</span>
                       <span className="font-mono text-sm text-primary">
-                        {Number(selectedService?.base_price) > 0 ? `$${Number(selectedService.base_price).toFixed(2)}` : 'Diagnostic Estimate'}
+                        {Number(selectedService?.base_price) > 0 ? formatINR(selectedService.base_price, true) : 'Diagnostic Estimate'}
                       </span>
                     </div>
                   </div>
