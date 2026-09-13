@@ -2,29 +2,12 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
 // 1. Helmet configuration (XSS, Clickjacking, MIME-sniffing protections)
+// CSP and cross-origin policies are disabled on the API to prevent blocking Firebase Auth / Google popups & iframes
 const helmetConfig = helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://*.firebaseapp.com"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-            imgSrc: ["'self'", "data:", "https:", "blob:"],
-            connectSrc: [
-                "'self'", 
-                "https://*.googleapis.com", 
-                "https://*.google.com", 
-                "https://*.firebaseio.com", 
-                "https://*.firebaseapp.com",
-                "https://identitytoolkit.googleapis.com",
-                "https://securetoken.googleapis.com"
-            ],
-            frameSrc: ["'self'", "https://*.firebaseapp.com", "https://accounts.google.com"]
-        }
-    },
+    contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false
 });
 
 // 2. Global Rate Limiting (DDoS and Brute Force protection)

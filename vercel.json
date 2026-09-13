@@ -15,6 +15,10 @@
   ],
   "routes": [
     {
+      "src": "/__/auth/(.*)",
+      "dest": "https://dbms-3ea01.firebaseapp.com/__/auth/$1"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/backend/server.js"
     },

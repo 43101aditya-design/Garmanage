@@ -385,8 +385,11 @@ export const useAuthStore = create<AuthState>()(
             console.warn('[AUTH] Popup error, checking for redirect fallback:', popupError);
             if (
               popupError.code === 'auth/popup-blocked' ||
-              popupError.code === 'auth/cancelled-popup-request'
+              popupError.code === 'auth/cancelled-popup-request' ||
+              popupError.code === 'auth/network-request-failed' ||
+              popupError.code === 'auth/internal-error'
             ) {
+              console.warn('[AUTH] Popup blocked or failed with network/storage restriction, falling back to signInWithRedirect:', popupError.message);
               await signInWithRedirect(auth, provider);
               return;
             }
