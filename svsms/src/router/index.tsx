@@ -118,6 +118,7 @@ const CustomerVehicleForm = safeLazy(() => import('../pages/customer/CustomerVeh
 const ServiceRequests = safeLazy(() => import('../pages/customer/ServiceRequests').then(m => ({ default: m.ServiceRequests })));
 const CreateServiceRequest = safeLazy(() => import('../pages/customer/CreateServiceRequest').then(m => ({ default: m.CreateServiceRequest })));
 const CustomerAppointments = safeLazy(() => import('../pages/customer/CustomerAppointments').then(m => ({ default: m.CustomerAppointments })));
+const CustomerServiceTracking = safeLazy(() => import('../pages/customer/CustomerServiceTracking').then(m => ({ default: m.CustomerServiceTracking })));
 
 // Existing generic/shared pages
 const Customers = safeLazy(() => import('../pages/entities/Customers').then(m => ({ default: m.Customers })));
@@ -235,6 +236,8 @@ export const router = createBrowserRouter([
       { path: 'customer/service-requests', element: <ProtectedRoute allowedRoles={['customer']}><ServiceRequests /></ProtectedRoute> },
       { path: 'customer/service-requests/new', element: <ProtectedRoute allowedRoles={['customer']}><CreateServiceRequest /></ProtectedRoute> },
       { path: 'customer/appointments', element: <ProtectedRoute allowedRoles={['customer']}><CustomerAppointments /></ProtectedRoute> },
+      { path: 'customer/tracking', element: <ProtectedRoute allowedRoles={['customer']}><CustomerServiceTracking /></ProtectedRoute> },
+      { path: 'customer/tracking/:id', element: <ProtectedRoute allowedRoles={['customer']}><CustomerServiceTracking /></ProtectedRoute> },
       
       // Shared existing routes (protected by default to authenticated users)
       { path: 'customers', element: <ProtectedRoute><Customers /></ProtectedRoute> },

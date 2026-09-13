@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar as CalendarIcon, Clock, MapPin, Car, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar as CalendarIcon, Clock, MapPin, Car, AlertTriangle, Wrench } from 'lucide-react';
 import { apiClient } from '../../api/services/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { format } from 'date-fns';
 
 export const CustomerAppointments = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -102,15 +104,24 @@ export const CustomerAppointments = () => {
                   </div>
                 </div>
 
-                {apt.status === 'SCHEDULED' && (
+                <div className="pt-2 space-y-2">
                   <Button 
-                    variant="outline" 
-                    className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-                    onClick={() => handleCancel(apt.id)}
+                    className="w-full gap-1.5 shadow-sm"
+                    onClick={() => navigate(`/customer/tracking/${apt.id}`)}
                   >
-                    Cancel Appointment
+                    <Wrench className="w-4 h-4" /> Track Service
                   </Button>
-                )}
+
+                  {apt.status === 'SCHEDULED' && (
+                    <Button 
+                      variant="outline" 
+                      className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                      onClick={() => handleCancel(apt.id)}
+                    >
+                      Cancel Appointment
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}

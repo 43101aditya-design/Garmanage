@@ -10,7 +10,7 @@ import { Badge } from '../../components/ui/Badge';
 import { 
   Building2, Users, Activity, TrendingUp, 
   ChevronRight, Calendar, ArrowUpRight, Award, Box, AlertTriangle, IndianRupee, Layers,
-  BrainCircuit, Sparkles, RefreshCw, ShieldAlert
+  BrainCircuit, Sparkles, RefreshCw, ShieldAlert, Clock, Wrench, Car, CheckCircle2
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -39,9 +39,49 @@ export const OwnerDashboard = () => {
   const [horizon, setHorizon] = useState<number>(30);
   const [monthlyRevenueData, setMonthlyRevenueData] = useState<any[]>([]);
 
+  // Real-time operational job tracking state
+  const [operationalJobs, setOperationalJobs] = useState<any[]>([]);
+  const [jobsLoading, setJobsLoading] = useState<boolean>(true);
+
   useEffect(() => {
     fetchGarages();
   }, [fetchGarages]);
+
+  // Fetch real-world operational tracking data across authorized facilities
+  useEffect(() => {
+    let isMounted = true;
+    const fetchOperationalJobs = async () => {
+      setJobsLoading(true);
+      try {
+        if (selectedGarage !== 'all') {
+          const res = await apiClient.get(`/api/garages/${selectedGarage}/jobs`);
+          if (isMounted) setOperationalJobs(Array.isArray(res) ? res : []);
+        } else if (garages.length > 0) {
+          const garagePromises = garages.slice(0, 8).map(g =>
+            apiClient.get(`/api/garages/${g.id}/jobs`).catch(() => [])
+          );
+          const results = await Promise.all(garagePromises);
+          const merged = results.flat();
+          const uniqueMap = new Map();
+          merged.forEach((j: any) => { if (j?.id) uniqueMap.set(j.id, j); });
+          if (isMounted) setOperationalJobs(Array.from(uniqueMap.values()));
+        } else {
+          if (isMounted) setOperationalJobs([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch operational jobs for owner:', err);
+      } finally {
+        if (isMounted) setJobsLoading(false);
+      }
+    };
+
+    fetchOperationalJobs();
+    const interval = setInterval(fetchOperationalJobs, 25000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [selectedGarage, garages]);
 
   useEffect(() => {
     const fetchPredictions = async () => {
@@ -151,6 +191,16 @@ export const OwnerDashboard = () => {
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const gridColor = isDark ? '#2b2342' : '#e2e8f0';
   const textColor = isDark ? '#d8b4fe' : '#64748b';
+
+  // Real operational job tracking calculations
+  const activeJobs = operationalJobs.filter(j => j.status !== 'COMPLETED' && j.status !== 'CANCELLED');
+  const delayedJobs = activeJobs.filter(j => j.delay_status === 'DELAYED');
+  const atRiskJobs = activeJobs.filter(j => j.delay_status === 'AT_RISK');
+  const inProgressJobs = activeJobs.filter(j => j.status === 'IN_PROGRESS');
+  const qcJobs = activeJobs.filter(j => j.status === 'QUALITY_CHECK');
+  const readyForPickupJobs = activeJobs.filter(j => j.status === 'READY_FOR_PICKUP');
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const jobsDueToday = activeJobs.filter(j => j.estimated_completion_at && j.estimated_completion_at.startsWith(todayStr));
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-300">
@@ -547,6 +597,174 @@ export const OwnerDashboard = () => {
                 </div>
               </div>
 
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* REAL-TIME WORKSHOP OPERATIONAL TRACKING & DELAY MONITOR */}
+      <Card className="border-purple-500/20 shadow-sm overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-purple-500/5 via-card to-background border-b border-border/40 pb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-[10px] text-purple-400 border-purple-500/30 uppercase tracking-wider">
+                  Live Operations
+                </Badge>
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-purple-400" /> Executive Workshop Operational Tracking
+                </CardTitle>
+              </div>
+              <CardDescription className="text-xs mt-1">
+                Real-time job lifecycle, delay detection, and technician assignments across facilities
+              </CardDescription>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/60 text-xs font-mono">
+                <span className="text-muted-foreground">Active:</span>
+                <span className="font-bold text-foreground">{activeJobs.length}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs font-mono text-blue-400">
+                <span>In Progress:</span>
+                <span className="font-bold">{inProgressJobs.length}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs font-mono text-purple-400">
+                <span>Quality Check:</span>
+                <span className="font-bold">{qcJobs.length}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400">
+                <span>Ready:</span>
+                <span className="font-bold">{readyForPickupJobs.length}</span>
+              </div>
+              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-mono ${
+                delayedJobs.length > 0 
+                  ? 'bg-red-500/10 border-red-500/30 text-red-400 font-bold animate-pulse' 
+                  : 'bg-muted/20 border-border/40 text-muted-foreground'
+              }`}>
+                <span>Delayed:</span>
+                <span>{delayedJobs.length}</span>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-5 space-y-4">
+          {/* Delayed jobs attention banner */}
+          {delayedJobs.length > 0 && (
+            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-red-400">
+                    Operational Delay Detected ({delayedJobs.length} {delayedJobs.length === 1 ? 'Job' : 'Jobs'})
+                  </h4>
+                  <p className="text-xs text-red-300/80 mt-0.5">
+                    Jobs have exceeded their calculated expected completion time and require supervisory attention.
+                  </p>
+                </div>
+              </div>
+              <Badge variant="destructive" className="font-mono text-xs uppercase shrink-0">
+                Supervisor Action Required
+              </Badge>
+            </div>
+          )}
+
+          {jobsLoading ? (
+            <div className="flex items-center justify-center py-12 space-y-2">
+              <RefreshCw className="w-6 h-6 animate-spin text-primary mr-2" />
+              <span className="text-xs text-muted-foreground font-mono">Syncing real-time workshop state...</span>
+            </div>
+          ) : activeJobs.length === 0 ? (
+            <div className="text-center py-10 bg-muted/10 rounded-xl border border-dashed border-border/60">
+              <CheckCircle2 className="w-10 h-10 text-emerald-500/60 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-foreground">Workshop Floor Clear</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                There are currently no active jobs in progress for the selected facility view.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-border/40">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-muted/40 border-b border-border/40 text-[11px] font-mono uppercase text-muted-foreground">
+                  <tr>
+                    <th className="py-3 px-4">Job & Service</th>
+                    <th className="py-3 px-4">Vehicle</th>
+                    <th className="py-3 px-4">Technician</th>
+                    <th className="py-3 px-4">Current Stage</th>
+                    <th className="py-3 px-4">Expected Ready</th>
+                    <th className="py-3 px-4">Health & Delay</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/30 font-sans">
+                  {activeJobs.map((job) => {
+                    const isDelayed = job.delay_status === 'DELAYED';
+                    const isAtRisk = job.delay_status === 'AT_RISK';
+                    return (
+                      <tr key={job.id} className="hover:bg-muted/20 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <div className="font-bold text-foreground">{job.service_type || 'General Service'}</div>
+                          <div className="font-mono text-[10px] text-muted-foreground">#{job.job_number}</div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <div className="font-medium text-foreground flex items-center gap-1.5">
+                            <Car className="w-3.5 h-3.5 text-muted-foreground" />
+                            {job.make} {job.model}
+                          </div>
+                          <div className="font-mono text-[10px] text-muted-foreground">{job.license_plate}</div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          {job.mechanic_name ? (
+                            <div className="flex items-center gap-1.5">
+                              <Wrench className="w-3.5 h-3.5 text-primary" />
+                              <span className="font-medium text-foreground">{job.mechanic_name}</span>
+                            </div>
+                          ) : (
+                            <span className="italic text-muted-foreground">Unassigned</span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <Badge 
+                            variant={
+                              job.status === 'QUALITY_CHECK' ? 'outline' :
+                              job.status === 'READY_FOR_PICKUP' ? 'success' :
+                              job.status === 'IN_PROGRESS' ? 'default' : 'secondary'
+                            }
+                            className="font-mono text-[10px]"
+                          >
+                            {job.stage_label || job.status}
+                          </Badge>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-[11px]">
+                          {job.estimated_completion_at ? (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                              <span>{new Date(job.estimated_completion_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground italic">Calculating...</span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <div className="space-y-1">
+                            <Badge 
+                              variant={isDelayed ? 'destructive' : isAtRisk ? 'warning' : 'success'}
+                              className="font-mono text-[9px]"
+                            >
+                              {isDelayed ? '⚠ DELAYED' : isAtRisk ? '⚡ AT RISK' : '✓ ON TIME'}
+                            </Badge>
+                            {job.delay_reason && (
+                              <p className="text-[10px] text-red-300 font-sans truncate max-w-[160px]" title={job.delay_reason}>
+                                {job.delay_reason}
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </CardContent>

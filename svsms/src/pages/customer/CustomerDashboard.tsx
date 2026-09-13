@@ -29,6 +29,7 @@ export const CustomerDashboard = () => {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [serviceRequests, setServiceRequests] = useState<any[]>([]);
+  const [activeTracking, setActiveTracking] = useState<any | null>(null);
   const [loadingDashboard, setLoadingDashboard] = useState<boolean>(true);
 
   // Quick booking modal state
@@ -38,11 +39,12 @@ export const CustomerDashboard = () => {
   // Fetch all real customer data
   const fetchCustomerData = useCallback(async () => {
     try {
-      const [savedRes, vehRes, apptRes, srvRes] = await Promise.all([
+      const [savedRes, vehRes, apptRes, srvRes, trackRes] = await Promise.all([
         savedGarageService.getSavedGarages().catch(() => []),
         apiClient.get('/api/customer/vehicles').catch(() => []),
         apiClient.get('/api/customer/appointments').catch(() => []),
-        apiClient.get('/api/customer/service-requests').catch(() => [])
+        apiClient.get('/api/customer/service-requests').catch(() => []),
+        apiClient.get('/api/jobs/customer/active-tracking').catch(() => null)
       ]);
 
       const sList = Array.isArray(savedRes) ? savedRes : [];
@@ -56,6 +58,12 @@ export const CustomerDashboard = () => {
 
       const rList = Array.isArray(srvRes) ? srvRes : srvRes?.data || [];
       setServiceRequests(rList);
+
+      if (trackRes && trackRes.tracking) {
+        setActiveTracking(trackRes.tracking);
+      } else {
+        setActiveTracking(null);
+      }
     } catch (err) {
       console.error('Failed to load customer dashboard data', err);
     } finally {
@@ -312,61 +320,140 @@ export const CustomerDashboard = () => {
         )}
       </div>
 
-      {/* Progress Timeline Stepper */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-muted/10 pb-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-base font-bold">Active Service Progress Tracker</CardTitle>
+      {/* Real-time Service Progress Tracker */}
+      <Card className="overflow-hidden border-border/60 shadow-md">
+        <CardHeader className="bg-muted/10 pb-4 border-b border-border/40">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-base font-bold flex items-center gap-2">
+                  <Wrench className="w-4 h-4 text-primary" />
+                  Live Service Tracking
+                </CardTitle>
+                {activeTracking && (
+                  <Badge 
+                    variant={activeTracking.delay_status === 'DELAYED' ? 'destructive' : activeTracking.delay_status === 'AT_RISK' ? 'warning' : 'success'}
+                    className="text-[10px] font-mono font-bold uppercase"
+                  >
+                    {activeTracking.delay_status.replace('_', ' ')}
+                  </Badge>
+                )}
+              </div>
               <CardDescription className="text-xs">
-                {activeServiceRequest 
-                  ? `Tracking: ${activeServiceRequest.service_type} (${activeServiceRequest.request_number})`
-                  : activeAppointment 
-                    ? `Upcoming bay reservation: ${activeAppointment.service_type || 'Scheduled Service'}`
-                    : 'No active service tickets logged'}
+                {activeTracking 
+                  ? `${activeTracking.vehicle?.brand} ${activeTracking.vehicle?.model} (${activeTracking.vehicle?.license_plate}) • ${activeTracking.garage?.name}`
+                  : activeServiceRequest 
+                    ? `Request: ${activeServiceRequest.service_type} (${activeServiceRequest.request_number})`
+                    : activeAppointment 
+                      ? `Upcoming bay reservation: ${activeAppointment.service_type || 'Scheduled Service'}`
+                      : 'No active maintenance currently underway'}
               </CardDescription>
             </div>
-            {activeStatus && (
-              <Badge variant={activeStatus === 'COMPLETED' ? 'success' : activeStatus === 'IN_PROGRESS' ? 'warning' : 'info'}>
-                {activeStatus}
-              </Badge>
+
+            {activeTracking && (
+              <div className="flex items-center gap-3">
+                {activeTracking.estimated_completion_at && (
+                  <div className="text-right hidden sm:block">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground block">
+                      Expected Ready
+                    </span>
+                    <span className="font-mono text-sm font-bold text-foreground">
+                      {new Date(activeTracking.estimated_completion_at).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                    </span>
+                  </div>
+                )}
+                <Button 
+                  size="sm" 
+                  onClick={() => navigate(`/customer/tracking/${activeTracking.job_id || activeTracking.appointment_id || ''}`)}
+                  className="gap-1.5 shadow-sm"
+                >
+                  Track Live <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-6 md:p-8">
-          <div className="relative flex flex-col md:flex-row md:justify-between gap-6 md:gap-4">
-            <div className="hidden md:block absolute top-4 left-4 right-4 h-0.5 bg-border/40 z-0" />
-            
-            {steps.map((step, idx) => {
-              const isActive = (idx === 0 && steps[0].done) ||
-                (idx === 1 && (activeStatus === 'SUBMITTED' || activeStatus === 'UNDER_REVIEW')) ||
-                (idx === 2 && activeStatus === 'SCHEDULED') ||
-                (idx === 3 && activeStatus === 'IN_PROGRESS') ||
-                (idx === 4 && activeStatus === 'COMPLETED');
 
-              return (
-                <div key={idx} className="flex md:flex-col md:items-center flex-1 relative z-10 gap-3 md:gap-0">
-                  <div className="flex items-center md:justify-center md:w-full md:mb-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border font-mono text-xs font-bold transition-all duration-300 ${
-                      step.done 
-                        ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_8px_rgba(168,85,247,0.35)]'
-                        : isActive 
-                          ? 'bg-amber-500/10 border-amber-500 text-amber-500 animate-pulse'
-                          : 'bg-card text-muted-foreground border-border/80'
-                    }`}>
-                      {idx + 1}
-                    </div>
-                  </div>
-                  <div className="md:text-center">
-                    <p className={`text-sm font-semibold ${isActive ? 'text-primary' : 'text-foreground'}`}>
-                      {step.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{step.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
+        {activeTracking?.is_delayed && (
+          <div className="bg-red-500/10 border-b border-red-500/20 px-6 py-2.5 flex items-center justify-between text-xs text-red-600 dark:text-red-400">
+            <span className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>
+                <strong>Service Delayed:</strong> {activeTracking.delay_reason || 'Work is taking longer than expected. Workshop team is on it.'}
+              </span>
+            </span>
+            <span className="font-mono font-bold shrink-0 ml-2">
+              New Target: {new Date(activeTracking.estimated_completion_at).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}
+            </span>
           </div>
+        )}
+
+        <CardContent className="p-6 md:p-8">
+          {activeTracking ? (
+            <div className="space-y-6">
+              {/* Timeline Horizontal Stepper */}
+              <div className="relative">
+                <div className="hidden md:block absolute top-4 left-6 right-6 h-1 bg-muted rounded-full z-0 overflow-hidden">
+                  <div 
+                    className="h-full bg-primary transition-all duration-500" 
+                    style={{ width: `${Math.min(100, Math.max(0, activeTracking.progress_percent || 20))}%` }}
+                  />
+                </div>
+
+                <div className="space-y-4 md:space-y-0 md:flex md:justify-between relative z-10">
+                  {(activeTracking.timeline || []).slice(0, 6).map((step: any, idx: number) => {
+                    const isDone = step.state === 'COMPLETED';
+                    const isCur = step.state === 'CURRENT';
+
+                    return (
+                      <div key={idx} className="flex md:flex-col md:items-center flex-1 gap-3 md:gap-1.5">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center border font-mono text-xs font-bold shrink-0 transition-all duration-300 ${
+                          isDone 
+                            ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                            : isCur 
+                              ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/30 ring-4 ring-primary/20 scale-105'
+                              : 'bg-card text-muted-foreground border-border/80'
+                        }`}>
+                          {isDone ? '✓' : idx + 1}
+                        </div>
+                        <div className="md:text-center space-y-0.5">
+                          <p className={`text-xs font-bold ${isCur ? 'text-primary' : isDone ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            {step.label}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground line-clamp-1">{step.description}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Status footer bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-border/30 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-muted-foreground">Current Stage:</span>
+                  <span className="font-bold text-foreground">{activeTracking.current_stage_label}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-muted-foreground">Next Action:</span>
+                  <span className="text-muted-foreground">{activeTracking.next_stage}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-6 space-y-3">
+              <div className="w-12 h-12 rounded-full bg-muted/60 text-muted-foreground flex items-center justify-center mx-auto">
+                <Car className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">No active service jobs currently in progress</p>
+                <p className="text-xs text-muted-foreground mt-0.5">When your vehicle is checked into a garage bay, live updates will appear here.</p>
+              </div>
+              <Button size="sm" variant="outline" onClick={() => navigate('/customer/select-garage')} className="mt-2">
+                Book a Service
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
