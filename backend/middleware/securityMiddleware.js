@@ -13,6 +13,7 @@ const helmetConfig = helmet({
             connectSrc: [
                 "'self'", 
                 "https://*.googleapis.com", 
+                "https://*.google.com", 
                 "https://*.firebaseio.com", 
                 "https://*.firebaseapp.com",
                 "https://identitytoolkit.googleapis.com",
