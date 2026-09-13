@@ -69,6 +69,9 @@ interface AuthState {
 }
 
 const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 const REAL_GARAGE_ID = 'e110162f-c650-43e1-83cb-0c77c58d0cfa';
 
@@ -262,7 +265,7 @@ export const useAuthStore = create<AuthState>()(
           if (data.requiresOnboarding) {
             const onboardingState = data.onboarding_state || 'ONBOARDING';
             const pendingRequests: JoinRequest[] = data.pendingRequests || [];
-            set({ needsOnboarding: true, isAuthenticated: false, user: null, onboardingState, pendingRequests });
+            set({ needsOnboarding: true, isAuthenticated: false, user: null, onboardingState, pendingRequests, isLoading: false });
           } else if (error?.status === 401) {
             // Check if Firebase auth can refresh the token before invalidating
             let refreshed = false;
@@ -375,7 +378,20 @@ export const useAuthStore = create<AuthState>()(
         }
         set({ isLoading: true });
         try {
-          const userCredential = await signInWithPopup(auth, provider);
+          let userCredential;
+          try {
+            userCredential = await signInWithPopup(auth, provider);
+          } catch (popupError: any) {
+            console.warn('[AUTH] Popup error, checking for redirect fallback:', popupError);
+            if (
+              popupError.code === 'auth/popup-blocked' ||
+              popupError.code === 'auth/cancelled-popup-request'
+            ) {
+              await signInWithRedirect(auth, provider);
+              return;
+            }
+            throw popupError;
+          }
           const token = await userCredential.user.getIdToken();
           localStorage.setItem('svsms_token', token);
           set({ token });

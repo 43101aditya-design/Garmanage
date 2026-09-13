@@ -117,7 +117,7 @@ app.get('/api/auth/me', require('./middleware/firebaseAuth').requireAuth, async 
         // Double check if account exists in User_Account or Customer by firebase_uid or email
         try {
             const [userRows] = await req.db.query(
-                'SELECT * FROM User_Account WHERE firebase_uid = ? OR email = ?',
+                'SELECT * FROM User_Account WHERE firebase_uid = ? OR LOWER(email) = LOWER(?)',
                 [req.firebaseUser.firebase_uid, req.firebaseUser.email]
             );
 

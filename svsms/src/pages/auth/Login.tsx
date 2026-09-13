@@ -40,22 +40,22 @@ export const Login = () => {
   }
 
   // Handle all post-auth redirect states
-  if (isAuthenticated) {
-    if (needsOnboarding) {
-      if (onboardingState === 'PENDING_APPROVAL' || (pendingRequests && pendingRequests.length > 0)) {
-        return <Navigate to="/pending-approval" replace />;
-      }
-      return <Navigate to="/onboarding" replace />;
+  // 1. If user needs onboarding or approval
+  if (needsOnboarding) {
+    if (onboardingState === 'PENDING_APPROVAL' || (pendingRequests && pendingRequests.length > 0)) {
+      return <Navigate to="/pending-approval" replace />;
     }
+    return <Navigate to="/onboarding" replace />;
+  }
 
-    if (user) {
-      // Multi-garage: let user pick workspace
-      if (user.memberships && user.memberships.length > 1) {
-        return <Navigate to="/select-role" replace />;
-      }
-      const targetRoute = getDashboardRoute(user.role);
-      return <Navigate to={targetRoute} replace />;
+  // 2. If user is authenticated with an active profile
+  if (isAuthenticated && user) {
+    // Multi-garage: let user pick workspace
+    if (user.memberships && user.memberships.length > 1) {
+      return <Navigate to="/select-role" replace />;
     }
+    const targetRoute = getDashboardRoute(user.role);
+    return <Navigate to={targetRoute} replace />;
   }
 
   const handleGoogleLogin = async () => {

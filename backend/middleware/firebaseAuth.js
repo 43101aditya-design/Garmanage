@@ -15,7 +15,7 @@ const loadUserAndMemberships = async (req, res, next, userData) => {
             
             // 2. If not found by UID, check if there's a pre-existing email account with the same email
             if (rows.length === 0 && userData.email) {
-                const [emailRecords] = await req.db.query('SELECT * FROM User_Account WHERE email = ?', [userData.email]);
+                const [emailRecords] = await req.db.query('SELECT * FROM User_Account WHERE LOWER(email) = LOWER(?)', [userData.email]);
                 if (emailRecords.length > 0) {
                     const existingUser = emailRecords[0];
                     // Link the accounts by updating the firebase_uid field to avoid duplicates
@@ -29,7 +29,7 @@ const loadUserAndMemberships = async (req, res, next, userData) => {
             
             // 3. If still not found in User_Account, check if there is a Customer record with this email
             if (rows.length === 0 && userData.email) {
-                const [custRecords] = await req.db.query('SELECT * FROM Customer WHERE email = ?', [userData.email]);
+                const [custRecords] = await req.db.query('SELECT * FROM Customer WHERE LOWER(email) = LOWER(?)', [userData.email]);
                 if (custRecords.length > 0) {
                     const cust = custRecords[0];
                     const newUserId = require('uuid').v4();

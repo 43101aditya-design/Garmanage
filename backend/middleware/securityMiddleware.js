@@ -6,13 +6,24 @@ const helmetConfig = helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", "data:"],
-            connectSrc: ["'self'"]
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://*.firebaseapp.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+            imgSrc: ["'self'", "data:", "https:", "blob:"],
+            connectSrc: [
+                "'self'", 
+                "https://*.googleapis.com", 
+                "https://*.firebaseio.com", 
+                "https://*.firebaseapp.com",
+                "https://identitytoolkit.googleapis.com",
+                "https://securetoken.googleapis.com"
+            ],
+            frameSrc: ["'self'", "https://*.firebaseapp.com", "https://accounts.google.com"]
         }
     },
-    crossOriginEmbedderPolicy: false, // For API compatibility
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    crossOriginResourcePolicy: { policy: "cross-origin" }
 });
 
 // 2. Global Rate Limiting (DDoS and Brute Force protection)
